@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">eSense Companion</string>
+
+    <string name="preference_about_header">About</string>
+    <string name="preference_about_key" translatable="false">preference_about_key</string>
+    <string name="preference_about_summary">eSense Companion %s</string>
+    <string name="preference_clear_data_header">Clear data</string>
+    <string name="preference_clear_data_key" translatable="false">preference_clear_data_key</string>
+
+    <string name="data_created_at">Created at %s</string>
+    <string name="data_duration">Duration: %s</string>
+    <string name="data_entry_amount">%d datapoints</string>
+    <string name="permissions_disclaimer">Permissions need to be accepted for bluetooth functionality</string>
+    <string name="bluetooth_disclaimer">Bluetooth needs to be enabled before a connection can be made</string>
+    <string name="enable">Enable</string>
+    <string name="accept">Accept</string>
+    <string name="notification_title">eSense Companion</string>
+    <string name="notification_message">eSense Companion running in the background</string>
+    <string name="connection_device_icon_description">Device icon</string>
+    <string name="connection_handle_icon_description">Bottomsheet handle</string>
+    <string name="connection_header_text">Searching for eSense earbuds</string>
+    <string name="connection_header_text_connected">Connected to %s</string>
+    <string name="connection_header_text_connecting">Connecting to %s</string>
+    <string name="connection_header_text_pairing">Pairing with %s</string>
+    <string name="connection_header_text_failed">Failed to connect to %s</string>
+    <string name="sample_rate_text">Sample rate</string>
+    <string name="sample_rate_label_formatter">%d Hz</string>
+    <string name="acc_enabled_text">Accelerometer enabled</string>
+    <string name="acc_range_text">Accelerometer range</string>
+    <string name="acc_range_2">± 2 g</string>
+    <string name="acc_range_4">± 4 g</string>
+    <string name="acc_range_8">± 8 g</string>
+    <string name="acc_range_16">± 16 g</string>
+    <string name="acc_low_pass_text">Accelerometer low pass filter enabled</string>
+    <string name="acc_low_pass_bandwidth_text">Accelerometer low pass filter bandwidth</string>
+    <string name="acc_low_pass_bandwidth_5">5 Hz</string>
+    <string name="acc_low_pass_bandwidth_10">10 Hz</string>
+    <string name="acc_low_pass_bandwidth_20">20 Hz</string>
+    <string name="acc_low_pass_bandwidth_41">41 Hz</string>
+    <string name="acc_low_pass_bandwidth_92">92 Hz</string>
+    <string name="acc_low_pass_bandwidth_184">184 Hz</string>
+    <string name="acc_low_pass_bandwidth_460">460 Hz</string>
+    <string name="gyro_enabled_text">Gyrosensor enabled</string>
+    <string name="gyro_range_text">Gyrosensor range</string>
+    <string name="gyro_range_250">± 250 deg/s</string>
+    <string name="gyro_range_500">± 500 deg/s</string>
+    <string name="gyro_range_1000">± 1000 deg/s</string>
+    <string name="gyro_range_2000">± 2000 deg/s</string>
+    <string name="gyro_low_pass_text">Gyrosensor low pass filter enabled</string>
+    <string name="gyro_low_pass_bandwidth_text">Gyrosensor low pass filter range</string>
+    <string name="gyro_low_pass_bandwidth_5">5 Hz</string>
+    <string name="gyro_low_pass_bandwidth_10">10 Hz</string>
+    <string name="gyro_low_pass_bandwidth_20">20 Hz</string>
+    <string name="gyro_low_pass_bandwidth_41">41 Hz</string>
+    <string name="gyro_low_pass_bandwidth_92">92 Hz</string>
+    <string name="gyro_low_pass_bandwidth_184">184 Hz</string>
+    <string name="gyro_low_pass_bandwidth_250">250 Hz</string>
+    <string name="gyro_low_pass_bandwidth_3600">3.6 kHz</string>
+    <string name="sensor_data_overview_no_data_icon_description">Save icon</string>
+    <string name="sensor_data_overview_no_data_text">No data has been recorded yet</string>
+    <string name="overview_device_icon_description">Device icon</string>
+    <string name="connect_fab_description">Start a connection</string>
+    <string name="connect_fab_text">Connect</string>
+    <string name="overview_no_devices_icon_description">Device hub icon</string>
+    <string name="overview_no_devices_text">Start connecting your eSense earbuds with the button below</string>
+    <string name="sensor_data_overview_data_icon_description">Data chart icon</string>
+    <string name="overview_fragment_title">Overview</string>
+    <string name="sensor_data_overview_fragment_title">Data Overview</string>
+    <string name="settings_fragment_title">Settings</string>
+    <string name="remove_device_item_title">Remove Device</string>
+    <string name="remove_device_dialog_title">Are you sure you want to remove this device?</string>
+    <string name="remove_device_dialog_positive">Remove</string>
+    <string name="remove_device_dialog_negative">Cancel</string>
+    <string name="clear_data_dialog_title">Are you sure you want to clear all data?</string>
+    <string name="clear_data_dialog_positive">Clear data</string>
+    <string name="clear_data_dialog_negative">Cancel</string>
+</resources>

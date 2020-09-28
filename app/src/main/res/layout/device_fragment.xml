@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="edu.teco.esensecompanion.overview.device.DeviceViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/sample_rate_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/sample_rate_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintBottom_toBottomOf="@id/sample_rate_slider"
+                app:layout_constraintEnd_toStartOf="@id/sample_rate_slider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/sample_rate_slider" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sample_rate_slider"
+                style="@style/Widget.MaterialComponents.Slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:stepSize="1.0"
+                android:value="@{vm.device.sampleRate}"
+                android:valueFrom="1"
+                android:valueTo="100"
+                app:haloColor="@color/material_slider_halo_color_secondary"
+                app:labelBehavior="withinBounds"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/sample_rate_text"
+                app:layout_constraintTop_toTopOf="parent"
+                app:thumbColor="?attr/colorSecondary"
+                app:trackColorActive="@color/material_slider_active_track_color_secondary"
+                app:trackColorInactive="@color/material_slider_inactive_track_color_secondary" />
+
+            <View
+                android:id="@+id/device_top_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="4dp"
+                android:background="?attr/colorControlHighlight"
+                app:layout_constraintBottom_toTopOf="@id/acc_enabled_switch"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sample_rate_slider" />
+
+            <TextView
+                android:id="@+id/acc_enabled_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/acc_enabled_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintBottom_toBottomOf="@id/acc_enabled_switch"
+                app:layout_constraintEnd_toStartOf="@id/acc_enabled_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/acc_enabled_switch" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/acc_enabled_switch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:checked="@{vm.device.accelerometerEnabled}"
+                app:layout_constraintStart_toStartOf="@id/sample_rate_slider"
+                app:layout_constraintTop_toBottomOf="@id/device_top_divider" />
+
+            <TextView
+                android:id="@+id/acc_range_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/acc_range_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintEnd_toStartOf="@id/acc_range_group"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/acc_range_group" />
+
+            <RadioGroup
+                android:id="@+id/acc_range_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:accRange="@{vm.device.accelerometerRange}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/acc_range_text"
+                app:layout_constraintTop_toBottomOf="@id/acc_enabled_switch">
+
+                <RadioButton
+                    android:id="@+id/acc_range_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled}"
+                    android:text="@string/acc_range_2"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_range_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled}"
+                    android:text="@string/acc_range_4"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_range_8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled}"
+                    android:text="@string/acc_range_8"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_range_16"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled}"
+                    android:text="@string/acc_range_16"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/acc_low_pass_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/acc_low_pass_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintBottom_toBottomOf="@id/acc_low_pass_switch"
+                app:layout_constraintEnd_toStartOf="@id/acc_low_pass_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/acc_low_pass_switch" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/acc_low_pass_switch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:checked="@{vm.device.accelerometerLowPassFilterEnabled}"
+                android:enabled="@{vm.device.accelerometerEnabled}"
+                app:layout_constraintStart_toStartOf="@id/acc_range_group"
+                app:layout_constraintTop_toBottomOf="@id/acc_range_group" />
+
+            <TextView
+                android:id="@+id/acc_low_pass_bandwidth_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/acc_low_pass_bandwidth_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintEnd_toStartOf="@id/acc_low_pass_bandwidth_group"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/acc_low_pass_bandwidth_group" />
+
+            <RadioGroup
+                android:id="@+id/acc_low_pass_bandwidth_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:accLPFBandwidth="@{vm.device.accelerometerLowPassFilterBandwidth}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/acc_low_pass_bandwidth_text"
+                app:layout_constraintTop_toBottomOf="@id/acc_low_pass_switch">
+
+                <RadioButton
+                    android:id="@+id/acc_low_pass_bandwidth_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.device.accelerometerLowPassFilterEnabled}"
+                    android:text="@string/acc_low_pass_bandwidth_5"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_low_pass_bandwidth_10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.device.accelerometerLowPassFilterEnabled}"
+                    android:text="@string/acc_low_pass_bandwidth_10"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_low_pass_bandwidth_20"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.device.accelerometerLowPassFilterEnabled}"
+                    android:text="@string/acc_low_pass_bandwidth_20"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_low_pass_bandwidth_41"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.device.accelerometerLowPassFilterEnabled}"
+                    android:text="@string/acc_low_pass_bandwidth_41"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_low_pass_bandwidth_92"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.device.accelerometerLowPassFilterEnabled}"
+                    android:text="@string/acc_low_pass_bandwidth_92"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_low_pass_bandwidth_184"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.device.accelerometerLowPassFilterEnabled}"
+                    android:text="@string/acc_low_pass_bandwidth_184"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/acc_low_pass_bandwidth_460"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.device.accelerometerLowPassFilterEnabled}"
+                    android:text="@string/acc_low_pass_bandwidth_460"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+            </RadioGroup>
+
+            <View
+                android:id="@+id/device_bottom_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="4dp"
+                android:background="?attr/colorControlHighlight"
+                app:layout_constraintBottom_toTopOf="@id/gyro_enabled_switch"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/acc_low_pass_bandwidth_group" />
+
+            <TextView
+                android:id="@+id/gyro_enabled_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/gyro_enabled_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintBottom_toBottomOf="@id/gyro_enabled_switch"
+                app:layout_constraintEnd_toStartOf="@id/gyro_enabled_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/gyro_enabled_switch" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/gyro_enabled_switch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:checked="@{vm.device.gyroSensorEnabled}"
+                app:layout_constraintStart_toStartOf="@id/acc_low_pass_bandwidth_group"
+                app:layout_constraintTop_toBottomOf="@id/device_bottom_divider" />
+
+            <TextView
+                android:id="@+id/gyro_range_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/gyro_range_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintEnd_toStartOf="@id/gyro_range_group"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/gyro_range_group" />
+
+            <RadioGroup
+                android:id="@+id/gyro_range_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:checkedButton="@id/gyro_range_500"
+                app:gyroRange="@{vm.device.gyroSensorRange}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/gyro_range_text"
+                app:layout_constraintTop_toBottomOf="@id/gyro_enabled_switch">
+
+                <RadioButton
+                    android:id="@+id/gyro_range_250"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled}"
+                    android:text="@string/gyro_range_250"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_range_500"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled}"
+                    android:text="@string/gyro_range_500"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_range_1000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled}"
+                    android:text="@string/gyro_range_1000"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_range_2000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled}"
+                    android:text="@string/gyro_range_2000"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/gyro_low_pass_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/gyro_low_pass_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintBottom_toBottomOf="@id/gyro_low_pass_switch"
+                app:layout_constraintEnd_toStartOf="@id/gyro_low_pass_switch"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/gyro_low_pass_switch" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/gyro_low_pass_switch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:checked="@{vm.device.gyroSensorLowPassFilterEnabled}"
+                android:enabled="@{vm.device.gyroSensorEnabled}"
+                app:layout_constraintStart_toStartOf="@id/gyro_range_group"
+                app:layout_constraintTop_toBottomOf="@id/gyro_range_group" />
+
+            <TextView
+                android:id="@+id/gyro_low_pass_bandwidth_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/gyro_low_pass_bandwidth_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintEnd_toStartOf="@id/gyro_low_pass_bandwidth_group"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/gyro_low_pass_bandwidth_group" />
+
+            <RadioGroup
+                android:id="@+id/gyro_low_pass_bandwidth_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:gyroLPFBandwidth="@{vm.device.gyroSensorLowPassFilterBandwidth}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/gyro_low_pass_bandwidth_text"
+                app:layout_constraintTop_toBottomOf="@id/gyro_low_pass_switch">
+
+                <RadioButton
+                    android:id="@+id/gyro_low_pass_bandwidth_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.device.gyroSensorLowPassFilterEnabled}"
+                    android:text="@string/gyro_low_pass_bandwidth_5"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_low_pass_bandwidth_10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.device.gyroSensorLowPassFilterEnabled}"
+                    android:text="@string/gyro_low_pass_bandwidth_10"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_low_pass_bandwidth_20"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.device.gyroSensorLowPassFilterEnabled}"
+                    android:text="@string/gyro_low_pass_bandwidth_20"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_low_pass_bandwidth_41"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.device.gyroSensorLowPassFilterEnabled}"
+                    android:text="@string/gyro_low_pass_bandwidth_41"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_low_pass_bandwidth_92"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.device.gyroSensorLowPassFilterEnabled}"
+                    android:text="@string/gyro_low_pass_bandwidth_92"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_low_pass_bandwidth_184"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.device.gyroSensorLowPassFilterEnabled}"
+                    android:text="@string/gyro_low_pass_bandwidth_184"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_low_pass_bandwidth_250"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.device.gyroSensorLowPassFilterEnabled}"
+                    android:text="@string/gyro_low_pass_bandwidth_250"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+                <RadioButton
+                    android:id="@+id/gyro_low_pass_bandwidth_3600"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.device.gyroSensorLowPassFilterEnabled}"
+                    android:text="@string/gyro_low_pass_bandwidth_3600"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+            </RadioGroup>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>
