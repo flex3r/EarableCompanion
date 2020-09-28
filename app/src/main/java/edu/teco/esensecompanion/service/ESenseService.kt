@@ -21,6 +21,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.esensecompanion.MainActivity
 import edu.teco.esensecompanion.R
 import edu.teco.esensecompanion.data.SensorDataRepository
+import edu.teco.esensecompanion.di.IOSupervisorScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
@@ -51,6 +55,10 @@ class ESenseService : Service() {
     @Inject
     lateinit var dataRepository: SensorDataRepository
 
+    @Inject
+    @IOSupervisorScope
+    lateinit var scope: CoroutineScope
+
     val isBluetoothEnabled get() = bluetoothAdapter.isEnabled
 
     override fun onBind(intent: Intent?): IBinder? = binder
@@ -76,6 +84,7 @@ class ESenseService : Service() {
     }
 
     override fun onDestroy() {
+        scope.cancel()
         unregisterReceiver(bluetoothStateReceiver)
         stopForeground(true)
         stopSelf()
