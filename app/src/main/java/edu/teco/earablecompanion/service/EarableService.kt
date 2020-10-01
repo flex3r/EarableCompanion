@@ -28,11 +28,11 @@ import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
 @AndroidEntryPoint
-class ESenseService : Service() {
+class EarableService : Service() {
 
     private val binder = LocalBinder()
 
-    inner class LocalBinder(val service: ESenseService = this@ESenseService) : Binder()
+    inner class LocalBinder(val service: EarableService = this@EarableService) : Binder()
 
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
@@ -112,10 +112,10 @@ class ESenseService : Service() {
     }
 
     companion object {
-        private val TAG = ESenseService::class.simpleName
+        private val TAG = EarableService::class.simpleName
 
-        private const val CHANNEL_ID_LOW = "edu.teco.esensecompanion.low"
-        private const val CHANNEL_ID_DEFAULT = "edu.teco.esensecompanion.default"
+        private const val CHANNEL_ID_LOW = "edu.teco.earablecompanion.low"
+        private const val CHANNEL_ID_DEFAULT = "edu.teco.earablecompanion.default"
         private const val NOTIFICATION_ID = 77777
         private const val NOTIFICATION_START_INTENT_CODE = 66666
     }

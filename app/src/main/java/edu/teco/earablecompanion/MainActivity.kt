@@ -21,7 +21,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.databinding.MainActivityBinding
-import edu.teco.earablecompanion.service.ESenseService
+import edu.teco.earablecompanion.service.EarableService
 import kotlinx.android.synthetic.main.main_activity.*
 
 @AndroidEntryPoint
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     private val requestPermissionsRegistration = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { map ->
         when {
             // all permissions granted, start/bind service
-            map.all { it.value } -> eSenseService?.let { enableBluetoothIfDisabled() } ?: startAndBindService()
+            map.all { it.value } -> earableService?.let { enableBluetoothIfDisabled() } ?: startAndBindService()
             else -> Snackbar.make(binding.root, R.string.permissions_disclaimer, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.accept) { requestPermissions() }
                 .show()
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             bottom_nav_view.isVisible = value
             field = value
         }
-    var eSenseService: ESenseService? = null
+    var earableService: EarableService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         if (!isChangingConfigurations) {
-            stopService(Intent(this, ESenseService::class.java))
+            stopService(Intent(this, EarableService::class.java))
         }
     }
 
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startAndBindService() {
-        Intent(this, ESenseService::class.java).also {
+        Intent(this, EarableService::class.java).also {
             try {
                 ContextCompat.startForegroundService(this, it)
                 bindService(it, serviceConnection, Context.BIND_AUTO_CREATE)
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun enableBluetoothIfDisabled() {
-        when (eSenseService?.isBluetoothEnabled) {
+        when (earableService?.isBluetoothEnabled) {
             true -> Unit// TODO start scan
             else -> enableBluetoothRegistration.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
@@ -102,12 +102,12 @@ class MainActivity : AppCompatActivity() {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            eSenseService = (service as ESenseService.LocalBinder).service
+            earableService = (service as EarableService.LocalBinder).service
             enableBluetoothIfDisabled()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            eSenseService = null
+            earableService = null
         }
     }
 
