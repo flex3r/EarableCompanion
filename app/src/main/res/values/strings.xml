@@ -1,9 +1,9 @@
 <resources>
-    <string name="app_name">eSense Companion</string>
+    <string name="app_name">EarableCompanion</string>
 
     <string name="preference_about_header">About</string>
     <string name="preference_about_key" translatable="false">preference_about_key</string>
-    <string name="preference_about_summary">eSense Companion %s</string>
+    <string name="preference_about_summary">EarableCompanion %s</string>
     <string name="preference_clear_data_header">Clear data</string>
     <string name="preference_clear_data_key" translatable="false">preference_clear_data_key</string>
 
@@ -14,11 +14,11 @@
     <string name="bluetooth_disclaimer">Bluetooth needs to be enabled before a connection can be made</string>
     <string name="enable">Enable</string>
     <string name="accept">Accept</string>
-    <string name="notification_title">eSense Companion</string>
-    <string name="notification_message">eSense Companion running in the background</string>
+    <string name="notification_title">EarableCompanion</string>
+    <string name="notification_message">EarableCompanion running in the background</string>
     <string name="connection_device_icon_description">Device icon</string>
     <string name="connection_handle_icon_description">Bottomsheet handle</string>
-    <string name="connection_header_text">Searching for eSense earbuds</string>
+    <string name="connection_header_text">Searching for earables</string>
     <string name="connection_header_text_connected">Connected to %s</string>
     <string name="connection_header_text_connecting">Connecting to %s</string>
     <string name="connection_header_text_pairing">Pairing with %s</string>
@@ -62,7 +62,7 @@
     <string name="connect_fab_description">Start a connection</string>
     <string name="connect_fab_text">Connect</string>
     <string name="overview_no_devices_icon_description">Device hub icon</string>
-    <string name="overview_no_devices_text">Start connecting your eSense earbuds with the button below</string>
+    <string name="overview_no_devices_text">Start connecting your earables with the button below</string>
     <string name="sensor_data_overview_data_icon_description">Data chart icon</string>
     <string name="overview_fragment_title">Overview</string>
     <string name="sensor_data_overview_fragment_title">Data Overview</string>
