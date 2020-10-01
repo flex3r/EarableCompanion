@@ -21,7 +21,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.databinding.MainActivityBinding
-import edu.teco.earablecompanion.service.EarableService
+import edu.teco.earablecompanion.bluetooth.EarableService
 import kotlinx.android.synthetic.main.main_activity.*
 
 @AndroidEntryPoint
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: MainActivityBinding
     private val enableBluetoothRegistration = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
-            Activity.RESULT_OK -> Unit // TODO start scan
+            Activity.RESULT_OK -> earableService?.startScan()
             else -> Snackbar.make(binding.root, R.string.bluetooth_disclaimer, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.enable) { enableBluetoothIfDisabled() }
                 .show()
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun enableBluetoothIfDisabled() {
         when (earableService?.isBluetoothEnabled) {
-            true -> Unit// TODO start scan
+            true -> earableService?.startScan()
             else -> enableBluetoothRegistration.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
     }

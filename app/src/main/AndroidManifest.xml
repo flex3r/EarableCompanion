@@ -22,7 +22,7 @@
         android:theme="@style/Theme.App"
         tools:ignore="GoogleAppIndexingWarning,AllowBackup">
 
-        <service android:name="edu.teco.earablecompanion.service.EarableService" />
+        <service android:name="edu.teco.earablecompanion.bluetooth.EarableService" />
 
         <activity
             android:name="edu.teco.earablecompanion.MainActivity"

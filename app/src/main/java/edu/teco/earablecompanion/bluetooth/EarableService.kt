@@ -1,4 +1,4 @@
-package edu.teco.earablecompanion.service
+package edu.teco.earablecompanion.bluetooth
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -6,6 +6,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.*
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
+import android.bluetooth.le.ScanSettings
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,6 +16,7 @@ import android.content.IntentFilter
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
@@ -22,6 +26,7 @@ import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.utils.collectCharacteristics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -53,6 +58,9 @@ class EarableService : Service() {
 
     @Inject
     lateinit var dataRepository: SensorDataRepository
+
+    @Inject
+    lateinit var connectionRepository: ConnectionRepository
 
     @Inject
     @IOSupervisorScope
@@ -95,6 +103,25 @@ class EarableService : Service() {
         super.onDestroy()
     }
 
+    fun startScan() {
+        val settings = ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+            .setMatchMode(ScanSettings.MATCH_MODE_STICKY)
+            .setNumOfMatches(ScanSettings.MATCH_NUM_FEW_ADVERTISEMENT)
+            .setReportDelay(2_000)
+            .build()
+        scope.launch {
+            bluetoothAdapter.bluetoothLeScanner.startScan(null, settings, scanCallback)
+        }
+    }
+
+    fun stopScan() {
+        if (isBluetoothEnabled) {
+            bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
+        }
+    }
+
     private fun startForeground() {
         val title = getString(R.string.notification_title)
         val message = getString(R.string.notification_message)
@@ -123,6 +150,19 @@ class EarableService : Service() {
         }
 
         gatts.clear()
+    }
+
+    private val scanCallback = object : ScanCallback() {
+        override fun onBatchScanResults(results: MutableList<ScanResult>?) {
+            results?.let {
+                Log.d(TAG, results.joinToString { "${it.rssi} ${it.device.address}" })
+                connectionRepository.updateScanResult(results)
+            } ?: connectionRepository.clearScanResult()
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            Log.e(TAG, "Scan failed: $errorCode")
+        }
     }
 
     private val gattCallback = object : BluetoothGattCallback() {

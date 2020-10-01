@@ -52,6 +52,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
 
     override fun onCancel(dialog: DialogInterface) {
         (parentFragment as? OverviewFragment)?.onCancelConnectionBottomSheet()
+        (activity as? MainActivity)?.earableService?.stopScan()
         // TODO cancel ongoing connecting / pairing process
     }
 
