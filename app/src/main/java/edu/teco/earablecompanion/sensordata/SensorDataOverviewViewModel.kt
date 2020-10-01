@@ -1,11 +1,13 @@
 package edu.teco.earablecompanion.sensordata
 
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -14,6 +16,10 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
     @Assisted savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(TAG, Log.getStackTraceString(throwable))
+    }
+
     private val _sensorDataItems = MutableLiveData<List<SensorDataOverviewItem>>(emptyList())
     val sensorDataItems: LiveData<List<SensorDataOverviewItem>> = _sensorDataItems
 
@@ -21,7 +27,7 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
         loadSensorData()
     }
 
-    private fun loadSensorData() = viewModelScope.launch {
+    private fun loadSensorData() = viewModelScope.launch(coroutineExceptionHandler) {
         var data = sensorDataRepository.getSensorData()
         if (data.isEmpty()) {
             sensorDataRepository.insertAll(DATA)
