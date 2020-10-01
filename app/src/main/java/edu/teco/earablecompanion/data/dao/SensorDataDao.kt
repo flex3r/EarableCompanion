@@ -11,6 +11,7 @@ interface SensorDataDao {
     @Query("SELECT * FROM data_table")
     suspend fun getAll(): List<SensorData>
 
+    @Transaction
     @Query("SELECT * FROM data_table")
     suspend fun getAllWithEntries(): List<SensorDataWithEntries>
 
