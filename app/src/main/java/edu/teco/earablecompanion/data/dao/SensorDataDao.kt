@@ -4,6 +4,7 @@ import androidx.room.*
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SensorDataDao {
@@ -32,7 +33,7 @@ interface SensorDataDao {
 
     @Transaction
     @Query("SELECT * FROM data_table WHERE data_id = :id")
-    suspend fun getDataWithEntriesById(id: Long): SensorDataWithEntries
+    fun getDataWithEntriesById(id: Long): Flow<SensorDataWithEntries>
 
     @Query("SELECT COUNT(data_entry_id) FROM data_entry_table WHERE data_id = :id")
     suspend fun getEntryCountByDataId(id: Long): Int

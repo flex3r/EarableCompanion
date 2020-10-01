@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.databinding.SensorDataOverviewFragmentBinding
 
@@ -14,10 +16,12 @@ import edu.teco.earablecompanion.databinding.SensorDataOverviewFragmentBinding
 class SensorDataOverviewFragment : Fragment() {
 
     private val viewModel: SensorDataOverviewViewModel by viewModels()
+    private val navController: NavController by lazy { findNavController() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = SensorDataOverviewAdapter {
-            Log.d(TAG, "onClick $it")
+            val action = SensorDataOverviewFragmentDirections.actionSensorDataOverviewFragmentToSensorDataDetailFragment(it.title, it.id)
+            navController.navigate(action)
         }
         viewModel.sensorDataItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
 

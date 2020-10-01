@@ -5,10 +5,11 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 sealed class SensorDataOverviewItem {
-    data class Data(val title: String, val description: String, val createdAt: LocalDateTime, val duration: Duration?, val entryCount: Int) : SensorDataOverviewItem() {
+    data class Data(val id: Long, val title: String, val description: String, val createdAt: LocalDateTime, val duration: Duration?, val entryCount: Int) : SensorDataOverviewItem() {
 
         companion object {
             fun fromEntity(sensorData: SensorData, entryCount: Int) = Data(
+                id = sensorData.dataId,
                 title = sensorData.title,
                 createdAt = sensorData.createdAt,
                 description = sensorData.description ?: "",

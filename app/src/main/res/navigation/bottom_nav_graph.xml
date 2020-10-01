@@ -15,7 +15,7 @@
             app:destination="@id/deviceFragment">
             <argument
                 android:name="name"
-                android:defaultValue="e-Sense device"
+                android:defaultValue="Earable device"
                 app:argType="string" />
         </action>
     </fragment>
@@ -32,7 +32,32 @@
         android:id="@+id/sensorDataOverviewFragment"
         android:name="edu.teco.earablecompanion.sensordata.SensorDataOverviewFragment"
         android:label="Data"
-        tools:layout="@layout/sensor_data_overview_fragment" />
+        tools:layout="@layout/sensor_data_overview_fragment" >
+        <action
+            android:id="@+id/action_sensorDataOverviewFragment_to_sensorDataDetailFragment"
+            app:destination="@id/sensorDataDetailFragment">
+            <argument
+                android:name="dataTitle"
+                android:defaultValue="Data"
+                app:argType="string"/>
+            <argument
+                android:name="dataId"
+                app:argType="long"
+                android:defaultValue="0L" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/sensorDataDetailFragment"
+        android:name="edu.teco.earablecompanion.sensordata.detail.SensorDataDetailFragment"
+        android:label="{dataTitle}"
+        tools:layout="@layout/sensor_data_detail_fragment">
+        <argument
+            android:name="dataTitle"
+            app:argType="string"/>
+        <argument
+            android:name="dataId"
+            app:argType="long"/>
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="edu.teco.earablecompanion.settings.SettingsFragment"

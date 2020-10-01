@@ -7,7 +7,7 @@ data class SensorDataWithEntries(
     @Embedded val data: SensorData,
     @Relation(
         parentColumn = "data_id",
-        entityColumn = "data_entry_id"
+        entityColumn = "data_id"
     )
     val entries: List<SensorDataEntry>
 )
