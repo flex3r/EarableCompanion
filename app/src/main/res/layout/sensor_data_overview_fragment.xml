@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="edu.teco.esensecompanion.sensordata.SensorDataOverviewViewModel" />
+            type="edu.teco.earablecompanion.sensordata.SensorDataOverviewViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

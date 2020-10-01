@@ -6,7 +6,7 @@
 
         <variable
             name="device"
-            type="edu.teco.esensecompanion.overview.OverviewItem.Device" />
+            type="edu.teco.earablecompanion.overview.OverviewItem.Device" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

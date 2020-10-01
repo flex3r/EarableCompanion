@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="edu.teco.esensecompanion">
+    package="edu.teco.earablecompanion">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -13,7 +13,7 @@
         android:required="true" />
 
     <application
-        android:name=".ESenseApplication"
+        android:name="edu.teco.earablecompanion.ESenseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,10 +22,10 @@
         android:theme="@style/Theme.App"
         tools:ignore="GoogleAppIndexingWarning,AllowBackup">
 
-        <service android:name="edu.teco.esensecompanion.service.ESenseService" />
+        <service android:name="edu.teco.earablecompanion.service.ESenseService" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="edu.teco.earablecompanion.MainActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize">
 

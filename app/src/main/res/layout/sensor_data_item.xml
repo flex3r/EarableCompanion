@@ -6,7 +6,7 @@
 
         <variable
             name="data"
-            type="edu.teco.esensecompanion.sensordata.SensorDataOverviewItem.Data" />
+            type="edu.teco.earablecompanion.sensordata.SensorDataOverviewItem.Data" />
 
         <import type="android.view.View" />
     </data>

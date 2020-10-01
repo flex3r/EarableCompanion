@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/overviewFragment"
-        android:name="edu.teco.esensecompanion.overview.OverviewFragment"
+        android:name="edu.teco.earablecompanion.overview.OverviewFragment"
         android:label="@string/app_name"
         tools:layout="@layout/overview_fragment">
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/deviceFragment"
-        android:name="edu.teco.esensecompanion.overview.device.DeviceFragment"
+        android:name="edu.teco.earablecompanion.overview.device.DeviceFragment"
         android:label="{name}"
         tools:layout="@layout/device_fragment">
         <argument
@@ -30,11 +30,11 @@
     </fragment>
     <fragment
         android:id="@+id/sensorDataOverviewFragment"
-        android:name="edu.teco.esensecompanion.sensordata.SensorDataOverviewFragment"
+        android:name="edu.teco.earablecompanion.sensordata.SensorDataOverviewFragment"
         android:label="Data"
         tools:layout="@layout/sensor_data_overview_fragment" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="edu.teco.esensecompanion.settings.SettingsFragment"
+        android:name="edu.teco.earablecompanion.settings.SettingsFragment"
         android:label="Settings" />
 </navigation>

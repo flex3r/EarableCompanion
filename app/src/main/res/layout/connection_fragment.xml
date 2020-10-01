@@ -7,7 +7,7 @@
 
         <variable
             name="vm"
-            type="edu.teco.esensecompanion.overview.connection.ConnectionViewModel" />
+            type="edu.teco.earablecompanion.overview.connection.ConnectionViewModel" />
 
         <import type="android.view.View" />
     </data>
