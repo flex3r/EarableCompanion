@@ -5,10 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothManager
+import android.bluetooth.*
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -22,8 +19,10 @@ import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
+import edu.teco.earablecompanion.utils.collectCharacteristics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import java.util.*
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
@@ -36,7 +35,8 @@ class EarableService : Service() {
 
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
-    private var bluetoothGatt: BluetoothGatt? = null
+    private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
+    private val characteristics = mutableMapOf<BluetoothDevice, Map<UUID, BluetoothGattCharacteristic>>()
     private val bluetoothAdapter: BluetoothAdapter by lazy(LazyThreadSafetyMode.NONE) {
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothManager.adapter
@@ -61,6 +61,10 @@ class EarableService : Service() {
     val isBluetoothEnabled get() = bluetoothAdapter.isEnabled
 
     override fun onBind(intent: Intent?): IBinder? = binder
+    override fun onUnbind(intent: Intent?): Boolean {
+        closeConnections()
+        return super.onUnbind(intent)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -109,6 +113,52 @@ class EarableService : Service() {
             .build()
 
         startForeground(NOTIFICATION_ID, notification)
+    }
+
+    private fun closeConnections() {
+        gatts.forEach { (device, gatt) ->
+            characteristics.remove(device)
+            gatt.disconnect()
+            gatt.close()
+        }
+
+        gatts.clear()
+    }
+
+    private val gattCallback = object : BluetoothGattCallback() {
+        override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
+            gatt?.apply {
+                characteristics[device] = collectCharacteristics()
+            }
+        }
+
+        override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+            gatt ?: return
+            when (newState) {
+                BluetoothProfile.STATE_CONNECTED -> {
+                    gatt.discoverServices()
+                    gatts[gatt.device] = gatt
+                }
+                BluetoothProfile.STATE_CONNECTING -> Unit
+                else -> {
+                    // disconnected
+                    characteristics.remove(gatt.device)
+                    gatts.remove(gatt.device)
+                }
+            }
+        }
+
+        override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
+            //if (characteristic?.uuid == ) {
+            //
+            //}
+        }
+
+        override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+            //if (characteristic != null && status == BluetoothGatt.GATT_SUCCESS && characteristic.uuid == ) {
+            //
+            //}
+        }
     }
 
     companion object {
