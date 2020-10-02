@@ -5,9 +5,8 @@ import edu.teco.earablecompanion.utils.clear
 import edu.teco.earablecompanion.utils.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
 
-class ConnectionRepository @Inject constructor() {
+class ConnectionRepository {
     private val _scanResult = MutableStateFlow<List<ScanResult>>(emptyList())
     val scanResult: StateFlow<List<ScanResult>> get() = _scanResult
 

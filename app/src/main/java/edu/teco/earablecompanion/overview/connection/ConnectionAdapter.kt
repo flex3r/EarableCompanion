@@ -29,6 +29,6 @@ class ConnectionAdapter(private val onClick: (ConnectionItem) -> Unit) : ListAda
 
     private class DetectDiff : DiffUtil.ItemCallback<ConnectionItem>() {
         override fun areContentsTheSame(oldItem: ConnectionItem, newItem: ConnectionItem): Boolean = oldItem == newItem
-        override fun areItemsTheSame(oldItem: ConnectionItem, newItem: ConnectionItem): Boolean = oldItem == newItem
+        override fun areItemsTheSame(oldItem: ConnectionItem, newItem: ConnectionItem): Boolean = oldItem.address == newItem.address
     }
 }

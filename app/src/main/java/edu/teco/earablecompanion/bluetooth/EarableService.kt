@@ -97,9 +97,10 @@ class EarableService : Service() {
     override fun onDestroy() {
         scope.cancel()
         unregisterReceiver(bluetoothStateReceiver)
+        closeConnections()
+
         stopForeground(true)
         stopSelf()
-        // TODO close any conns
         super.onDestroy()
     }
 
@@ -109,7 +110,7 @@ class EarableService : Service() {
             .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
             .setMatchMode(ScanSettings.MATCH_MODE_STICKY)
             .setNumOfMatches(ScanSettings.MATCH_NUM_FEW_ADVERTISEMENT)
-            .setReportDelay(2_000)
+            .setReportDelay(2000)
             .build()
         scope.launch {
             bluetoothAdapter.bluetoothLeScanner.startScan(null, settings, scanCallback)
@@ -119,6 +120,7 @@ class EarableService : Service() {
     fun stopScan() {
         if (isBluetoothEnabled) {
             bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
+            connectionRepository.clearScanResult()
         }
     }
 
