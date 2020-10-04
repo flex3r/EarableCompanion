@@ -23,6 +23,7 @@ import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.utils.collectCharacteristics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
 import no.nordicsemi.android.support.v18.scanner.ScanCallback
 import no.nordicsemi.android.support.v18.scanner.ScanResult
@@ -156,7 +157,9 @@ class EarableService : Service() {
     private val scanCallback = object : ScanCallback() {
         override fun onBatchScanResults(results: MutableList<ScanResult>) {
             Log.d(TAG, results.joinToString { "${it.rssi} ${it.device.address}" })
-            connectionRepository.updateScanResult(results)
+            scope.launch {
+                connectionRepository.updateScanResult(results)
+            }
         }
 
         override fun onScanFailed(errorCode: Int) {
