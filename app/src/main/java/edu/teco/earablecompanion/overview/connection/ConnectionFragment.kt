@@ -52,11 +52,18 @@ class ConnectionFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         connectionAdapter = ConnectionAdapter(::startConnect)
+        val linearLayoutManager = LinearLayoutManager(view.context)
         binding.connectionDevicesRecyclerview.apply {
-            adapter = connectionAdapter
-            layoutManager = LinearLayoutManager(view.context).apply {
-                stackFromEnd = true
-                reverseLayout = true
+            layoutManager = linearLayoutManager
+            adapter = connectionAdapter.apply {
+                registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                    override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                        super.onItemRangeInserted(positionStart, itemCount)
+                        if (positionStart == 0 && positionStart == linearLayoutManager.findFirstCompletelyVisibleItemPosition()) {
+                            linearLayoutManager.scrollToPosition(0)
+                        }
+                    }
+                })
             }
         }
     }
