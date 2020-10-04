@@ -30,13 +30,10 @@ class ConnectionFragment : BottomSheetDialogFragment() {
         binding = ConnectionFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@ConnectionFragment
-            connectionLayout.minHeight = (resources.displayMetrics.heightPixels / 2.0).toInt()
-            connectionLayout.maxHeight = (resources.displayMetrics.heightPixels / 2.0).toInt()
+            connectionLayout.minHeight = (resources.displayMetrics.heightPixels * 0.75).toInt()
+            connectionLayout.maxHeight = (resources.displayMetrics.heightPixels * 0.75).toInt()
         }
-        (dialog as? BottomSheetDialog)?.behavior?.apply {
-            state = BottomSheetBehavior.STATE_EXPANDED
-        }
-
+        (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
         viewModel.apply {
             devices.observe(viewLifecycleOwner) {

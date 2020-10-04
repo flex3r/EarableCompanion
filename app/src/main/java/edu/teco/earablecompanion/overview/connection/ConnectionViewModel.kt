@@ -15,8 +15,8 @@ class ConnectionViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val devices: LiveData<List<ConnectionItem>> = liveData(viewModelScope.coroutineContext) {
-        connectionRepository.scanResult.collectLatest {
-            emit(it.toConnectionItems())
+        connectionRepository.scanResult.collectLatest { scanResult ->
+            emit(scanResult.map { it.value }.toConnectionItems())
         }
     }
 

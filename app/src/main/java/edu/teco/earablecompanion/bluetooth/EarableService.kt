@@ -6,9 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.*
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -26,7 +23,10 @@ import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.utils.collectCharacteristics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
+import no.nordicsemi.android.support.v18.scanner.ScanCallback
+import no.nordicsemi.android.support.v18.scanner.ScanResult
+import no.nordicsemi.android.support.v18.scanner.ScanSettings
 import java.util.*
 import javax.inject.Inject
 
@@ -46,6 +46,7 @@ class EarableService : Service() {
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothManager.adapter
     }
+    private val scanner: BluetoothLeScannerCompat by lazy { BluetoothLeScannerCompat.getScanner() }
     private val bluetoothStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != BluetoothDevice.ACTION_BOND_STATE_CHANGED) return
@@ -112,14 +113,12 @@ class EarableService : Service() {
             .setNumOfMatches(ScanSettings.MATCH_NUM_FEW_ADVERTISEMENT)
             .setReportDelay(2000)
             .build()
-        scope.launch {
-            bluetoothAdapter.bluetoothLeScanner.startScan(null, settings, scanCallback)
-        }
+        scanner.startScan(null, settings, scanCallback)
     }
 
     fun stopScan() {
         if (isBluetoothEnabled) {
-            bluetoothAdapter.bluetoothLeScanner.stopScan(scanCallback)
+            scanner.stopScan(scanCallback)
             connectionRepository.clearScanResult()
         }
     }
@@ -155,11 +154,9 @@ class EarableService : Service() {
     }
 
     private val scanCallback = object : ScanCallback() {
-        override fun onBatchScanResults(results: MutableList<ScanResult>?) {
-            results?.let {
-                Log.d(TAG, results.joinToString { "${it.rssi} ${it.device.address}" })
-                connectionRepository.updateScanResult(results)
-            } ?: connectionRepository.clearScanResult()
+        override fun onBatchScanResults(results: MutableList<ScanResult>) {
+            Log.d(TAG, results.joinToString { "${it.rssi} ${it.device.address}" })
+            connectionRepository.updateScanResult(results)
         }
 
         override fun onScanFailed(errorCode: Int) {

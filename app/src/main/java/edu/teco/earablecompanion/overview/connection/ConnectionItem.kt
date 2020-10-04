@@ -1,6 +1,6 @@
 package edu.teco.earablecompanion.overview.connection
 
-import android.bluetooth.le.ScanResult
+import no.nordicsemi.android.support.v18.scanner.ScanResult
 
 data class ConnectionItem(val name: String, val address: String, val connectionStrength: String) {
 
@@ -11,6 +11,6 @@ data class ConnectionItem(val name: String, val address: String, val connectionS
             connectionStrength = "$rssi db"
         )
 
-        fun List<ScanResult>.toConnectionItems(): List<ConnectionItem> = map { it.toConnectionItem() }.sortedWith(compareByDescending { it.connectionStrength })
+        fun List<ScanResult>.toConnectionItems(): List<ConnectionItem> = filter { it.isConnectable }.map { it.toConnectionItem() }
     }
 }
