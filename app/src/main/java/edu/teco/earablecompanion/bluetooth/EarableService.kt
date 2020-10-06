@@ -13,6 +13,7 @@ import android.content.IntentFilter
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.os.ParcelUuid
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
@@ -164,6 +165,9 @@ class EarableService : Service() {
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
+            if (result.scanRecord?.serviceUuids?.any { SERVICE_UUID_FILTER.contains(it) } == true)
+                return
+
             when (callbackType) {
                 ScanSettings.CALLBACK_TYPE_ALL_MATCHES -> scope.launch {
                     connectionRepository.updateScanResult(result)
@@ -221,6 +225,10 @@ class EarableService : Service() {
         private const val CHANNEL_ID_DEFAULT = "edu.teco.earablecompanion.default"
         private const val NOTIFICATION_ID = 77777
         private const val NOTIFICATION_START_INTENT_CODE = 66666
+        private val SERVICE_UUID_FILTER = listOf(
+            ParcelUuid.fromString("0000fd6f-0000-1000-8000-00805f9b34fb"), // Contact tracing
+            ParcelUuid.fromString("0000fe9f-0000-1000-8000-00805f9b34fb"), // Google
+        )
     }
 
 }
