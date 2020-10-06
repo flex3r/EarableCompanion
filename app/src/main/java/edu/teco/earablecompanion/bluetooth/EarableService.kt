@@ -112,11 +112,10 @@ class EarableService : Service() {
 
     fun startScan() {
         val settings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
             .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
             .setMatchMode(ScanSettings.MATCH_MODE_STICKY)
             .setNumOfMatches(ScanSettings.MATCH_NUM_FEW_ADVERTISEMENT)
-            .setReportDelay(2000)
             .build()
         scanner.startScan(null, settings, scanCallback)
     }
@@ -164,10 +163,11 @@ class EarableService : Service() {
     }
 
     private val scanCallback = object : ScanCallback() {
-        override fun onBatchScanResults(results: MutableList<ScanResult>) {
-            Log.d(TAG, results.joinToString { "${it.rssi} ${it.device.address}" })
-            scope.launch {
-                connectionRepository.updateScanResult(results)
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            when (callbackType) {
+                ScanSettings.CALLBACK_TYPE_ALL_MATCHES -> scope.launch {
+                    connectionRepository.updateScanResult(result)
+                }
             }
         }
 

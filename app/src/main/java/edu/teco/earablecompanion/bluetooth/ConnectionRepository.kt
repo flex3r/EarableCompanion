@@ -16,14 +16,11 @@ class ConnectionRepository {
     val connectionEvent: Flow<ConnectionEvent> get() = _connectionEvent.asFlow()
 
     @Synchronized
-    fun updateScanResult(results: List<ScanResult>) {
+    fun updateScanResult(result: ScanResult) {
         val current = _scanResult.value
-        results.forEach {
-            current[it.device.address] = it
-        }
-        val newestTimestamp = results.maxOf { it.timestampNanos }
-        current.forEach { (address, result) ->
-            val elapsed = (newestTimestamp - result.timestampNanos).absoluteValue
+        current[result.device.address] = result
+        current.forEach { (address, currentResult) ->
+            val elapsed = (result.timestampNanos - currentResult.timestampNanos).absoluteValue
             if (elapsed > ELAPSED_TIMESTAMP_NANOS_LIMIT) {
                 current.remove(address)
             }
