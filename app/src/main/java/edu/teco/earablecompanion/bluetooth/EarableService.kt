@@ -20,7 +20,9 @@ import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
+import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.utils.collectCharacteristics
+import edu.teco.earablecompanion.utils.connect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -51,9 +53,11 @@ class EarableService : Service() {
     private val bluetoothStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != BluetoothDevice.ACTION_BOND_STATE_CHANGED) return
-
-            if (intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, 0) == BluetoothDevice.BOND_BONDED) {
-                val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
+            val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
+            when (intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, 0)) {
+                BluetoothDevice.BOND_BONDING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Pairing(device))
+                BluetoothDevice.BOND_BONDED -> device.connect(this@EarableService, GattCallback())
+                else -> Unit
             }
         }
     }
@@ -124,6 +128,11 @@ class EarableService : Service() {
         }
     }
 
+    fun connectOrBond(device: BluetoothDevice) {
+        if (!device.createBond())
+            device.connect(this, GattCallback())
+    }
+
     private fun startForeground() {
         val title = getString(R.string.notification_title)
         val message = getString(R.string.notification_message)
@@ -167,7 +176,7 @@ class EarableService : Service() {
         }
     }
 
-    private val gattCallback = object : BluetoothGattCallback() {
+    private inner class GattCallback : BluetoothGattCallback() {
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
             gatt?.apply {
                 characteristics[device] = collectCharacteristics()
@@ -180,12 +189,14 @@ class EarableService : Service() {
                 BluetoothProfile.STATE_CONNECTED -> {
                     gatt.discoverServices()
                     gatts[gatt.device] = gatt
+                    connectionRepository.updateConnectionEvent(ConnectionEvent.Connected(gatt.device))
                 }
-                BluetoothProfile.STATE_CONNECTING -> Unit
+                BluetoothProfile.STATE_CONNECTING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
                 else -> {
                     // disconnected
                     characteristics.remove(gatt.device)
                     gatts.remove(gatt.device)
+                    connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
                 }
             }
         }

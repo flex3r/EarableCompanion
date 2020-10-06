@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ConnectionViewModel @ViewModelInject constructor(
-    connectionRepository: ConnectionRepository,
+    private val connectionRepository: ConnectionRepository,
     @Assisted savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -20,23 +20,8 @@ class ConnectionViewModel @ViewModelInject constructor(
         }
     }
 
-    private val _connectionEvent = MutableLiveData<ConnectionEvent>(ConnectionEvent.Empty)
-    val connectionEvent: LiveData<ConnectionEvent>
-        get() = _connectionEvent
+    val connectionEvent: LiveData<ConnectionEvent> = connectionRepository.connectionEvent.asLiveData(viewModelScope.coroutineContext)
+    val isConnecting: LiveData<Boolean> = connectionEvent.map { it is ConnectionEvent.Connecting }
 
-    val isConnecting: LiveData<Boolean> = _connectionEvent.map { it is ConnectionEvent.Connecting || it is ConnectionEvent.Pairing }
-
-    fun connect(item: ConnectionItem) {
-        connectAndDismiss(item)
-    }
-
-    private fun connectAndDismiss(item: ConnectionItem) = viewModelScope.launch {
-        _connectionEvent.value = ConnectionEvent.Connecting(item)
-
-        delay(2_000)
-        _connectionEvent.value = ConnectionEvent.Pairing(item)
-
-        delay(2_000)
-        _connectionEvent.value = ConnectionEvent.Connected(item)
-    }
+    fun clearConnectionEvent() = connectionRepository.clearConnectionEvent()
 }

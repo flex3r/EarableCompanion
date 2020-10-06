@@ -3,7 +3,6 @@ package edu.teco.earablecompanion.overview.connection
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +35,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
         (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_EXPANDED
 
         viewModel.apply {
+            clearConnectionEvent()
             devices.observe(viewLifecycleOwner) {
                 connectionAdapter.submitList(it)
             }
@@ -76,23 +76,25 @@ class ConnectionFragment : BottomSheetDialogFragment() {
     override fun onCancel(dialog: DialogInterface) {
         (parentFragment as? OverviewFragment)?.onCancelConnectionBottomSheet()
         (activity as? MainActivity)?.earableService?.stopScan()
-        // TODO cancel ongoing connecting / pairing process
     }
 
     private fun startConnect(item: ConnectionItem) {
         if (viewModel.isConnecting.value == true) return
-        viewModel.connect(item)
+        (activity as? MainActivity)?.earableService?.connectOrBond(item.device)
     }
 
-    private fun handleConnectionEvent(event: ConnectionEvent) = when (event) {
-        is ConnectionEvent.Connected -> {
-            (parentFragment as? OverviewFragment)?.showSnackbar(getString(R.string.connection_header_text_connected, event.item.name))
-            requireDialog().cancel()
+    private fun handleConnectionEvent(event: ConnectionEvent) {
+        when (event) {
+            is ConnectionEvent.Connected -> {
+                (parentFragment as? OverviewFragment)?.showSnackbar(getString(R.string.connection_header_text_connected, event.device.name ?: "unknown device"))
+                requireDialog().cancel()
+                viewModel.clearConnectionEvent()
+            }
+            is ConnectionEvent.Pairing -> binding.connectionHeaderText.text = getString(R.string.connection_header_text_pairing, event.device.name ?: "unknown device")
+            is ConnectionEvent.Connecting -> binding.connectionHeaderText.text = getString(R.string.connection_header_text_connecting, event.device.name ?: "unknown device")
+            is ConnectionEvent.Failed -> (parentFragment as? OverviewFragment)?.showSnackbar(getString(R.string.connection_header_text_failed, event.device.name ?: "unknown device"))
+            else -> binding.connectionHeaderText.text = getString(R.string.connection_header_text)
         }
-        is ConnectionEvent.Connecting -> binding.connectionHeaderText.text = getString(R.string.connection_header_text_connecting, event.item.name)
-        is ConnectionEvent.Pairing -> binding.connectionHeaderText.text = getString(R.string.connection_header_text_pairing, event.item.name)
-        is ConnectionEvent.Failed -> (parentFragment as? OverviewFragment)?.showSnackbar(getString(R.string.connection_header_text_failed, event.item.name))
-        else -> Unit
     }
 
     companion object {
