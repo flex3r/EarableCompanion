@@ -1,5 +1,6 @@
-package edu.teco.earablecompanion.overview.device
+package edu.teco.earablecompanion.overview.device.esense
 
+import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.os.Bundle
 import android.view.*
@@ -7,28 +8,29 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
-import edu.teco.earablecompanion.databinding.DeviceFragmentBinding
+import edu.teco.earablecompanion.databinding.EsenseDeviceFragmentBinding
 
 @AndroidEntryPoint
-class DeviceFragment : Fragment() {
+class ESenseDeviceFragment : Fragment() {
 
-    private val viewModel: DeviceViewModel by viewModels()
+    private val viewModel: ESenseDeviceViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
+    private val args: ESenseDeviceFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = DeviceFragmentBinding.inflate(inflater, container, false).apply {
+        val binding = EsenseDeviceFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
-            lifecycleOwner = this@DeviceFragment
+            lifecycleOwner = this@ESenseDeviceFragment
 
             sampleRateSlider.setup()
             setupAccelerometerSettings()
             setupGyroSensorSettings()
-
         }
 
         setHasOptionsMenu(true)
@@ -40,7 +42,7 @@ class DeviceFragment : Fragment() {
         when (item.itemId) {
             R.id.remove_device -> MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.remove_device_dialog_title))
-                .setPositiveButton(getString(R.string.remove_device_dialog_positive)) { _, _ -> navController.popBackStack() }
+                .setPositiveButton(getString(R.string.remove_device_dialog_positive)) { _, _ -> disconnectDevice() }
                 .setNegativeButton(getString(R.string.remove_device_dialog_negative)) { d, _ -> d.dismiss() }
                 .show()
             else -> return false
@@ -58,6 +60,11 @@ class DeviceFragment : Fragment() {
         super.onDetach()
     }
 
+    private fun disconnectDevice() {
+        (activity as? MainActivity)?.earableService?.disconnect(args.device)
+        navController.popBackStack()
+    }
+
     private fun Slider.setup() {
         setLabelFormatter { getString(R.string.sample_rate_label_formatter, it) }
         addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
@@ -68,7 +75,7 @@ class DeviceFragment : Fragment() {
         })
     }
 
-    private fun DeviceFragmentBinding.setupAccelerometerSettings() {
+    private fun EsenseDeviceFragmentBinding.setupAccelerometerSettings() {
         accEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerEnabled(isChecked) }
         accLowPassSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerLPFEnabled(isChecked) }
         accRangeGroup.setOnCheckedChangeListener { _, checkedId ->
@@ -94,7 +101,7 @@ class DeviceFragment : Fragment() {
         }
     }
 
-    private fun DeviceFragmentBinding.setupGyroSensorSettings() {
+    private fun EsenseDeviceFragmentBinding.setupGyroSensorSettings() {
         gyroEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setGyroSensorEnabled(isChecked) }
         gyroLowPassSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setGyroSensorLPFEnabled(isChecked) }
         gyroRangeGroup.setOnCheckedChangeListener { _, checkedId ->
@@ -104,9 +111,9 @@ class DeviceFragment : Fragment() {
                 R.id.gyro_range_2000 -> 2000
                 else -> 500
             }
-            viewModel.setAccelerometerRange(range)
+            viewModel.setGyroSensorRange(range)
         }
-        accLowPassBandwidthGroup.setOnCheckedChangeListener { _, checkedId ->
+        gyroLowPassBandwidthGroup.setOnCheckedChangeListener { _, checkedId ->
             val bandwidth = when (checkedId) {
                 R.id.gyro_low_pass_bandwidth_10 -> 10
                 R.id.gyro_low_pass_bandwidth_20 -> 20
@@ -117,11 +124,11 @@ class DeviceFragment : Fragment() {
                 R.id.gyro_low_pass_bandwidth_3600 -> 3600
                 else -> 5 // default
             }
-            viewModel.setAccelerometerLPFBandwidth(bandwidth)
+            viewModel.setGyroSensorLPFBandwidth(bandwidth)
         }
     }
 
     companion object {
-        private val TAG = DeviceFragment::class.java.simpleName
+        private val TAG = ESenseDeviceFragment::class.java.simpleName
     }
 }

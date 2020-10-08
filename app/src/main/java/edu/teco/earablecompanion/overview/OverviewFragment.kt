@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.overview
 
+import android.bluetooth.BluetoothDevice
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.databinding.OverviewFragmentBinding
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
 
@@ -21,9 +23,12 @@ class OverviewFragment : Fragment() {
     private lateinit var binding: OverviewFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = OverviewAdapter {
-            val action = OverviewFragmentDirections.actionOverviewFragmentToDeviceFragment(it.name)
-            navController.navigate(action)
+        val adapter = OverviewAdapter { device ->
+            val action = when(device.type) {
+                EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name, device.bluetoothDevice)
+                else -> null // TODO
+            }
+            action?.let { navController.navigate(it) }
         }
         viewModel.devices.observe(viewLifecycleOwner) { adapter.submitList(it) }
 

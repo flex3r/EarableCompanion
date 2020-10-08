@@ -133,6 +133,16 @@ class EarableService : Service() {
             device.connect(this, GattCallback())
     }
 
+    fun disconnect(device: BluetoothDevice) {
+        characteristics.remove(device)
+        gatts[device]?.let { gatt->
+            gatt.disconnect()
+            gatt.close()
+        }
+        gatts.remove(device)
+        connectionRepository.removeConnectedDevice(device)
+    }
+
     private fun startForeground() {
         val title = getString(R.string.notification_title)
         val message = getString(R.string.notification_message)
@@ -197,13 +207,14 @@ class EarableService : Service() {
                     connectionRepository.updateConnectedDevice(gatt.device)
                 }
                 BluetoothProfile.STATE_CONNECTING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
-                else -> {
+                BluetoothProfile.STATE_DISCONNECTED -> {
                     // disconnected
                     characteristics.remove(gatt.device)
                     gatts.remove(gatt.device)
                     connectionRepository.updateConnectionEvent(ConnectionEvent.Empty)
                     connectionRepository.removeConnectedDevice(gatt.device)
                 }
+                else -> Unit
             }
         }
 

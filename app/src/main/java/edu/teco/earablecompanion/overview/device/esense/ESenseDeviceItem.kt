@@ -1,6 +1,6 @@
-package edu.teco.earablecompanion.overview.device
+package edu.teco.earablecompanion.overview.device.esense
 
-data class DeviceItem(
+data class ESenseDeviceItem(
     val name: String,
     val sampleRate: Int = 50,
     val accelerometerEnabled: Boolean = true,

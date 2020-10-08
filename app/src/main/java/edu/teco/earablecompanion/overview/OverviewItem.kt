@@ -7,11 +7,12 @@ sealed class OverviewItem {
 
     object NoDevices : OverviewItem()
 
-    data class Device(val name: String, val address: String, val type: EarableType) : OverviewItem() {
+    data class Device(val name: String, val address: String, val bluetoothDevice: BluetoothDevice, val type: EarableType) : OverviewItem() {
         companion object {
-            private fun BluetoothDevice.toOverviewItem() = OverviewItem.Device(
+            private fun BluetoothDevice.toOverviewItem() = Device(
                 name = name ?: "Unknown device",
                 address = address,
+                bluetoothDevice = this,
                 type = when {
                     name.startsWith("eSense-") -> EarableType.ESENSE
                     else -> EarableType.GENERIC // TODO

@@ -11,39 +11,45 @@
         android:label="@string/app_name"
         tools:layout="@layout/overview_fragment">
         <action
-            android:id="@+id/action_overviewFragment_to_deviceFragment"
-            app:destination="@id/deviceFragment">
+            android:id="@+id/action_overviewFragment_to_eSenseDeviceFragment"
+            app:destination="@id/eSenseDeviceFragment">
             <argument
                 android:name="name"
                 android:defaultValue="Earable device"
                 app:argType="string" />
+            <argument
+                android:name="device"
+                app:argType="android.bluetooth.BluetoothDevice" />
         </action>
     </fragment>
     <fragment
-        android:id="@+id/deviceFragment"
-        android:name="edu.teco.earablecompanion.overview.device.DeviceFragment"
+        android:id="@+id/eSenseDeviceFragment"
+        android:name="edu.teco.earablecompanion.overview.device.esense.ESenseDeviceFragment"
         android:label="{name}"
-        tools:layout="@layout/device_fragment">
+        tools:layout="@layout/esense_device_fragment">
         <argument
             android:name="name"
             app:argType="string" />
+        <argument
+            android:name="device"
+            app:argType="android.bluetooth.BluetoothDevice" />
     </fragment>
     <fragment
         android:id="@+id/sensorDataOverviewFragment"
         android:name="edu.teco.earablecompanion.sensordata.SensorDataOverviewFragment"
         android:label="Data"
-        tools:layout="@layout/sensor_data_overview_fragment" >
+        tools:layout="@layout/sensor_data_overview_fragment">
         <action
             android:id="@+id/action_sensorDataOverviewFragment_to_sensorDataDetailFragment"
             app:destination="@id/sensorDataDetailFragment">
             <argument
                 android:name="dataTitle"
                 android:defaultValue="Data"
-                app:argType="string"/>
+                app:argType="string" />
             <argument
                 android:name="dataId"
-                app:argType="long"
-                android:defaultValue="0L" />
+                android:defaultValue="0L"
+                app:argType="long" />
         </action>
     </fragment>
     <fragment
@@ -53,10 +59,10 @@
         tools:layout="@layout/sensor_data_detail_fragment">
         <argument
             android:name="dataTitle"
-            app:argType="string"/>
+            app:argType="string" />
         <argument
             android:name="dataId"
-            app:argType="long"/>
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
