@@ -129,6 +129,8 @@ class EarableService : Service() {
     }
 
     fun connectOrBond(device: BluetoothDevice) {
+        connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(device))
+
         if (!device.createBond())
             device.connect(this, GattCallback())
     }
