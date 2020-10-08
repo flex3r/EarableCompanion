@@ -13,6 +13,6 @@ data class ConnectionItem(val name: String, val address: String, val connectionS
             device = device
         )
 
-        fun List<ScanResult>.toConnectionItems(): List<ConnectionItem> = filter { it.isConnectable }.map { it.toConnectionItem() }
+        fun Collection<ScanResult>.toConnectionItems(): List<ConnectionItem> = filter { it.isConnectable }.map { it.toConnectionItem() }
     }
 }

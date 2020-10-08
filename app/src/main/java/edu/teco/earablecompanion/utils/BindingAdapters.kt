@@ -4,6 +4,7 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import edu.teco.earablecompanion.R
+import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
@@ -70,4 +71,12 @@ fun TextView.formatDuration(duration: Duration?) {
             .format(instant)
         resources.getString(R.string.data_duration, formatted)
     } ?: ""
+}
+
+@BindingAdapter("description")
+fun TextView.setEarableDescription(type: EarableType) {
+    text = when(type) {
+        EarableType.ESENSE -> context.getString(R.string.earable_esense_description)
+        else -> "" // TODO
+    }
 }

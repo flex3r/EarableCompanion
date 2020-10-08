@@ -2,16 +2,27 @@ package edu.teco.earablecompanion.overview
 
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import edu.teco.earablecompanion.bluetooth.ConnectionRepository
+import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOverviewItems
+import kotlinx.coroutines.flow.collectLatest
 
-class OverviewViewModel @ViewModelInject constructor(@Assisted savedStateHandle: SavedStateHandle) : ViewModel() {
+class OverviewViewModel @ViewModelInject constructor(
+    connectionRepository: ConnectionRepository,
+    @Assisted savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
-    private val _devices = MutableLiveData(DATA)
-    val devices: LiveData<List<OverviewItem>>
-        get() = _devices
+    val devices: LiveData<List<OverviewItem>> = liveData(viewModelScope.coroutineContext) {
+        connectionRepository.connectedDevices.collectLatest { devices ->
+            val items = devices.values.toOverviewItems()
+            when {
+                items.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
+                else -> emit(items)
+            }
+        }
+    }
+
+    val hasConnectedDevices = devices.map { items -> items.any { it is OverviewItem.Device } }
 
     private val _connectionOpen = MutableLiveData(false)
     val connectionOpen: LiveData<Boolean>
@@ -19,13 +30,5 @@ class OverviewViewModel @ViewModelInject constructor(@Assisted savedStateHandle:
 
     fun setConnectionOpen(open: Boolean) {
         _connectionOpen.value = open
-    }
-
-    companion object {
-        private val DATA = listOf(
-            OverviewItem.NoDevices,
-            OverviewItem.Device(123, "eSense-1234", "85db", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-            OverviewItem.Device(124, "eSense-4321", "72db", "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."),
-        )
     }
 }

@@ -8,8 +8,8 @@ import android.content.Context
 import java.util.*
 
 fun BluetoothGatt.collectCharacteristics(): Map<UUID, BluetoothGattCharacteristic> = services.map { service ->
-    service.characteristics.map { characterisic ->
-        characterisic.uuid to characterisic
+    service.characteristics.map { characteristic ->
+        characteristic.uuid to characteristic
     }
 }.flatten().toMap()
 

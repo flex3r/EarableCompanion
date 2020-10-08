@@ -194,13 +194,15 @@ class EarableService : Service() {
                     gatt.discoverServices()
                     gatts[gatt.device] = gatt
                     connectionRepository.updateConnectionEvent(ConnectionEvent.Connected(gatt.device))
+                    connectionRepository.updateConnectedDevice(gatt.device)
                 }
                 BluetoothProfile.STATE_CONNECTING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
                 else -> {
                     // disconnected
                     characteristics.remove(gatt.device)
                     gatts.remove(gatt.device)
-                    connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
+                    connectionRepository.updateConnectionEvent(ConnectionEvent.Empty)
+                    connectionRepository.removeConnectedDevice(gatt.device)
                 }
             }
         }
