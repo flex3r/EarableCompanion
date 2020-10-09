@@ -1,7 +1,9 @@
 package edu.teco.earablecompanion.overview.device.esense
 
+import edu.teco.earablecompanion.overview.device.DeviceItem
+
 data class ESenseDeviceItem(
-    val name: String,
+    override val name: String,
     val sampleRate: Int = 50,
     val accelerometerEnabled: Boolean = true,
     val accelerometerRange: Int = 4,
@@ -11,4 +13,4 @@ data class ESenseDeviceItem(
     val gyroSensorRange: Int = 500,
     val gyroSensorLowPassFilterEnabled: Boolean = true,
     val gyroSensorLowPassFilterBandwidth: Int = 5
-)
+) : DeviceItem()
