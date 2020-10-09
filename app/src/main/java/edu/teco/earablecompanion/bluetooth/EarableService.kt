@@ -22,6 +22,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
+import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
 import edu.teco.earablecompanion.utils.collectCharacteristics
 import edu.teco.earablecompanion.utils.connect
 import kotlinx.coroutines.CoroutineScope
@@ -45,7 +46,7 @@ class EarableService : Service() {
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
 
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
-    private val characteristics = mutableMapOf<BluetoothDevice, Map<UUID, BluetoothGattCharacteristic>>()
+    private val characteristics = mutableMapOf<BluetoothDevice, Map<String, BluetoothGattCharacteristic>>()
     private val bluetoothAdapter: BluetoothAdapter by lazy(LazyThreadSafetyMode.NONE) {
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothManager.adapter
@@ -143,6 +144,7 @@ class EarableService : Service() {
         }
         gatts.remove(device)
         connectionRepository.removeConnectedDevice(device)
+        connectionRepository.removeConfig(device.address)
     }
 
     private fun startForeground() {
@@ -195,7 +197,13 @@ class EarableService : Service() {
     private inner class GattCallback : BluetoothGattCallback() {
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
             gatt?.apply {
-                characteristics[device] = collectCharacteristics()
+                val deviceCharacteristics = collectCharacteristics()
+                characteristics[device] = deviceCharacteristics
+                // TODO generalise
+                val config = deviceCharacteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.value?.let { bytes ->
+                    ESenseConfig(bytes)
+                } ?: ESenseConfig()
+                connectionRepository.setConfig(gatt.device.address, config)
             }
         }
 
@@ -215,6 +223,7 @@ class EarableService : Service() {
                     gatts.remove(gatt.device)
                     connectionRepository.updateConnectionEvent(ConnectionEvent.Empty)
                     connectionRepository.removeConnectedDevice(gatt.device)
+                    connectionRepository.removeConfig(gatt.device.address)
                 }
                 else -> Unit
             }

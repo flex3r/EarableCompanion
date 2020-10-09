@@ -5,6 +5,7 @@ import edu.teco.earablecompanion.overview.device.DeviceItem
 data class ESenseDeviceItem(
     override val name: String,
     val sampleRate: Int = 50,
+    val config: ESenseConfig,
     val accelerometerEnabled: Boolean = true,
     val accelerometerRange: Int = 4,
     val accelerometerLowPassFilterEnabled: Boolean = true,
