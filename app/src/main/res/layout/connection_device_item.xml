@@ -27,11 +27,11 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/connection_device_icon_description"
                 android:src="@drawable/ic_baseline_bluetooth_24"
-                app:tint="?attr/colorSecondary"
                 app:layout_constraintBottom_toBottomOf="@id/connection_device_name"
                 app:layout_constraintEnd_toStartOf="@id/connection_device_name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/connection_device_name" />
+                app:layout_constraintTop_toTopOf="@id/connection_device_name"
+                app:tint="?attr/colorSecondary" />
 
             <TextView
                 android:id="@+id/connection_device_name"

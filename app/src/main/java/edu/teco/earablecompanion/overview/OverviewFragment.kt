@@ -1,6 +1,5 @@
 package edu.teco.earablecompanion.overview
 
-import android.bluetooth.BluetoothDevice
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,7 +23,7 @@ class OverviewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = OverviewAdapter { device ->
-            val action = when(device.type) {
+            val action = when (device.type) {
                 EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name, device.bluetoothDevice)
                 else -> null // TODO
             }

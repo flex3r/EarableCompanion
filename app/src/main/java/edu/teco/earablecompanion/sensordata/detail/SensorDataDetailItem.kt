@@ -1,8 +1,6 @@
 package edu.teco.earablecompanion.sensordata.detail
 
-import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
-import edu.teco.earablecompanion.sensordata.SensorDataOverviewItem
 import java.time.Duration
 import java.time.LocalDateTime
 

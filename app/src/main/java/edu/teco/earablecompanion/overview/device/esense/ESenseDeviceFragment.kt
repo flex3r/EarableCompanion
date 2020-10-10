@@ -3,7 +3,6 @@ package edu.teco.earablecompanion.overview.device.esense
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -78,7 +77,7 @@ class ESenseDeviceFragment : Fragment() {
     }
 
     private fun Slider.setup() {
-        setLabelFormatter { getString(R.string.sample_rate_label_formatter, it) }
+        setLabelFormatter { getString(R.string.sample_rate_label_formatter, it.toInt()) }
         addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
             override fun onStartTrackingTouch(slider: Slider) = Unit
             override fun onStopTrackingTouch(slider: Slider) {
@@ -89,30 +88,25 @@ class ESenseDeviceFragment : Fragment() {
 
     private fun EsenseDeviceFragmentBinding.setupAccelerometerSettings() {
         accEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerEnabled(isChecked) }
-        accLowPassSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val bandwidth = when {
-                isChecked -> accLowPassBandwidthGroup.checkedRadioButtonId.toAccLPF
-                else -> ESenseConfig.AccLPF.DISABLED
-            }
-            viewModel.setAccelerometerLPFBandwidth(bandwidth)
-        }
         accRangeGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.setAccelerometerRange(checkedId.toAccRange)
         }
         accLowPassBandwidthGroup.setOnCheckedChangeListener { _, checkedId ->
-            viewModel.setAccelerometerLPFBandwidth(checkedId.toAccLPF)
+            val bandwidth = checkedId.toAccLPF
+            bandwidth?.let { viewModel.setAccelerometerLPFBandwidth(it) }
         }
     }
 
-    private val Int.toAccLPF: ESenseConfig.AccLPF
+    private val Int.toAccLPF: ESenseConfig.AccLPF?
         get() = when (this) {
+            R.id.acc_low_pass_bandwidth_5 -> ESenseConfig.AccLPF.BW_5
             R.id.acc_low_pass_bandwidth_10 -> ESenseConfig.AccLPF.BW_10
             R.id.acc_low_pass_bandwidth_20 -> ESenseConfig.AccLPF.BW_20
             R.id.acc_low_pass_bandwidth_41 -> ESenseConfig.AccLPF.BW_41
             R.id.acc_low_pass_bandwidth_92 -> ESenseConfig.AccLPF.BW_92
             R.id.acc_low_pass_bandwidth_184 -> ESenseConfig.AccLPF.BW_184
             R.id.acc_low_pass_bandwidth_460 -> ESenseConfig.AccLPF.BW_460
-            else -> ESenseConfig.AccLPF.BW_5
+            else -> ESenseConfig.AccLPF.DISABLED
         }
 
     private val Int.toAccRange: ESenseConfig.AccRange
@@ -125,23 +119,17 @@ class ESenseDeviceFragment : Fragment() {
 
     private fun EsenseDeviceFragmentBinding.setupGyroSensorSettings() {
         gyroEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setGyroSensorEnabled(isChecked) }
-        gyroLowPassSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val bandwidth = when {
-                isChecked -> gyroLowPassBandwidthGroup.checkedRadioButtonId.toGyroLPF
-                else -> ESenseConfig.GyroLPF.DISABLED
-            }
-            viewModel.setGyroSensorLPFBandwidth(bandwidth)
-        }
         gyroRangeGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.setGyroSensorRange(checkedId.toGyroRange)
         }
         gyroLowPassBandwidthGroup.setOnCheckedChangeListener { _, checkedId ->
-            viewModel.setGyroSensorLPFBandwidth(checkedId.toGyroLPF)
+            checkedId.toGyroLPF?.let { viewModel.setGyroSensorLPFBandwidth(it) }
         }
     }
 
-    private val Int.toGyroLPF: ESenseConfig.GyroLPF
+    private val Int.toGyroLPF: ESenseConfig.GyroLPF?
         get() = when (this) {
+            R.id.gyro_low_pass_bandwidth_5 -> ESenseConfig.GyroLPF.BW_5
             R.id.gyro_low_pass_bandwidth_10 -> ESenseConfig.GyroLPF.BW_10
             R.id.gyro_low_pass_bandwidth_20 -> ESenseConfig.GyroLPF.BW_20
             R.id.gyro_low_pass_bandwidth_41 -> ESenseConfig.GyroLPF.BW_41
@@ -149,7 +137,7 @@ class ESenseDeviceFragment : Fragment() {
             R.id.gyro_low_pass_bandwidth_184 -> ESenseConfig.GyroLPF.BW_184
             R.id.gyro_low_pass_bandwidth_250 -> ESenseConfig.GyroLPF.BW_250
             R.id.gyro_low_pass_bandwidth_3600 -> ESenseConfig.GyroLPF.BW_3600
-            else -> ESenseConfig.GyroLPF.BW_5
+            else -> ESenseConfig.GyroLPF.DISABLED
         }
 
     private val Int.toGyroRange: ESenseConfig.GyroRange

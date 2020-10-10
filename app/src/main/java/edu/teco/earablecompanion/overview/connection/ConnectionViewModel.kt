@@ -5,9 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
 import edu.teco.earablecompanion.overview.connection.ConnectionItem.Companion.toConnectionItems
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class ConnectionViewModel @ViewModelInject constructor(
     private val connectionRepository: ConnectionRepository,

@@ -44,8 +44,14 @@ class ConnectionRepository {
     fun updateConnectedDevice(device: BluetoothDevice) = _connectedDevices.updateValue { this[device.address] = device }
     fun removeConnectedDevice(device: BluetoothDevice) = _connectedDevices.updateValue { this.remove(device.address) }
 
-    fun setConfig(address: String, config: Config) = _deviceConfigs.updateValue { this[address] = config }
     fun removeConfig(address: String) = _deviceConfigs.updateValue { this.remove(address) }
+    fun updateConfig(address: String?, action: Config.() -> Unit) = _deviceConfigs.updateValue { this[address]?.action() }
+    fun setOrUpdateConfigFromBytes(address: String, bytes: ByteArray, block: () -> Config) = _deviceConfigs.updateValue {
+        when {
+            containsKey(address) -> this[address]?.updateValues(bytes)
+            else -> this[address] = block()
+        }
+    }
 
     companion object {
         private const val ELAPSED_TIMESTAMP_NANOS_LIMIT = 10_000_000_000L

@@ -20,8 +20,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import edu.teco.earablecompanion.databinding.MainActivityBinding
 import edu.teco.earablecompanion.bluetooth.EarableService
+import edu.teco.earablecompanion.databinding.MainActivityBinding
 import kotlinx.android.synthetic.main.main_activity.*
 
 @AndroidEntryPoint

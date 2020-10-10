@@ -25,7 +25,6 @@ import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
-import edu.teco.earablecompanion.overview.device.esense.ESenseConfig.Companion.checkCheckSum
 import edu.teco.earablecompanion.utils.collectCharacteristics
 import edu.teco.earablecompanion.utils.connect
 import edu.teco.earablecompanion.utils.earableType
@@ -247,14 +246,23 @@ class EarableService : Service() {
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
-            Log.d(TAG, "onCharacteristicChanged ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
+            Log.i(TAG, "onCharacteristicChanged ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            Log.d(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
+            Log.i(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
+            if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
+                return
+            }
+
+            when (gatt.device.earableType) {
+                EarableType.ESENSE -> handleESenseCharacteristics(gatt, characteristic)
+                else -> Unit
+            }
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+            Log.i(TAG, "onCharacteristicRead ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
             if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
                 return
             }
@@ -269,9 +277,10 @@ class EarableService : Service() {
             when (characteristic.uuid.toString().toLowerCase(Locale.ROOT)) {
                 ESenseConfig.SENSOR_CONFIG_UUID -> {
                     val bytes = characteristic.value
-                    if (bytes.checkCheckSum(1)) {
-                        val config = ESenseConfig(bytes)
-                        connectionRepository.setConfig(gatt.device.address, config)
+                    if (ESenseConfig.checkCheckSum(bytes, index = 1)) {
+                        connectionRepository.setOrUpdateConfigFromBytes(gatt.device.address, bytes) {
+                            ESenseConfig(bytes)
+                        }
                     }
                 }
                 else -> Unit

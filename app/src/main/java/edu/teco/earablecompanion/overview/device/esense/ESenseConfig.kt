@@ -3,7 +3,15 @@ package edu.teco.earablecompanion.overview.device.esense
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.and
 
-data class ESenseConfig(var accRange: AccRange = AccRange.G_4, var gyroRange: GyroRange = GyroRange.DEG_500, var accLPF: AccLPF = AccLPF.BW_5, var gyroLPF: GyroLPF = GyroLPF.BW_5) : Config() {
+data class ESenseConfig(
+    var sampleRate: Int = 50,
+    var accEnabled: Boolean = true,
+    var gyroEnabled: Boolean = true,
+    var accRange: AccRange = AccRange.G_4,
+    var gyroRange: GyroRange = GyroRange.DEG_500,
+    var accLPF: AccLPF = AccLPF.BW_5,
+    var gyroLPF: GyroLPF = GyroLPF.BW_5,
+) : Config() {
 
     override val configCharacteristic = SENSOR_CONFIG_UUID
     override fun toCharacteristicData(): ByteArray {
@@ -16,11 +24,18 @@ data class ESenseConfig(var accRange: AccRange = AccRange.G_4, var gyroRange: Gy
         }
     }
 
-    constructor(characteristicData: ByteArray) : this(
-        accRange = parseAccRange(characteristicData),
-        gyroRange = parseGyroRange(characteristicData),
-        accLPF = parseAccLPF(characteristicData),
-        gyroLPF = parseGyroLPF(characteristicData)
+    override fun updateValues(bytes: ByteArray) {
+        accRange = parseAccRange(bytes)
+        gyroRange = parseGyroRange(bytes)
+        accLPF = parseAccLPF(bytes)
+        gyroLPF = parseGyroLPF(bytes)
+    }
+
+    constructor(bytes: ByteArray) : this(
+        accRange = parseAccRange(bytes),
+        gyroRange = parseGyroRange(bytes),
+        accLPF = parseAccLPF(bytes),
+        gyroLPF = parseGyroLPF(bytes)
     )
 
     // +-g
@@ -110,13 +125,13 @@ data class ESenseConfig(var accRange: AccRange = AccRange.G_4, var gyroRange: Gy
 
         private fun ByteArray.calculateChecksum(index: Int): Byte {
             var sum = 0
-            for(i in index + 1 until size) {
+            for (i in index + 1 until size) {
                 sum += this[i] and 0xFF
             }
 
             return (sum % 256).toByte()
         }
 
-        fun ByteArray.checkCheckSum(index: Int): Boolean = calculateChecksum(index) == this[index]
+        fun checkCheckSum(bytes: ByteArray, index: Int): Boolean = bytes.calculateChecksum(index) == bytes[index]
     }
 }

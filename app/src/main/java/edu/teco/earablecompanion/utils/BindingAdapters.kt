@@ -25,13 +25,14 @@ fun RadioGroup.setAccelerometerRange(range: ESenseConfig.AccRange) {
 @BindingAdapter("accLPFBandwidth")
 fun RadioGroup.setAccelerometerLPFBandwidth(bandwidth: ESenseConfig.AccLPF) {
     val checkedId = when (bandwidth) {
+        ESenseConfig.AccLPF.BW_5 -> R.id.acc_low_pass_bandwidth_5
         ESenseConfig.AccLPF.BW_10 -> R.id.acc_low_pass_bandwidth_10
         ESenseConfig.AccLPF.BW_20 -> R.id.acc_low_pass_bandwidth_20
         ESenseConfig.AccLPF.BW_41 -> R.id.acc_low_pass_bandwidth_41
         ESenseConfig.AccLPF.BW_92 -> R.id.acc_low_pass_bandwidth_92
         ESenseConfig.AccLPF.BW_184 -> R.id.acc_low_pass_bandwidth_184
         ESenseConfig.AccLPF.BW_460 -> R.id.acc_low_pass_bandwidth_460
-        else -> R.id.acc_low_pass_bandwidth_5 // default
+        else -> R.id.acc_low_pass_bandwidth_disabled
     }
     check(checkedId)
 }
@@ -50,6 +51,7 @@ fun RadioGroup.setGyroSensorRange(range: ESenseConfig.GyroRange) {
 @BindingAdapter("gyroLPFBandwidth")
 fun RadioGroup.setGyroSensorLPFBandwidth(bandwidth: ESenseConfig.GyroLPF) {
     val checkedId = when (bandwidth) {
+        ESenseConfig.GyroLPF.BW_5 -> R.id.gyro_low_pass_bandwidth_5
         ESenseConfig.GyroLPF.BW_10 -> R.id.gyro_low_pass_bandwidth_10
         ESenseConfig.GyroLPF.BW_20 -> R.id.gyro_low_pass_bandwidth_20
         ESenseConfig.GyroLPF.BW_41 -> R.id.gyro_low_pass_bandwidth_41
@@ -57,7 +59,7 @@ fun RadioGroup.setGyroSensorLPFBandwidth(bandwidth: ESenseConfig.GyroLPF) {
         ESenseConfig.GyroLPF.BW_184 -> R.id.gyro_low_pass_bandwidth_184
         ESenseConfig.GyroLPF.BW_250 -> R.id.gyro_low_pass_bandwidth_250
         ESenseConfig.GyroLPF.BW_3600 -> R.id.gyro_low_pass_bandwidth_3600
-        else -> R.id.gyro_low_pass_bandwidth_5 // default
+        else -> R.id.gyro_low_pass_bandwidth_disabled
     }
     check(checkedId)
 }
@@ -76,7 +78,7 @@ fun TextView.formatDuration(duration: Duration?) {
 
 @BindingAdapter("description")
 fun TextView.setEarableDescription(type: EarableType) {
-    text = when(type) {
+    text = when (type) {
         EarableType.ESENSE -> context.getString(R.string.earable_esense_description)
         else -> "" // TODO
     }

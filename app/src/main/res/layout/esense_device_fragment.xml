@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
+            android:contentDescription="@string/esense_device_save_fab_description"
             android:src="@drawable/ic_baseline_save_24" />
 
         <ScrollView
@@ -48,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:stepSize="1.0"
-                    android:value="@{vm.device.sampleRate}"
+                    android:value="@{vm.device.config.sampleRate}"
                     android:valueFrom="1"
                     android:valueTo="100"
                     app:haloColor="@color/material_slider_halo_color_secondary"
@@ -88,7 +89,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:checked="@{vm.device.accelerometerEnabled}"
+                    android:checked="@{vm.device.config.accEnabled}"
                     app:layout_constraintStart_toStartOf="@id/sample_rate_slider"
                     app:layout_constraintTop_toBottomOf="@id/device_top_divider" />
 
@@ -117,7 +118,7 @@
                         android:id="@+id/acc_range_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_range_2"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -125,7 +126,7 @@
                         android:id="@+id/acc_range_4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_range_4"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -133,7 +134,7 @@
                         android:id="@+id/acc_range_8"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_range_8"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -141,32 +142,10 @@
                         android:id="@+id/acc_range_16"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_range_16"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
                 </RadioGroup>
-
-                <TextView
-                    android:id="@+id/acc_low_pass_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:text="@string/acc_low_pass_text"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    app:layout_constraintBottom_toBottomOf="@id/acc_low_pass_switch"
-                    app:layout_constraintEnd_toStartOf="@id/acc_low_pass_switch"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/acc_low_pass_switch" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/acc_low_pass_switch"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:checked="@{vm.accLPFEnabled}"
-                    android:enabled="@{vm.device.accelerometerEnabled}"
-                    app:layout_constraintStart_toStartOf="@id/acc_range_group"
-                    app:layout_constraintTop_toBottomOf="@id/acc_range_group" />
 
                 <TextView
                     android:id="@+id/acc_low_pass_bandwidth_text"
@@ -187,13 +166,21 @@
                     app:accLPFBandwidth="@{vm.device.config.accLPF}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/acc_low_pass_bandwidth_text"
-                    app:layout_constraintTop_toBottomOf="@id/acc_low_pass_switch">
+                    app:layout_constraintTop_toBottomOf="@id/acc_range_group">
+
+                    <RadioButton
+                        android:id="@+id/acc_low_pass_bandwidth_disabled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="@{vm.device.config.accEnabled}"
+                        android:text="@string/radio_group_button_disabled"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
                     <RadioButton
                         android:id="@+id/acc_low_pass_bandwidth_5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.accLPFEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_low_pass_bandwidth_5"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -201,7 +188,7 @@
                         android:id="@+id/acc_low_pass_bandwidth_10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.accLPFEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_low_pass_bandwidth_10"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -209,7 +196,7 @@
                         android:id="@+id/acc_low_pass_bandwidth_20"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.accLPFEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_low_pass_bandwidth_20"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -217,7 +204,7 @@
                         android:id="@+id/acc_low_pass_bandwidth_41"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.accLPFEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_low_pass_bandwidth_41"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -225,7 +212,7 @@
                         android:id="@+id/acc_low_pass_bandwidth_92"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.accLPFEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_low_pass_bandwidth_92"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -233,7 +220,7 @@
                         android:id="@+id/acc_low_pass_bandwidth_184"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.accLPFEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_low_pass_bandwidth_184"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -241,7 +228,7 @@
                         android:id="@+id/acc_low_pass_bandwidth_460"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.accelerometerEnabled &amp;&amp; vm.accLPFEnabled}"
+                        android:enabled="@{vm.device.config.accEnabled}"
                         android:text="@string/acc_low_pass_bandwidth_460"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
                 </RadioGroup>
@@ -274,7 +261,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:checked="@{vm.device.gyroSensorEnabled}"
+                    android:checked="@{vm.device.config.gyroEnabled}"
                     app:layout_constraintStart_toStartOf="@id/acc_low_pass_bandwidth_group"
                     app:layout_constraintTop_toBottomOf="@id/device_bottom_divider" />
 
@@ -294,7 +281,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:checkedButton="@id/gyro_range_500"
                     app:gyroRange="@{vm.device.config.gyroRange}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/gyro_range_text"
@@ -304,7 +290,7 @@
                         android:id="@+id/gyro_range_250"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_range_250"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -312,7 +298,7 @@
                         android:id="@+id/gyro_range_500"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_range_500"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -320,7 +306,7 @@
                         android:id="@+id/gyro_range_1000"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_range_1000"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -328,32 +314,10 @@
                         android:id="@+id/gyro_range_2000"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_range_2000"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
                 </RadioGroup>
-
-                <TextView
-                    android:id="@+id/gyro_low_pass_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:text="@string/gyro_low_pass_text"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    app:layout_constraintBottom_toBottomOf="@id/gyro_low_pass_switch"
-                    app:layout_constraintEnd_toStartOf="@id/gyro_low_pass_switch"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/gyro_low_pass_switch" />
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/gyro_low_pass_switch"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:checked="@{vm.gyroLPFEnabled}"
-                    android:enabled="@{vm.device.gyroSensorEnabled}"
-                    app:layout_constraintStart_toStartOf="@id/gyro_range_group"
-                    app:layout_constraintTop_toBottomOf="@id/gyro_range_group" />
 
                 <TextView
                     android:id="@+id/gyro_low_pass_bandwidth_text"
@@ -374,13 +338,21 @@
                     app:gyroLPFBandwidth="@{vm.device.config.gyroLPF}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/gyro_low_pass_bandwidth_text"
-                    app:layout_constraintTop_toBottomOf="@id/gyro_low_pass_switch">
+                    app:layout_constraintTop_toBottomOf="@id/gyro_range_group">
+
+                    <RadioButton
+                        android:id="@+id/gyro_low_pass_bandwidth_disabled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
+                        android:text="@string/radio_group_button_disabled"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
                     <RadioButton
                         android:id="@+id/gyro_low_pass_bandwidth_5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.gyroLPFEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_low_pass_bandwidth_5"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -388,7 +360,7 @@
                         android:id="@+id/gyro_low_pass_bandwidth_10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.gyroLPFEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_low_pass_bandwidth_10"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -396,7 +368,7 @@
                         android:id="@+id/gyro_low_pass_bandwidth_20"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.gyroLPFEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_low_pass_bandwidth_20"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -404,7 +376,7 @@
                         android:id="@+id/gyro_low_pass_bandwidth_41"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.gyroLPFEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_low_pass_bandwidth_41"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -412,7 +384,7 @@
                         android:id="@+id/gyro_low_pass_bandwidth_92"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.gyroLPFEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_low_pass_bandwidth_92"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -420,7 +392,7 @@
                         android:id="@+id/gyro_low_pass_bandwidth_184"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.gyroLPFEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_low_pass_bandwidth_184"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -428,7 +400,7 @@
                         android:id="@+id/gyro_low_pass_bandwidth_250"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.gyroLPFEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_low_pass_bandwidth_250"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
@@ -436,7 +408,7 @@
                         android:id="@+id/gyro_low_pass_bandwidth_3600"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="@{vm.device.gyroSensorEnabled &amp;&amp; vm.gyroLPFEnabled}"
+                        android:enabled="@{vm.device.config.gyroEnabled}"
                         android:text="@string/gyro_low_pass_bandwidth_3600"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
                 </RadioGroup>
