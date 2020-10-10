@@ -5,6 +5,7 @@ import edu.teco.earablecompanion.utils.and
 
 data class ESenseConfig(var accRange: AccRange = AccRange.G_4, var gyroRange: GyroRange = GyroRange.DEG_500, var accLPF: AccLPF = AccLPF.BW_5, var gyroLPF: GyroLPF = GyroLPF.BW_5) : Config() {
 
+    override val configCharacteristic = SENSOR_CONFIG_UUID
     override fun toCharacteristicData(): ByteArray {
         return byteArrayOf(0x59, 0x00, 0x04, 0x06, 0x08, 0x08, 0x06).apply {
             setAccLPFBytes()
@@ -88,17 +89,6 @@ data class ESenseConfig(var accRange: AccRange = AccRange.G_4, var gyroRange: Gy
         }
     }
 
-    private fun ByteArray.calculateChecksum(index: Int): Byte {
-        var sum = 0
-        for(i in index + 1 until size) {
-            sum += this[i] and 0xFF
-        }
-
-        return (sum % 256).toByte()
-    }
-
-    private fun ByteArray.checkCheckSum(index: Int): Boolean = calculateChecksum(index) == this[index]
-
     companion object {
         const val SENSOR_UUID = "0000ff08-0000-1000-8000-00805f9b34fb"
         const val SENSOR_CONFIG_UUID = "0000ff0e-0000-1000-8000-00805f9b34fb"
@@ -117,5 +107,16 @@ data class ESenseConfig(var accRange: AccRange = AccRange.G_4, var gyroRange: Gy
             1, 2 -> GyroLPF.DISABLED
             else -> GyroLPF.values()[data[3] and 0x7]
         }
+
+        private fun ByteArray.calculateChecksum(index: Int): Byte {
+            var sum = 0
+            for(i in index + 1 until size) {
+                sum += this[i] and 0xFF
+            }
+
+            return (sum % 256).toByte()
+        }
+
+        fun ByteArray.checkCheckSum(index: Int): Boolean = calculateChecksum(index) == this[index]
     }
 }

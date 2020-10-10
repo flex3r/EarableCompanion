@@ -2,6 +2,7 @@ package edu.teco.earablecompanion.overview
 
 import android.bluetooth.BluetoothDevice
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.utils.earableType
 
 sealed class OverviewItem {
 
@@ -13,10 +14,7 @@ sealed class OverviewItem {
                 name = name ?: "Unknown device",
                 address = address,
                 bluetoothDevice = this,
-                type = when {
-                    name.startsWith("eSense-") -> EarableType.ESENSE
-                    else -> EarableType.GENERIC // TODO
-                }
+                type = earableType
             )
 
             fun Collection<BluetoothDevice>.toOverviewItems(): List<OverviewItem> = map { it.toOverviewItem() }

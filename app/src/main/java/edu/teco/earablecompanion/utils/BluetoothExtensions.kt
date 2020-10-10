@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
-import java.util.*
+import edu.teco.earablecompanion.bluetooth.earable.EarableType
 
 fun BluetoothGatt.collectCharacteristics(): Map<String, BluetoothGattCharacteristic> = services.map { service ->
     service.characteristics.map { characteristic ->
@@ -14,3 +14,9 @@ fun BluetoothGatt.collectCharacteristics(): Map<String, BluetoothGattCharacteris
 }.flatten().toMap()
 
 fun BluetoothDevice.connect(context: Context, callback: BluetoothGattCallback): BluetoothGatt = connectGatt(context, true, callback, BluetoothDevice.TRANSPORT_LE)
+
+val BluetoothDevice.earableType: EarableType
+    get() = when {
+        name.startsWith("eSense-") -> EarableType.ESENSE
+        else -> EarableType.GENERIC // TODO
+    }

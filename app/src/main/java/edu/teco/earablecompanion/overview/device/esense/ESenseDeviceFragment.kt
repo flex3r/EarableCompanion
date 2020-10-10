@@ -1,9 +1,9 @@
 package edu.teco.earablecompanion.overview.device.esense
 
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
@@ -31,6 +32,17 @@ class ESenseDeviceFragment : Fragment() {
             sampleRateSlider.setup()
             setupAccelerometerSettings()
             setupGyroSensorSettings()
+            esenseDeviceSaveFab.setOnClickListener {
+                val config = viewModel.device.value?.config
+                val result = config?.let {
+                    (activity as? MainActivity)?.earableService?.setConfig(args.device, it)
+                } ?: false
+                val snackbarMessage = when {
+                    result -> getString(R.string.config_saved_successful)
+                    else -> getString(R.string.config_saved_failed)
+                }
+                Snackbar.make(root, snackbarMessage, Snackbar.LENGTH_SHORT).show()
+            }
         }
 
         setHasOptionsMenu(true)
@@ -77,56 +89,76 @@ class ESenseDeviceFragment : Fragment() {
 
     private fun EsenseDeviceFragmentBinding.setupAccelerometerSettings() {
         accEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerEnabled(isChecked) }
-        accLowPassSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerLPFEnabled(isChecked) }
-        accRangeGroup.setOnCheckedChangeListener { _, checkedId ->
-            val range = when (checkedId) {
-                R.id.acc_range_2 -> 2
-                R.id.acc_range_8 -> 8
-                R.id.acc_range_16 -> 16
-                else -> 4 // default
-            }
-            viewModel.setAccelerometerRange(range)
-        }
-        accLowPassBandwidthGroup.setOnCheckedChangeListener { _, checkedId ->
-            val bandwidth = when (checkedId) {
-                R.id.acc_low_pass_bandwidth_10 -> 10
-                R.id.acc_low_pass_bandwidth_20 -> 20
-                R.id.acc_low_pass_bandwidth_41 -> 41
-                R.id.acc_low_pass_bandwidth_92 -> 92
-                R.id.acc_low_pass_bandwidth_184 -> 184
-                R.id.acc_low_pass_bandwidth_460 -> 460
-                else -> 5
+        accLowPassSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val bandwidth = when {
+                isChecked -> accLowPassBandwidthGroup.checkedRadioButtonId.toAccLPF
+                else -> ESenseConfig.AccLPF.DISABLED
             }
             viewModel.setAccelerometerLPFBandwidth(bandwidth)
         }
+        accRangeGroup.setOnCheckedChangeListener { _, checkedId ->
+            viewModel.setAccelerometerRange(checkedId.toAccRange)
+        }
+        accLowPassBandwidthGroup.setOnCheckedChangeListener { _, checkedId ->
+            viewModel.setAccelerometerLPFBandwidth(checkedId.toAccLPF)
+        }
     }
+
+    private val Int.toAccLPF: ESenseConfig.AccLPF
+        get() = when (this) {
+            R.id.acc_low_pass_bandwidth_10 -> ESenseConfig.AccLPF.BW_10
+            R.id.acc_low_pass_bandwidth_20 -> ESenseConfig.AccLPF.BW_20
+            R.id.acc_low_pass_bandwidth_41 -> ESenseConfig.AccLPF.BW_41
+            R.id.acc_low_pass_bandwidth_92 -> ESenseConfig.AccLPF.BW_92
+            R.id.acc_low_pass_bandwidth_184 -> ESenseConfig.AccLPF.BW_184
+            R.id.acc_low_pass_bandwidth_460 -> ESenseConfig.AccLPF.BW_460
+            else -> ESenseConfig.AccLPF.BW_5
+        }
+
+    private val Int.toAccRange: ESenseConfig.AccRange
+        get() = when (this) {
+            R.id.acc_range_2 -> ESenseConfig.AccRange.G_2
+            R.id.acc_range_8 -> ESenseConfig.AccRange.G_8
+            R.id.acc_range_16 -> ESenseConfig.AccRange.G_16
+            else -> ESenseConfig.AccRange.G_4
+        }
 
     private fun EsenseDeviceFragmentBinding.setupGyroSensorSettings() {
         gyroEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setGyroSensorEnabled(isChecked) }
-        gyroLowPassSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setGyroSensorLPFEnabled(isChecked) }
-        gyroRangeGroup.setOnCheckedChangeListener { _, checkedId ->
-            val range = when (checkedId) {
-                R.id.gyro_range_250 -> 250
-                R.id.gyro_range_1000 -> 1000
-                R.id.gyro_range_2000 -> 2000
-                else -> 500
-            }
-            viewModel.setGyroSensorRange(range)
-        }
-        gyroLowPassBandwidthGroup.setOnCheckedChangeListener { _, checkedId ->
-            val bandwidth = when (checkedId) {
-                R.id.gyro_low_pass_bandwidth_10 -> 10
-                R.id.gyro_low_pass_bandwidth_20 -> 20
-                R.id.gyro_low_pass_bandwidth_41 -> 41
-                R.id.gyro_low_pass_bandwidth_92 -> 92
-                R.id.gyro_low_pass_bandwidth_184 -> 184
-                R.id.gyro_low_pass_bandwidth_250 -> 250
-                R.id.gyro_low_pass_bandwidth_3600 -> 3600
-                else -> 5 // default
+        gyroLowPassSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val bandwidth = when {
+                isChecked -> gyroLowPassBandwidthGroup.checkedRadioButtonId.toGyroLPF
+                else -> ESenseConfig.GyroLPF.DISABLED
             }
             viewModel.setGyroSensorLPFBandwidth(bandwidth)
         }
+        gyroRangeGroup.setOnCheckedChangeListener { _, checkedId ->
+            viewModel.setGyroSensorRange(checkedId.toGyroRange)
+        }
+        gyroLowPassBandwidthGroup.setOnCheckedChangeListener { _, checkedId ->
+            viewModel.setGyroSensorLPFBandwidth(checkedId.toGyroLPF)
+        }
     }
+
+    private val Int.toGyroLPF: ESenseConfig.GyroLPF
+        get() = when (this) {
+            R.id.gyro_low_pass_bandwidth_10 -> ESenseConfig.GyroLPF.BW_10
+            R.id.gyro_low_pass_bandwidth_20 -> ESenseConfig.GyroLPF.BW_20
+            R.id.gyro_low_pass_bandwidth_41 -> ESenseConfig.GyroLPF.BW_41
+            R.id.gyro_low_pass_bandwidth_92 -> ESenseConfig.GyroLPF.BW_92
+            R.id.gyro_low_pass_bandwidth_184 -> ESenseConfig.GyroLPF.BW_184
+            R.id.gyro_low_pass_bandwidth_250 -> ESenseConfig.GyroLPF.BW_250
+            R.id.gyro_low_pass_bandwidth_3600 -> ESenseConfig.GyroLPF.BW_3600
+            else -> ESenseConfig.GyroLPF.BW_5
+        }
+
+    private val Int.toGyroRange: ESenseConfig.GyroRange
+        get() = when (this) {
+            R.id.gyro_range_250 -> ESenseConfig.GyroRange.DEG_250
+            R.id.gyro_range_1000 -> ESenseConfig.GyroRange.DEG_1000
+            R.id.gyro_range_2000 -> ESenseConfig.GyroRange.DEG_2000
+            else -> ESenseConfig.GyroRange.DEG_500
+        }
 
     companion object {
         private val TAG = ESenseDeviceFragment::class.java.simpleName

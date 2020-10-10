@@ -5,57 +5,58 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @BindingAdapter("accRange")
-fun RadioGroup.setAccelerometerRange(range: Int) {
+fun RadioGroup.setAccelerometerRange(range: ESenseConfig.AccRange) {
     val checkedId = when (range) {
-        2 -> R.id.acc_range_2
-        8 -> R.id.acc_range_8
-        16 -> R.id.acc_range_16
+        ESenseConfig.AccRange.G_2 -> R.id.acc_range_2
+        ESenseConfig.AccRange.G_8 -> R.id.acc_range_8
+        ESenseConfig.AccRange.G_16 -> R.id.acc_range_16
         else -> R.id.acc_range_4 // default
     }
     check(checkedId)
 }
 
 @BindingAdapter("accLPFBandwidth")
-fun RadioGroup.setAccelerometerLPFBandwidth(bandwidth: Int) {
+fun RadioGroup.setAccelerometerLPFBandwidth(bandwidth: ESenseConfig.AccLPF) {
     val checkedId = when (bandwidth) {
-        10 -> R.id.acc_low_pass_bandwidth_10
-        20 -> R.id.acc_low_pass_bandwidth_20
-        41 -> R.id.acc_low_pass_bandwidth_41
-        92 -> R.id.acc_low_pass_bandwidth_92
-        184 -> R.id.acc_low_pass_bandwidth_184
-        460 -> R.id.acc_low_pass_bandwidth_460
+        ESenseConfig.AccLPF.BW_10 -> R.id.acc_low_pass_bandwidth_10
+        ESenseConfig.AccLPF.BW_20 -> R.id.acc_low_pass_bandwidth_20
+        ESenseConfig.AccLPF.BW_41 -> R.id.acc_low_pass_bandwidth_41
+        ESenseConfig.AccLPF.BW_92 -> R.id.acc_low_pass_bandwidth_92
+        ESenseConfig.AccLPF.BW_184 -> R.id.acc_low_pass_bandwidth_184
+        ESenseConfig.AccLPF.BW_460 -> R.id.acc_low_pass_bandwidth_460
         else -> R.id.acc_low_pass_bandwidth_5 // default
     }
     check(checkedId)
 }
 
 @BindingAdapter("gyroRange")
-fun RadioGroup.setGyroSensorRange(range: Int) {
+fun RadioGroup.setGyroSensorRange(range: ESenseConfig.GyroRange) {
     val checkedId = when (range) {
-        250 -> R.id.gyro_range_250
-        1000 -> R.id.gyro_range_1000
-        2000 -> R.id.gyro_range_2000
+        ESenseConfig.GyroRange.DEG_250 -> R.id.gyro_range_250
+        ESenseConfig.GyroRange.DEG_1000 -> R.id.gyro_range_1000
+        ESenseConfig.GyroRange.DEG_2000 -> R.id.gyro_range_2000
         else -> R.id.gyro_range_500 // default
     }
     check(checkedId)
 }
 
 @BindingAdapter("gyroLPFBandwidth")
-fun RadioGroup.setGyroSensorLPFBandwidth(bandwidth: Int) {
+fun RadioGroup.setGyroSensorLPFBandwidth(bandwidth: ESenseConfig.GyroLPF) {
     val checkedId = when (bandwidth) {
-        10 -> R.id.gyro_low_pass_bandwidth_10
-        20 -> R.id.gyro_low_pass_bandwidth_20
-        41 -> R.id.gyro_low_pass_bandwidth_41
-        92 -> R.id.gyro_low_pass_bandwidth_92
-        184 -> R.id.gyro_low_pass_bandwidth_184
-        250 -> R.id.gyro_low_pass_bandwidth_250
-        3600 -> R.id.gyro_low_pass_bandwidth_3600
+        ESenseConfig.GyroLPF.BW_10 -> R.id.gyro_low_pass_bandwidth_10
+        ESenseConfig.GyroLPF.BW_20 -> R.id.gyro_low_pass_bandwidth_20
+        ESenseConfig.GyroLPF.BW_41 -> R.id.gyro_low_pass_bandwidth_41
+        ESenseConfig.GyroLPF.BW_92 -> R.id.gyro_low_pass_bandwidth_92
+        ESenseConfig.GyroLPF.BW_184 -> R.id.gyro_low_pass_bandwidth_184
+        ESenseConfig.GyroLPF.BW_250 -> R.id.gyro_low_pass_bandwidth_250
+        ESenseConfig.GyroLPF.BW_3600 -> R.id.gyro_low_pass_bandwidth_3600
         else -> R.id.gyro_low_pass_bandwidth_5 // default
     }
     check(checkedId)

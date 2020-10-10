@@ -19,12 +19,16 @@ import androidx.core.app.NotificationCompat
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
+import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
+import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
+import edu.teco.earablecompanion.overview.device.esense.ESenseConfig.Companion.checkCheckSum
 import edu.teco.earablecompanion.utils.collectCharacteristics
 import edu.teco.earablecompanion.utils.connect
+import edu.teco.earablecompanion.utils.earableType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -138,13 +142,21 @@ class EarableService : Service() {
 
     fun disconnect(device: BluetoothDevice) {
         characteristics.remove(device)
-        gatts[device]?.let { gatt->
+        gatts[device]?.let { gatt ->
             gatt.disconnect()
             gatt.close()
         }
         gatts.remove(device)
         connectionRepository.removeConnectedDevice(device)
         connectionRepository.removeConfig(device.address)
+    }
+
+    fun setConfig(device: BluetoothDevice, config: Config): Boolean {
+        val bytes = config.toCharacteristicData()
+        val characteristic = characteristics[device]?.get(config.configCharacteristic) ?: return false
+        val gatt = gatts[device] ?: return false
+        characteristic.value = bytes
+        return gatt.writeCharacteristic(characteristic)
     }
 
     private fun startForeground() {
@@ -196,15 +208,20 @@ class EarableService : Service() {
 
     private inner class GattCallback : BluetoothGattCallback() {
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-            gatt?.apply {
-                val deviceCharacteristics = collectCharacteristics()
-                characteristics[device] = deviceCharacteristics
-                // TODO generalise
-                val config = deviceCharacteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.value?.let { bytes ->
-                    ESenseConfig(bytes)
-                } ?: ESenseConfig()
-                connectionRepository.setConfig(gatt.device.address, config)
+            if (gatt == null) {
+                return
             }
+
+            val deviceCharacteristics = gatt.collectCharacteristics()
+            characteristics[gatt.device] = deviceCharacteristics
+
+            when (gatt.device.earableType) {
+                EarableType.ESENSE -> {
+                    deviceCharacteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.let { gatt.readCharacteristic(it) }
+                }
+                else -> Unit // TODO generalise
+            }
+
         }
 
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -230,15 +247,35 @@ class EarableService : Service() {
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
-            //if (characteristic?.uuid == ) {
-            //
-            //}
+            Log.d(TAG, "onCharacteristicChanged ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
+        }
+
+        override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+            Log.d(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            //if (characteristic != null && status == BluetoothGatt.GATT_SUCCESS && characteristic.uuid == ) {
-            //
-            //}
+            if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
+                return
+            }
+
+            when (gatt.device.earableType) {
+                EarableType.ESENSE -> handleESenseCharacteristics(gatt, characteristic)
+                else -> Unit
+            }
+        }
+
+        private fun handleESenseCharacteristics(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+            when (characteristic.uuid.toString().toLowerCase(Locale.ROOT)) {
+                ESenseConfig.SENSOR_CONFIG_UUID -> {
+                    val bytes = characteristic.value
+                    if (bytes.checkCheckSum(1)) {
+                        val config = ESenseConfig(bytes)
+                        connectionRepository.setConfig(gatt.device.address, config)
+                    }
+                }
+                else -> Unit
+            }
         }
     }
 

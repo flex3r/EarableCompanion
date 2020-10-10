@@ -2,9 +2,9 @@ package edu.teco.earablecompanion.utils
 
 import androidx.lifecycle.MutableLiveData
 
-inline fun <T> MutableLiveData<T>.update(action: (T) -> T) {
+inline fun <T> MutableLiveData<T>.update(action: T.() -> Unit) {
     value?.let {
-        val newValue = action(it)
-        value = newValue
+        action(it)
+        value = it
     }
 }
