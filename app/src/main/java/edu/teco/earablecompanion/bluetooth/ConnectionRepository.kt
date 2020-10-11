@@ -52,6 +52,7 @@ class ConnectionRepository {
             else -> this[address] = block()
         }
     }
+    fun getCurrentConfigs() = _deviceConfigs.value
 
     companion object {
         private const val ELAPSED_TIMESTAMP_NANOS_LIMIT = 10_000_000_000L

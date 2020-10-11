@@ -22,6 +22,7 @@ class OverviewAdapter(private val onClick: (item: OverviewItem.Device) -> Unit) 
     override fun getItemViewType(position: Int): Int = when (currentList[position]) {
         is OverviewItem.Device -> ITEM_VIEW_TYPE_DEVICE
         is OverviewItem.NoDevices -> ITEM_VIEW_TYPE_NO_DEVICES
+        is OverviewItem.Recording -> ITEM_VIEW_TYPE_NO_DEVICES // TODO
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

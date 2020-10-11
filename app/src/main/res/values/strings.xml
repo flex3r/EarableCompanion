@@ -79,4 +79,8 @@
     <string name="config_saved_failed">Failed to save configuration on device</string>
     <string name="esense_device_save_fab_description">Save configuration to device</string>
     <string name="radio_group_button_disabled">Disabled</string>
+    <string name="record_fab_description">Start a recording</string>
+    <string name="record_fab_text">Record</string>
+    <string name="stop_record_fab_description">Stop a recording</string>
+    <string name="stop_record_fab_text">Stop</string>
 </resources>

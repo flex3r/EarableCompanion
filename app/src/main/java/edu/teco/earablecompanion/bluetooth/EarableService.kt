@@ -158,6 +158,15 @@ class EarableService : Service() {
         return gatt.writeCharacteristic(characteristic)
     }
 
+    fun startRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
+        // TODO
+        dataRepository.startRecording(devices)
+    }
+
+    fun stopRecording() {
+        dataRepository.stopRecording()
+    }
+
     private fun startForeground() {
         val title = getString(R.string.notification_title)
         val message = getString(R.string.notification_message)

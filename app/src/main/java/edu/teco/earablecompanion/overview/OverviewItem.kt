@@ -3,6 +3,7 @@ package edu.teco.earablecompanion.overview
 import android.bluetooth.BluetoothDevice
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.utils.earableType
+import java.time.LocalDateTime
 
 sealed class OverviewItem {
 
@@ -20,4 +21,6 @@ sealed class OverviewItem {
             fun Collection<BluetoothDevice>.toOverviewItems(): List<OverviewItem> = map { it.toOverviewItem() }
         }
     }
+
+    data class Recording(val startedAt: LocalDateTime, val devices: List<BluetoothDevice>): OverviewItem()
 }
