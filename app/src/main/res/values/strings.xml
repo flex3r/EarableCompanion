@@ -83,4 +83,7 @@
     <string name="record_fab_text">Record</string>
     <string name="stop_record_fab_description">Stop a recording</string>
     <string name="stop_record_fab_text">Stop</string>
+    <string name="overview_recording_icon_description">Recording icon</string>
+    <string name="overview_recording_title_text">Recording active</string>
+    <string name="overview_recording_datetime_format">Started %s</string>
 </resources>

@@ -8,8 +8,10 @@ import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @BindingAdapter("accRange")
 fun RadioGroup.setAccelerometerRange(range: ESenseConfig.AccRange) {
@@ -74,6 +76,14 @@ fun TextView.formatDuration(duration: Duration?) {
             .format(instant)
         resources.getString(R.string.data_duration, formatted)
     } ?: ""
+}
+
+@BindingAdapter("localDateTime")
+fun TextView.formatLocalDateTime(localDateTime: LocalDateTime) {
+    val formatter = DateTimeFormatter
+        .ofLocalizedDateTime(FormatStyle.SHORT)
+        .withZone(ZoneId.systemDefault())
+    text = context.getString(R.string.overview_recording_datetime_format, localDateTime.format(formatter))
 }
 
 @BindingAdapter("description")

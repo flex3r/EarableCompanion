@@ -2,6 +2,7 @@ package edu.teco.earablecompanion.overview
 
 import android.bluetooth.BluetoothDevice
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.data.SensorDataRecording
 import edu.teco.earablecompanion.utils.earableType
 import java.time.LocalDateTime
 
@@ -22,5 +23,12 @@ sealed class OverviewItem {
         }
     }
 
-    data class Recording(val startedAt: LocalDateTime, val devices: List<BluetoothDevice>): OverviewItem()
+    data class Recording(val startedAt: LocalDateTime, val devices: List<BluetoothDevice>): OverviewItem() {
+        companion object {
+            fun SensorDataRecording.toOverviewItem() = Recording(
+                startedAt = startedAt,
+                devices = devices
+            )
+        }
+    }
 }

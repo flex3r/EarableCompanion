@@ -1,12 +1,12 @@
 package edu.teco.earablecompanion.overview
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOverviewItems
+import edu.teco.earablecompanion.overview.OverviewItem.Recording.Companion.toOverviewItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 
@@ -24,7 +24,7 @@ class OverviewViewModel @ViewModelInject constructor(
                 when {
                     items.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
                     activeRecording == null -> emit(items)
-                    else -> emit(listOf(OverviewItem.Recording(activeRecording.createdAt, activeRecording.devices)) + items)
+                    else -> emit(listOf(activeRecording.toOverviewItem()) + items)
                 }
             }
     }
