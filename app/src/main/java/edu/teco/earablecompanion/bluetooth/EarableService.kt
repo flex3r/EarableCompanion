@@ -152,7 +152,7 @@ class EarableService : Service() {
 
     fun setConfig(device: BluetoothDevice, config: Config): Boolean {
         val bytes = config.toCharacteristicData()
-        val characteristic = characteristics[device]?.get(config.configCharacteristic) ?: return false
+        val characteristic = characteristics[device]?.get(config.sensorConfigCharacteristic) ?: return false
         val gatt = gatts[device] ?: return false
         characteristic.value = bytes
         return gatt.writeCharacteristic(characteristic)

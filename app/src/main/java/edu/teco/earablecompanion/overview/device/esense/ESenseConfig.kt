@@ -13,16 +13,25 @@ data class ESenseConfig(
     var gyroLPF: GyroLPF = GyroLPF.BW_5,
 ) : Config() {
 
-    override val configCharacteristic = SENSOR_CONFIG_UUID
-    override fun toCharacteristicData(): ByteArray {
-        return byteArrayOf(0x59, 0x00, 0x04, 0x06, 0x08, 0x08, 0x06).apply {
+    override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
+    override val configCharacteristic = CONFIG_UUID
+    override val sensorCharacteristic = SENSOR_UUID
+
+    override val sensorConfigCharacteristicData: ByteArray
+        get() = byteArrayOf(0x59, 0x00, 0x04, 0x06, 0x08, 0x08, 0x06).apply {
             setAccLPFBytes()
             setGyroLPFBytes()
             setAccRangeBytes()
             setGyroRangeBytes()
             this[1] = calculateChecksum(1)
         }
-    }
+
+    override val enableSensorCharacteristicData: ByteArray
+        get() = byteArrayOf(0x53, 0x00, 0x02, 0x01, sampleRate.coerceIn(1..100).toByte()).apply {
+            this[1] = calculateChecksum(1)
+        }
+    override val disableSensorCharacteristicData: ByteArray
+        get() = byteArrayOf(0x53, 0x02, 0x02, 0x00, 0x00)
 
     override fun updateValues(bytes: ByteArray) {
         accRange = parseAccRange(bytes)
