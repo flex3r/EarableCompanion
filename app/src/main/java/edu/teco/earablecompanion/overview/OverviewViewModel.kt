@@ -9,10 +9,11 @@ import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOvervi
 import edu.teco.earablecompanion.overview.OverviewItem.Recording.Companion.toOverviewItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 class OverviewViewModel @ViewModelInject constructor(
     private val connectionRepository: ConnectionRepository,
-    sensorDataRepository: SensorDataRepository,
+    private val sensorDataRepository: SensorDataRepository,
     @Assisted savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -43,6 +44,8 @@ class OverviewViewModel @ViewModelInject constructor(
     fun setConnectionOpen(open: Boolean) {
         _connectionOpen.value = open
     }
+
+    fun addSensorData(title: String) = viewModelScope.launch { sensorDataRepository.addSensorData(title) }
 
     fun getCurrentConfigs() = connectionRepository.getCurrentConfigs()
 }

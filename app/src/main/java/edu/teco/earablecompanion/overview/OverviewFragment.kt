@@ -4,13 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
+import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.databinding.OverviewFragmentBinding
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
@@ -51,7 +55,7 @@ class OverviewFragment : Fragment() {
             devicesRecyclerview.adapter = adapter
             connectFab.setOnClickListener(::showConnectionBottomSheet)
             connectFabSmall.setOnClickListener(::showConnectionBottomSheet)
-            recordFab.setOnClickListener { startRecording() }
+            recordFab.setOnClickListener { displayStartRecordingDialog() }
             stopRecordFab.setOnClickListener { stopRecording() }
         }
 
@@ -68,6 +72,27 @@ class OverviewFragment : Fragment() {
         viewModel.setConnectionOpen(true)
         val dialog = ConnectionFragment()
         dialog.show(childFragmentManager, ConnectionFragment::class.java.simpleName)
+    }
+
+    private fun displayStartRecordingDialog() {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val inputLayout = LayoutInflater.from(builder.context).inflate(R.layout.start_recording_input_layout, null) as LinearLayout
+        val editText = inputLayout.findViewById<TextInputEditText>(R.id.start_recording_input_text)
+
+        builder
+            .setTitle(R.string.start_recording_dialog_title)
+            .setView(inputLayout)
+            .setPositiveButton(R.string.start_recording_dialog_positive) { _, _ ->
+                val input = editText.text?.toString()
+                val title = when {
+                    input.isNullOrBlank() -> getString(R.string.start_recording_dialog_title_default)
+                    else -> input
+                }
+                viewModel.addSensorData(title)
+                startRecording()
+            }
+            .setNegativeButton(R.string.start_recording_dialog_negative) { d, _ -> d.dismiss() }
+            .show()
     }
 
     private fun startRecording() {

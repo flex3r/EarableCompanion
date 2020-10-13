@@ -86,4 +86,9 @@
     <string name="overview_recording_icon_description">Recording icon</string>
     <string name="overview_recording_title_text">Recording active</string>
     <string name="overview_recording_datetime_format">Started %s</string>
+    <string name="start_recording_dialog_title">Start a recording</string>
+    <string name="start_recording_dialog_hint">Title</string>
+    <string name="start_recording_dialog_positive">Start</string>
+    <string name="start_recording_dialog_negative">Cancel</string>
+    <string name="start_recording_dialog_title_default">Sensor data</string>
 </resources>

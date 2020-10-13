@@ -181,7 +181,7 @@ class EarableService : Service() {
         dataRepository.stopRecording()
     }
 
-    fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) {
+    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) {
         val characteristic = characteristics[device]?.get(config.sensorCharacteristic) ?: return
         val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
         if (success) {
@@ -251,10 +251,8 @@ class EarableService : Service() {
             characteristics[gatt.device] = deviceCharacteristics
 
             when (gatt.device.earableType) {
-                EarableType.ESENSE -> {
-                    deviceCharacteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.let { gatt.readCharacteristic(it) }
-                }
-                else -> Unit // TODO generalise
+                EarableType.ESENSE -> deviceCharacteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.let { gatt.readCharacteristic(it) }
+                else -> Unit // TODO
             }
 
         }
@@ -270,7 +268,7 @@ class EarableService : Service() {
                 }
                 BluetoothProfile.STATE_CONNECTING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
                 BluetoothProfile.STATE_DISCONNECTED -> {
-                    // disconnected
+                    // disconnected TODO stop recording if active
                     characteristics.remove(gatt.device)
                     gatts.remove(gatt.device)
                     connectionRepository.updateConnectionEvent(ConnectionEvent.Empty)
@@ -283,6 +281,9 @@ class EarableService : Service() {
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
             Log.i(TAG, "onCharacteristicChanged ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
+            if (gatt == null || characteristic == null) {
+                return
+            }
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {

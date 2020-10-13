@@ -27,6 +27,10 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     suspend fun clearData() = sensorDataDao.deleteAll()
 
     fun startRecording(devices: List<BluetoothDevice>) = _activeRecording.setValue { SensorDataRecording(LocalDateTime.now(ZoneId.systemDefault()), devices) }
-
     fun stopRecording() = _activeRecording.setValue { null }
+
+    suspend fun addSensorData(title: String) {
+        val data = SensorData(title = title, createdAt = LocalDateTime.now())
+        sensorDataDao.insert(data)
+    }
 }
