@@ -2,6 +2,7 @@ package edu.teco.earablecompanion.overview.device.esense
 
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.and
+import java.util.*
 
 data class ESenseConfig(
     var sampleRate: Int = 50,
@@ -16,6 +17,7 @@ data class ESenseConfig(
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
     override val configCharacteristic = CONFIG_UUID
     override val sensorCharacteristic = SENSOR_UUID
+    override val notificationDescriptor = UUID.fromString(NOTIFICATION_DESCRIPTOR_UUID)
 
     override val sensorConfigCharacteristicData: ByteArray
         get() = byteArrayOf(0x59, 0x00, 0x04, 0x06, 0x08, 0x08, 0x06).apply {
@@ -114,6 +116,7 @@ data class ESenseConfig(
     }
 
     companion object {
+        private const val NOTIFICATION_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
         const val SENSOR_UUID = "0000ff08-0000-1000-8000-00805f9b34fb"
         const val SENSOR_CONFIG_UUID = "0000ff0e-0000-1000-8000-00805f9b34fb"
         const val CONFIG_UUID = "0000ff07-0000-1000-8000-00805f9b34fb"

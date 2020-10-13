@@ -164,7 +164,7 @@ class EarableService : Service() {
             configCharacteristic.value = config.enableSensorCharacteristicData
             gatts[device]?.writeCharacteristic(configCharacteristic)
 
-            // TODO enable notification
+            setSensorNotificationEnabled(device, config, enable = true)
         }
         dataRepository.startRecording(devices)
     }
@@ -176,9 +176,22 @@ class EarableService : Service() {
             configCharacteristic.value = config.disableSensorCharacteristicData
             gatts[device]?.writeCharacteristic(configCharacteristic)
 
-            // TODO disable notification
+            setSensorNotificationEnabled(device, config, enable = false)
         }
         dataRepository.stopRecording()
+    }
+
+    fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) {
+        val characteristic = characteristics[device]?.get(config.sensorCharacteristic) ?: return
+        val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
+        if (success) {
+            val descriptor = characteristic.getDescriptor(config.notificationDescriptor)
+            descriptor.value = when {
+                enable -> BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                else -> BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+            }
+            gatts[device]?.writeDescriptor(descriptor)
+        }
     }
 
     private fun startForeground() {

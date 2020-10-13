@@ -1,5 +1,7 @@
 package edu.teco.earablecompanion.overview.device
 
+import java.util.*
+
 abstract class Config {
 
     // Characteristic to change sensor configuration
@@ -10,6 +12,8 @@ abstract class Config {
 
     // Characteristic for receiving data
     abstract val sensorCharacteristic: String
+
+    abstract val notificationDescriptor: UUID
 
     abstract val sensorConfigCharacteristicData: ByteArray
     abstract val enableSensorCharacteristicData: ByteArray
