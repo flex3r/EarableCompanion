@@ -151,19 +151,33 @@ class EarableService : Service() {
     }
 
     fun setConfig(device: BluetoothDevice, config: Config): Boolean {
-        val bytes = config.toCharacteristicData()
         val characteristic = characteristics[device]?.get(config.sensorConfigCharacteristic) ?: return false
         val gatt = gatts[device] ?: return false
-        characteristic.value = bytes
+        characteristic.value = config.sensorConfigCharacteristicData
         return gatt.writeCharacteristic(characteristic)
     }
 
     fun startRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
-        // TODO
+        devices.forEach { device ->
+            val config = configs[device.address] ?: return@forEach
+            val configCharacteristic = characteristics[device]?.get(config.configCharacteristic) ?: return@forEach
+            configCharacteristic.value = config.enableSensorCharacteristicData
+            gatts[device]?.writeCharacteristic(configCharacteristic)
+
+            // TODO enable notification
+        }
         dataRepository.startRecording(devices)
     }
 
-    fun stopRecording() {
+    fun stopRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
+        devices.forEach { device ->
+            val config = configs[device.address] ?: return@forEach
+            val configCharacteristic = characteristics[device]?.get(config.configCharacteristic) ?: return@forEach
+            configCharacteristic.value = config.disableSensorCharacteristicData
+            gatts[device]?.writeCharacteristic(configCharacteristic)
+
+            // TODO disable notification
+        }
         dataRepository.stopRecording()
     }
 

@@ -79,7 +79,11 @@ class OverviewFragment : Fragment() {
     }
 
     private fun stopRecording() {
-        (activity as? MainActivity)?.earableService?.stopRecording()
+        val devices = viewModel.overviewItems.value?.filterIsInstance<OverviewItem.Device>()?.map { it.bluetoothDevice }
+        val configs = viewModel.getCurrentConfigs()
+        devices?.let {
+            (activity as? MainActivity)?.earableService?.stopRecording(devices, configs)
+        }
     }
 
     companion object {
