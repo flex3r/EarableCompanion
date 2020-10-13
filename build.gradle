@@ -4,7 +4,7 @@ buildscript {
         apkName = "EarableCompanion"
 
         // Plugins
-        gradle_build_tools_version = '4.0.1'
+        gradle_build_tools_version = '4.1.0'
         kotlin_version = '1.4.10'
 
         // Kotlin
