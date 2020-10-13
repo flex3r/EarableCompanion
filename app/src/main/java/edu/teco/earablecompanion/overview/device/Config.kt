@@ -15,6 +15,5 @@ abstract class Config {
     abstract val enableSensorCharacteristicData: ByteArray
     abstract val disableSensorCharacteristicData: ByteArray
 
-    abstract fun toCharacteristicData(): ByteArray
     abstract fun updateValues(bytes: ByteArray)
 }
