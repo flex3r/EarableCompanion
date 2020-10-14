@@ -25,6 +25,7 @@
                 android:id="@+id/overview_device_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/overview_device_icon_description"
                 android:src="@drawable/ic_baseline_bluetooth_24"
                 app:layout_constraintBottom_toBottomOf="@id/overview_device_name"
@@ -56,7 +57,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toTopOf="@id/overview_device_description"
                 app:layout_constraintEnd_toEndOf="@id/overview_device_name"
-                app:layout_constraintStart_toStartOf="@id/overview_device_name"
+                app:layout_constraintStart_toStartOf="@id/overview_device_icon"
                 app:layout_constraintTop_toBottomOf="@id/overview_device_name" />
 
             <TextView
@@ -67,7 +68,7 @@
                 app:description="@{device.type}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/overview_device_name"
-                app:layout_constraintStart_toStartOf="@id/overview_device_name"
+                app:layout_constraintStart_toStartOf="@id/overview_device_icon"
                 app:layout_constraintTop_toBottomOf="@id/overview_device_address" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
