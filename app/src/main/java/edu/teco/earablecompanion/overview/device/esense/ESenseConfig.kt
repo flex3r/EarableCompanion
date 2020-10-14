@@ -1,7 +1,9 @@
 package edu.teco.earablecompanion.overview.device.esense
 
+import android.util.Log
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.and
+import edu.teco.earablecompanion.utils.shl
 import java.util.*
 
 data class ESenseConfig(
@@ -12,12 +14,13 @@ data class ESenseConfig(
     var gyroRange: GyroRange = GyroRange.DEG_500,
     var accLPF: AccLPF = AccLPF.BW_5,
     var gyroLPF: GyroLPF = GyroLPF.BW_5,
+    var accOffset: Triple<Int, Int, Int> = Triple(0, 0, 0)
 ) : Config() {
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
     override val configCharacteristic = CONFIG_UUID
     override val sensorCharacteristic = SENSOR_UUID
-    override val notificationDescriptor = UUID.fromString(NOTIFICATION_DESCRIPTOR_UUID)
+    override val notificationDescriptor: UUID = UUID.fromString(NOTIFICATION_DESCRIPTOR_UUID)
 
     override val sensorConfigCharacteristicData: ByteArray
         get() = byteArrayOf(0x59, 0x00, 0x04, 0x06, 0x08, 0x08, 0x06).apply {
@@ -85,6 +88,17 @@ data class ESenseConfig(
             GyroRange.DEG_2000 -> 16.4
         }
 
+    fun setAccOffset(bytes: ByteArray) {
+        if (checkCheckSum(bytes, 1)) {
+            // "The values for the accelerometer are in ±16G format, therefore 1g = 2048 read from the registers"
+            val x = (bytes[9] shl 8) or (bytes[10] and 0xff)
+            val y = (bytes[11] shl 8) or (bytes[12] and 0xff)
+            val z = (bytes[13] shl 8) or (bytes[14] and 0xff)
+            accOffset = Triple(x, y, z)
+            Log.d(TAG, "Parsed new accOffset $accOffset")
+        }
+    }
+
     // [4:3] -> 11100111 -> 0xE7
     private fun ByteArray.setAccRangeBytes() {
         this[5] = ((this[5] and 0xE7) or (accRange.ordinal shl 3)).toByte()
@@ -116,10 +130,13 @@ data class ESenseConfig(
     }
 
     companion object {
+        private val TAG = ESenseConfig::class.java.simpleName
+
         private const val NOTIFICATION_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
         const val SENSOR_UUID = "0000ff08-0000-1000-8000-00805f9b34fb"
         const val SENSOR_CONFIG_UUID = "0000ff0e-0000-1000-8000-00805f9b34fb"
         const val CONFIG_UUID = "0000ff07-0000-1000-8000-00805f9b34fb"
+        const val ACC_OFFSET_UUID = "0000ff0d-0000-1000-8000-00805f9b34fb"
 
         private fun parseAccRange(data: ByteArray): AccRange = AccRange.values()[(data[4] and 0x18) shr 3]
 

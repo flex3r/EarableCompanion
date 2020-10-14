@@ -30,6 +30,7 @@ import edu.teco.earablecompanion.utils.connect
 import edu.teco.earablecompanion.utils.earableType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
 import no.nordicsemi.android.support.v18.scanner.ScanCallback
@@ -251,7 +252,7 @@ class EarableService : Service() {
             characteristics[gatt.device] = deviceCharacteristics
 
             when (gatt.device.earableType) {
-                EarableType.ESENSE -> deviceCharacteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.let { gatt.readCharacteristic(it) }
+                EarableType.ESENSE -> readESenseCharacteristics(gatt, deviceCharacteristics)
                 else -> Unit // TODO
             }
 
@@ -320,8 +321,20 @@ class EarableService : Service() {
                         }
                     }
                 }
+                ESenseConfig.ACC_OFFSET_UUID -> {
+                    connectionRepository.updateConfig(gatt.device.address) {
+                        (this as? ESenseConfig)?.setAccOffset(characteristic.value)
+                    }
+                }
                 else -> Unit
             }
+        }
+
+        private fun readESenseCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>) = scope.launch {
+            characteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.let { gatt.readCharacteristic(it) }
+
+            delay(250) // TODO replace with better mechanism
+            characteristics[ESenseConfig.ACC_OFFSET_UUID]?.let { gatt.readCharacteristic(it) }
         }
     }
 
