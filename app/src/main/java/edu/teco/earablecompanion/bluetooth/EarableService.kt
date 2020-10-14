@@ -158,7 +158,7 @@ class EarableService : Service() {
         return gatt.writeCharacteristic(characteristic)
     }
 
-    fun startRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
+    fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>) {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
             val configCharacteristic = characteristics[device]?.get(config.configCharacteristic) ?: return@forEach
@@ -167,7 +167,9 @@ class EarableService : Service() {
 
             setSensorNotificationEnabled(device, config, enable = true)
         }
-        dataRepository.startRecording(devices)
+        scope.launch {
+            dataRepository.startRecording(title, devices)
+        }
     }
 
     fun stopRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
@@ -179,7 +181,9 @@ class EarableService : Service() {
 
             setSensorNotificationEnabled(device, config, enable = false)
         }
-        dataRepository.stopRecording()
+        scope.launch {
+            dataRepository.stopRecording()
+        }
     }
 
     private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) {
@@ -284,6 +288,18 @@ class EarableService : Service() {
             Log.i(TAG, "onCharacteristicChanged ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
             if (gatt == null || characteristic == null) {
                 return
+            }
+
+            val formattedCharacteristic = characteristic.uuid.toString().toLowerCase(Locale.ROOT)
+            when (gatt.device.earableType) {
+                EarableType.ESENSE -> if (formattedCharacteristic == ESenseConfig.SENSOR_UUID) {
+                    connectionRepository.getConfigOrNull(gatt.device.address)?.let {
+                        scope.launch {
+                            dataRepository.addSensorDataEntry(it, characteristic.value)
+                        }
+                    }
+                }
+                else -> Unit
             }
         }
 

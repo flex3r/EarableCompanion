@@ -1,9 +1,12 @@
 package edu.teco.earablecompanion.overview.device.esense
 
 import android.util.Log
+import edu.teco.earablecompanion.data.entities.SensorData
+import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.and
 import edu.teco.earablecompanion.utils.shl
+import java.time.LocalDateTime
 import java.util.*
 
 data class ESenseConfig(
@@ -14,7 +17,7 @@ data class ESenseConfig(
     var gyroRange: GyroRange = GyroRange.DEG_500,
     var accLPF: AccLPF = AccLPF.BW_5,
     var gyroLPF: GyroLPF = GyroLPF.BW_5,
-    var accOffset: Triple<Int, Int, Int> = Triple(0, 0, 0)
+    var accOffset: Triple<Double, Double, Double> = Triple(0.0, 0.0, 0.0)
 ) : Config() {
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
@@ -45,6 +48,22 @@ data class ESenseConfig(
         gyroLPF = parseGyroLPF(bytes)
     }
 
+    override fun parseSensorValues(bytes: ByteArray): SensorDataEntry? {
+        if (!checkCheckSum(bytes, 2)) return null
+
+        val (accX, accY, accZ) = bytes.parseAccSensorData()
+        val (gyroX, gyroY, gyroZ) = bytes.parseGyroSensorData()
+        return SensorDataEntry(
+            timestamp = LocalDateTime.now(),
+            accX = accX,
+            accY = accY,
+            accZ = accZ,
+            gyroX = gyroX,
+            gyroY = gyroY,
+            gyroZ = gyroZ
+        )
+    }
+
     constructor(bytes: ByteArray) : this(
         accRange = parseAccRange(bytes),
         gyroRange = parseGyroRange(bytes),
@@ -72,7 +91,7 @@ data class ESenseConfig(
         BW_250, BW_184, BW_92, BW_41, BW_20, BW_10, BW_5, BW_3600, DISABLED
     }
 
-    val accSensitivityFactor: Double
+    private val accSensitivityFactor: Double
         get() = when (accRange) {
             AccRange.G_2 -> 16384.0
             AccRange.G_4 -> 8192.0
@@ -80,7 +99,7 @@ data class ESenseConfig(
             AccRange.G_16 -> 2048.0
         }
 
-    val gyroSensitivityFactor: Double
+    private val gyroSensitivityFactor: Double
         get() = when (gyroRange) {
             GyroRange.DEG_250 -> 131.0
             GyroRange.DEG_500 -> 65.5
@@ -91,11 +110,12 @@ data class ESenseConfig(
     fun setAccOffset(bytes: ByteArray) {
         if (checkCheckSum(bytes, 1)) {
             // "The values for the accelerometer are in ±16G format, therefore 1g = 2048 read from the registers"
-            val x = (bytes[9] shl 8) or (bytes[10] and 0xff)
-            val y = (bytes[11] shl 8) or (bytes[12] and 0xff)
-            val z = (bytes[13] shl 8) or (bytes[14] and 0xff)
+            val x = ((bytes[9] shl 8) or (bytes[10] and 0xff)) / 2048.0
+            val y = ((bytes[11] shl 8) or (bytes[12] and 0xff)) / 2048.0
+            val z = ((bytes[13] shl 8) or (bytes[14] and 0xff)) / 2048.0
+
             accOffset = Triple(x, y, z)
-            Log.d(TAG, "Parsed new accOffset $accOffset")
+            Log.i(TAG, "Parsed new accOffset $accOffset")
         }
     }
 
@@ -127,6 +147,24 @@ data class ESenseConfig(
             this[4] = (this[4] and 0xFC).toByte() // disable bypass
             this[3] = ((this[3] and 0xF8) or gyroLPF.ordinal).toByte()
         }
+    }
+
+    private fun ByteArray.parseAccSensorData(): Triple<Double, Double, Double> {
+        val x = (((this[10] shl 8) or (this[11] and 0xff)) / accSensitivityFactor) + accOffset.first
+        val y = (((this[12] shl 8) or (this[13] and 0xff)) / accSensitivityFactor) + accOffset.second
+        val z = (((this[14] shl 8) or (this[15] and 0xff)) / accSensitivityFactor) + accOffset.third
+
+        //Log.d(TAG, "acc data $x $y $z")
+        return Triple(x, y, z)
+    }
+
+    private fun ByteArray.parseGyroSensorData(): Triple<Double, Double, Double> {
+        val x = ((this[4] shl 8) or (this[5] and 0xff)) / gyroSensitivityFactor
+        val y = ((this[6] shl 8) or (this[7] and 0xff)) / gyroSensitivityFactor
+        val z = ((this[8] shl 8) or (this[9] and 0xff)) / gyroSensitivityFactor
+
+        //Log.d(TAG, "gyro data $x $y $z")
+        return Triple(x, y, z)
     }
 
     companion object {

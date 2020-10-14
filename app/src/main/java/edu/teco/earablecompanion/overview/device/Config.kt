@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.overview.device
 
+import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import java.util.*
 
 abstract class Config {
@@ -20,4 +21,5 @@ abstract class Config {
     abstract val disableSensorCharacteristicData: ByteArray
 
     abstract fun updateValues(bytes: ByteArray)
+    abstract fun parseSensorValues(bytes: ByteArray): SensorDataEntry?
 }

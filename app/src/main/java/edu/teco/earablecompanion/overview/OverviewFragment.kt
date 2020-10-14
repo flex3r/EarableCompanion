@@ -88,18 +88,17 @@ class OverviewFragment : Fragment() {
                     input.isNullOrBlank() -> getString(R.string.start_recording_dialog_title_default)
                     else -> input
                 }
-                viewModel.addSensorData(title)
-                startRecording()
+                startRecording(title)
             }
             .setNegativeButton(R.string.start_recording_dialog_negative) { d, _ -> d.dismiss() }
             .show()
     }
 
-    private fun startRecording() {
+    private fun startRecording(title: String) {
         val devices = viewModel.overviewItems.value?.filterIsInstance<OverviewItem.Device>()?.map { it.bluetoothDevice }
         val configs = viewModel.getCurrentConfigs()
         devices?.let {
-            (activity as? MainActivity)?.earableService?.startRecording(devices, configs)
+            (activity as? MainActivity)?.earableService?.startRecording(title, devices, configs)
         }
     }
 

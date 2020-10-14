@@ -1,16 +1,18 @@
 package edu.teco.earablecompanion.data
 
 import android.bluetooth.BluetoothDevice
+import android.util.Log
+import androidx.room.Room
 import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
+import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.setValue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 
 class SensorDataRepository @Inject constructor(private val sensorDataDao: SensorDataDao) {
@@ -26,11 +28,32 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     suspend fun insertAllEntries(entries: List<SensorDataEntry>) = sensorDataDao.insertAllEntries(entries)
     suspend fun clearData() = sensorDataDao.deleteAll()
 
-    fun startRecording(devices: List<BluetoothDevice>) = _activeRecording.setValue { SensorDataRecording(LocalDateTime.now(ZoneId.systemDefault()), devices) }
-    fun stopRecording() = _activeRecording.setValue { null }
-
-    suspend fun addSensorData(title: String) {
+    suspend fun startRecording(title: String, devices: List<BluetoothDevice>) {
         val data = SensorData(title = title, createdAt = LocalDateTime.now())
-        sensorDataDao.insert(data)
+        val dataId = sensorDataDao.insert(data)
+        data.dataId = dataId
+
+        val recording = SensorDataRecording(data, devices)
+        _activeRecording.value = recording
+    }
+
+    suspend fun stopRecording() {
+        val data = _activeRecording.value?.data ?: return
+        data.stoppedAt = LocalDateTime.now()
+
+        sensorDataDao.update(data)
+        _activeRecording.value = null
+    }
+
+    suspend fun addSensorDataEntry(config: Config, bytes: ByteArray) {
+        val dataId = activeRecording.value?.data?.dataId ?: return
+        val entry = config.parseSensorValues(bytes) ?: return
+        entry.dataId = dataId
+        
+        sensorDataDao.insertEntry(entry)
+    }
+
+    companion object {
+        private val TAG = SensorDataRecording::class.java.simpleName
     }
 }

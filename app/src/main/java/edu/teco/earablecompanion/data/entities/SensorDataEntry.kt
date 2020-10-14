@@ -11,8 +11,8 @@ data class SensorDataEntry(
     @ColumnInfo(name = "data_entry_id")
     @PrimaryKey(autoGenerate = true)
     var dataEntryId: Long = 0L,
-    @ColumnInfo(name = "data_id")
-    var dataId: Long,
+    @ColumnInfo(name = "data_id", index = true)
+    var dataId: Long = 0L,
     @ColumnInfo(name = "entry_timestamp") var timestamp: LocalDateTime,
     @ColumnInfo(name = "entry_acc_X") var accX: Double?,
     @ColumnInfo(name = "entry_acc_Y") var accY: Double?,

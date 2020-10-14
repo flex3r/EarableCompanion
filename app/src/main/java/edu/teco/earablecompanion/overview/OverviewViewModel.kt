@@ -45,7 +45,5 @@ class OverviewViewModel @ViewModelInject constructor(
         _connectionOpen.value = open
     }
 
-    fun addSensorData(title: String) = viewModelScope.launch { sensorDataRepository.addSensorData(title) }
-
     fun getCurrentConfigs() = connectionRepository.getCurrentConfigs()
 }

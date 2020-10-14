@@ -17,7 +17,10 @@ interface SensorDataDao {
     suspend fun getAllWithEntries(): List<SensorDataWithEntries>
 
     @Insert
-    suspend fun insert(data: SensorData)
+    suspend fun insert(data: SensorData): Long
+
+    @Update
+    suspend fun update(data: SensorData)
 
     @Insert
     suspend fun insertAll(data: List<SensorData>)
@@ -27,6 +30,9 @@ interface SensorDataDao {
 
     @Query("DELETE FROM data_table")
     suspend fun deleteAll()
+
+    @Insert
+    suspend fun insertEntry(entry: SensorDataEntry)
 
     @Insert
     suspend fun insertAllEntries(entries: List<SensorDataEntry>)
