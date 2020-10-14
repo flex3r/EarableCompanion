@@ -28,6 +28,9 @@ interface SensorDataDao {
     @Delete
     suspend fun delete(data: SensorData)
 
+    @Query("DELETE FROM data_table WHERE data_id = :id")
+    suspend fun deleteById(id: Long)
+
     @Query("DELETE FROM data_table")
     suspend fun deleteAll()
 

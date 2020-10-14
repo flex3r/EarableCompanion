@@ -7,9 +7,10 @@ import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class SensorDataDetailViewModel @ViewModelInject constructor(
-    sensorDataRepository: SensorDataRepository,
+    private val sensorDataRepository: SensorDataRepository,
     @Assisted savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -21,6 +22,8 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
                 emit(SensorDataDetailItem.fromEntity(it))
             }
     }
+
+    fun removeData() = viewModelScope.launch { sensorDataRepository.removeData(dataId) }
 
     companion object {
         private val TAG = SensorDataDetailViewModel::class.java.simpleName
