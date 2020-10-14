@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.inject.Inject
 
 class SensorDataRepository @Inject constructor(private val sensorDataDao: SensorDataDao) {
@@ -26,7 +27,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     suspend fun clearData() = sensorDataDao.deleteAll()
 
     suspend fun startRecording(title: String, devices: List<BluetoothDevice>) {
-        val data = SensorData(title = title, createdAt = LocalDateTime.now())
+        val data = SensorData(title = title, createdAt = LocalDateTime.now(ZoneId.systemDefault()))
         val dataId = sensorDataDao.insert(data)
         data.dataId = dataId
 
@@ -36,7 +37,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
 
     suspend fun stopRecording() {
         val data = _activeRecording.value?.data ?: return
-        data.stoppedAt = LocalDateTime.now()
+        data.stoppedAt = LocalDateTime.now(ZoneId.systemDefault())
 
         sensorDataDao.update(data)
         _activeRecording.value = null

@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.utils
 
+import android.text.format.DateUtils
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -7,7 +8,6 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
 import java.time.Duration
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -69,11 +69,7 @@ fun RadioGroup.setGyroSensorLPFBandwidth(bandwidth: ESenseConfig.GyroLPF) {
 @BindingAdapter("duration")
 fun TextView.formatDuration(duration: Duration?) {
     text = duration?.let {
-        val instant = Instant.ofEpochMilli(it.toMillis())
-        val formatted = DateTimeFormatter
-            .ofPattern("HH:mm:ss")
-            .withZone(ZoneId.systemDefault())
-            .format(instant)
+        val formatted = DateUtils.formatElapsedTime(it.seconds)
         resources.getString(R.string.data_duration, formatted)
     } ?: ""
 }
