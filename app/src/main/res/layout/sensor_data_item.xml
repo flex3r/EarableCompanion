@@ -30,11 +30,11 @@
                 android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/sensor_data_overview_data_icon_description"
                 android:src="@drawable/ic_baseline_insert_chart_24"
-                android:tint="?attr/colorSecondary"
                 app:layout_constraintBottom_toBottomOf="@id/sensor_data_overview_data_title"
                 app:layout_constraintEnd_toStartOf="@id/sensor_data_overview_data_title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/sensor_data_overview_data_title" />
+                app:layout_constraintTop_toTopOf="@id/sensor_data_overview_data_title"
+                app:tint="?attr/colorSecondary" />
 
             <TextView
                 android:id="@+id/sensor_data_overview_data_title"
@@ -44,22 +44,10 @@
                 android:gravity="center_horizontal"
                 android:text="@{data.title}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                app:layout_constraintBottom_toTopOf="@id/sensor_data_overview_data_description"
+                app:layout_constraintBottom_toTopOf="@id/sensor_data_overview_data_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/sensor_data_overview_data_icon"
                 app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/sensor_data_overview_data_description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="@{data.description}"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/sensor_data_overview_data_icon"
-                app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_title" />
 
             <TextView
                 android:id="@+id/sensor_data_overview_data_date"
@@ -67,11 +55,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{@string/data_created_at(data.createdAt.toString())}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/sensor_data_overview_data_icon"
-                app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_description" />
+                app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_title"
+                app:startedLocalDateTime="@{data.createdAt}" />
 
             <TextView
                 android:id="@+id/sensor_data_overview_data_duration"
@@ -99,6 +87,5 @@
                 app:layout_constraintStart_toStartOf="@id/sensor_data_overview_data_icon"
                 app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_duration" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </com.google.android.material.card.MaterialCardView>
 </layout>

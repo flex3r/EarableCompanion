@@ -71,19 +71,19 @@ fun TextView.formatDuration(duration: Duration?) {
     text = duration?.let {
         val instant = Instant.ofEpochMilli(it.toMillis())
         val formatted = DateTimeFormatter
-            .ofPattern("HH:mm:ss.SSS")
+            .ofPattern("HH:mm:ss")
             .withZone(ZoneId.systemDefault())
             .format(instant)
         resources.getString(R.string.data_duration, formatted)
     } ?: ""
 }
 
-@BindingAdapter("localDateTime")
-fun TextView.formatLocalDateTime(localDateTime: LocalDateTime) {
+@BindingAdapter("startedLocalDateTime")
+fun TextView.formatStartedLocalDateTime(localDateTime: LocalDateTime) {
     val formatter = DateTimeFormatter
         .ofLocalizedDateTime(FormatStyle.SHORT)
         .withZone(ZoneId.systemDefault())
-    text = context.getString(R.string.overview_recording_datetime_format, localDateTime.format(formatter))
+    text = context.getString(R.string.recording_started_datetime_format, localDateTime.format(formatter))
 }
 
 @BindingAdapter("description")

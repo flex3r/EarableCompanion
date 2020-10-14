@@ -54,7 +54,7 @@
                 app:layout_constraintEnd_toEndOf="@id/overview_recording_title"
                 app:layout_constraintStart_toStartOf="@id/overview_recording_title"
                 app:layout_constraintTop_toBottomOf="@id/overview_recording_title"
-                app:localDateTime="@{recording.startedAt}" />
+                app:startedLocalDateTime="@{recording.startedAt}" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

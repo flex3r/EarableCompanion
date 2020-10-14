@@ -1,14 +1,11 @@
 package edu.teco.earablecompanion.data
 
 import android.bluetooth.BluetoothDevice
-import android.util.Log
-import androidx.room.Room
 import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
 import edu.teco.earablecompanion.overview.device.Config
-import edu.teco.earablecompanion.utils.setValue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,7 +46,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         val dataId = activeRecording.value?.data?.dataId ?: return
         val entry = config.parseSensorValues(bytes) ?: return
         entry.dataId = dataId
-        
+
         sensorDataDao.insertEntry(entry)
     }
 
