@@ -7,7 +7,7 @@ import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.sensordata.SensorDataOverviewItem.Data.Companion.toOverviewItem
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 
 class SensorDataOverviewViewModel @ViewModelInject constructor(
     private val sensorDataRepository: SensorDataRepository,
@@ -19,13 +19,14 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
     }
 
     val sensorDataItems: LiveData<List<SensorDataOverviewItem>> = liveData(viewModelScope.coroutineContext) {
-        val data = sensorDataRepository.getSensorData()
-        when {
-            data.isEmpty() -> emit(listOf(SensorDataOverviewItem.NoData))
-            else -> emit(data.map {
-                val entryCount = sensorDataRepository.getDataEntryCount(it.dataId)
-                it.toOverviewItem(entryCount)
-            })
+        sensorDataRepository.getSensorDataFlow().collectLatest { data ->
+            when {
+                data.isEmpty() -> emit(listOf(SensorDataOverviewItem.NoData))
+                else -> emit(data.map {
+                    val entryCount = sensorDataRepository.getDataEntryCount(it.dataId)
+                    it.toOverviewItem(entryCount)
+                })
+            }
         }
     }
 
