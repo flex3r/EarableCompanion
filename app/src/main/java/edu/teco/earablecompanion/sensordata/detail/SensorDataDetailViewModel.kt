@@ -9,6 +9,7 @@ import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailItem.Descript
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.system.measureTimeMillis
 
 class SensorDataDetailViewModel @ViewModelInject constructor(
     private val sensorDataRepository: SensorDataRepository,
@@ -19,15 +20,17 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     val detailItems: LiveData<List<SensorDataDetailItem>> = liveData(viewModelScope.coroutineContext) {
         sensorDataRepository.getSensorDataWithEntries(dataId)
             .catch { Log.e(TAG, Log.getStackTraceString(it)) }
-            .collectLatest {
+            .collectLatest { data ->
                 when {
-                    it.entries.isEmpty() -> emit(listOf(it.toDescriptionItem(), SensorDataDetailItem.NoData))
+                    data.entries.isEmpty() -> emit(listOf(data.toDescriptionItem(), SensorDataDetailItem.NoData))
                     else -> {
-                        val charts = mutableListOf<SensorDataDetailItem>()
-                        it.onEachDataTypeWithTitle { sensorDataType, list ->
-                            charts += SensorDataDetailItem.Chart(sensorDataType, list)
-                        }
-                        emit(listOf(it.toDescriptionItem()) + charts)
+                        measureTimeMillis {
+                            val charts = mutableListOf<SensorDataDetailItem>()
+                            data.onEachDataTypeWithTitle { sensorDataType, list ->
+                                charts += SensorDataDetailItem.Chart(sensorDataType, list)
+                            }
+                            emit(listOf(data.toDescriptionItem()) + charts)
+                        }.let { Log.i(TAG, "Mapping data entries took $it ms") }
                     }
                 }
             }
