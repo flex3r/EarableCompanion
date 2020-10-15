@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -22,7 +23,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.bluetooth.EarableService
 import edu.teco.earablecompanion.databinding.MainActivityBinding
-import kotlinx.android.synthetic.main.main_activity.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -50,8 +50,10 @@ class MainActivity : AppCompatActivity() {
 
     var bottomNavigationVisible: Boolean = true
         set(value) {
-            bottom_nav_view.isVisible = value
-            field = value
+            lifecycleScope.launchWhenCreated {
+                binding.bottomNavView.isVisible = value
+                field = value
+            }
         }
     var earableService: EarableService? = null
 
