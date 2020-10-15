@@ -1,18 +1,19 @@
 package edu.teco.earablecompanion.sensordata.detail
 
+import edu.teco.earablecompanion.data.SensorDataType
+import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
 import java.time.Duration
 import java.time.LocalDateTime
 
-// TODO data
-data class SensorDataDetailItem(val title: String, val description: String, val createdAt: LocalDateTime, val duration: Duration?, val entryCount: Int) {
-    companion object {
-        fun fromEntity(sensorData: SensorDataWithEntries) = SensorDataDetailItem(
-            title = sensorData.data.title,
-            createdAt = sensorData.data.createdAt,
-            description = sensorData.data.description ?: "",
-            duration = sensorData.data.stoppedAt?.let { Duration.between(sensorData.data.createdAt, sensorData.data.stoppedAt) },
-            entryCount = sensorData.entries.size
-        )
+sealed class SensorDataDetailItem {
+    object NoData : SensorDataDetailItem()
+
+    data class Description(val description: String?) : SensorDataDetailItem() {
+        companion object {
+            fun SensorDataWithEntries.toDescriptionItem() = Description(data.description)
+        }
     }
+
+    data class Chart(val type: SensorDataType, val data: List<Pair<LocalDateTime, Double>>) : SensorDataDetailItem()
 }

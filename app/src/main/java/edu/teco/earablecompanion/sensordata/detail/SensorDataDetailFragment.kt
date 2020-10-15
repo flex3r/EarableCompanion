@@ -20,7 +20,7 @@ class SensorDataDetailFragment : Fragment() {
     private val navController: NavController by lazy { findNavController() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        viewModel.dataItem.observe(viewLifecycleOwner) {
+        viewModel.detailItems.observe(viewLifecycleOwner) {
             Log.d(TAG, it.toString())
         }
 
