@@ -98,4 +98,9 @@
     <string name="start_recording_dialog_title_default">Sensor data</string>
     <string name="export_fab_description">Export a data recording</string>
     <string name="export_fab_text">Export</string>
+    <string name="sensor_data_detail_description_title">Description</string>
+    <string name="sensor_data_detail_description_icon_description">Description icon</string>
+    <string name="sensor_data_detail_description_edit_text">Edit</string>
+    <string name="sensor_data_detail_no_data_icon_description">Info icon</string>
+    <string name="sensor_data_detail_no_data_text">This data recording has no data</string>
 </resources>

@@ -33,6 +33,8 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
             }
     }
 
+    val hasData = detailItems.map { items -> items.any { it is SensorDataDetailItem.Chart } }
+
     fun removeData() = viewModelScope.launch { sensorDataRepository.removeData(dataId) }
 
     companion object {

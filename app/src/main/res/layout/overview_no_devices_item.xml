@@ -19,7 +19,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/overview_no_devices_icon_description"
                 android:src="@drawable/ic_baseline_device_hub_24"
-                android:tint="?attr/colorSecondary"
+                app:tint="?attr/colorSecondary"
                 app:layout_constraintBottom_toBottomOf="@id/overview_no_devices_text"
                 app:layout_constraintEnd_toStartOf="@id/overview_no_devices_text"
                 app:layout_constraintStart_toStartOf="parent"

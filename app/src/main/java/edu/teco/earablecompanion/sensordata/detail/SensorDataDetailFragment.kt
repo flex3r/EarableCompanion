@@ -2,7 +2,6 @@ package edu.teco.earablecompanion.sensordata.detail
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,13 +19,17 @@ class SensorDataDetailFragment : Fragment() {
     private val navController: NavController by lazy { findNavController() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        viewModel.detailItems.observe(viewLifecycleOwner) {
-            Log.d(TAG, it.toString())
-        }
+        val adapter = SensorDataDetailAdapter(::editDescription)
+
+        viewModel.detailItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
 
         val binding = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@SensorDataDetailFragment
+            sensorDataDetailRecyclerview.adapter = adapter
+            exportFab.setOnClickListener {
+                // TODO
+            }
         }
 
         setHasOptionsMenu(true)
@@ -59,6 +62,10 @@ class SensorDataDetailFragment : Fragment() {
     private fun removeData() {
         viewModel.removeData()
         navController.popBackStack()
+    }
+
+    private fun editDescription() {
+        // TODO
     }
 
     companion object {
