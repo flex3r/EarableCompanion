@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.github.mikephil.charting.charts.LineChart
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataDetailChartItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailDescriptionItemBinding
@@ -41,22 +42,24 @@ class SensorDataDetailAdapter(private val onClick: () -> Unit) : ListAdapter<Sen
                 holder.binding.sensorDataDetailDescriptionEdit.setOnClickListener { onClick() }
             }
             is ChartViewHolder -> with(holder.binding) {
-                sensorDataDetailChart.apply {
-                    description.isEnabled = false
-                    legend.isEnabled = false
-                    isDoubleTapToZoomEnabled = false
-                    isKeepPositionOnRotation = true
-                    setDrawBorders(true)
-                    setBorderColor(context.themeColor(R.attr.colorPrimary))
-                    xAxis.setDrawGridLines(false)
-                    xAxis.setDrawLabels(false)
-                    axisLeft.setDrawGridLines(false)
-                    axisLeft.textColor = context.themeColor(android.R.attr.textColorPrimary)
-                    axisRight.isEnabled = false
-                }
+                sensorDataDetailChart.setup()
                 item = getItem(position) as SensorDataDetailItem.Chart
             }
         }
+    }
+
+    private fun LineChart.setup() {
+        description.isEnabled = false
+        legend.isEnabled = false
+        isDoubleTapToZoomEnabled = false
+        isKeepPositionOnRotation = true
+        setDrawBorders(true)
+        setBorderColor(context.themeColor(R.attr.colorPrimary))
+        xAxis.setDrawGridLines(false)
+        xAxis.setDrawLabels(false)
+        axisLeft.setDrawGridLines(false)
+        axisLeft.textColor = context.themeColor(android.R.attr.textColorPrimary)
+        axisRight.isEnabled = false
     }
 
     private class DetectDiff : DiffUtil.ItemCallback<SensorDataDetailItem>() {

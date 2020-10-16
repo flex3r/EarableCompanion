@@ -126,5 +126,6 @@ fun LineChart.setDataEntries(entries: List<Entry>, dataType: SensorDataType) {
 
     data = LineData(dataSet)
     setVisibleXRange(50f, 250f)
-    animateX(1000)
+    invalidate()
+    //animateX(1000)
 }
