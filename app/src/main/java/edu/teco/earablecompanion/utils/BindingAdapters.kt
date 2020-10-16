@@ -1,11 +1,20 @@
 package edu.teco.earablecompanion.utils
 
+import android.content.Context
+import android.graphics.Color
 import android.text.format.DateUtils
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.core.content.res.use
 import androidx.databinding.BindingAdapter
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.data.SensorDataType
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
 import java.time.Duration
 import java.time.LocalDateTime
@@ -88,4 +97,34 @@ fun TextView.setEarableDescription(type: EarableType) {
         EarableType.ESENSE -> context.getString(R.string.earable_esense_description)
         else -> "" // TODO
     }
+}
+
+private fun SensorDataType.getTitle(context: Context): String = when (this) {
+    SensorDataType.ACC_X -> context.getString(R.string.sensor_data_type_acc_x_title)
+    SensorDataType.ACC_Y -> context.getString(R.string.sensor_data_type_acc_y_title)
+    SensorDataType.ACC_Z -> context.getString(R.string.sensor_data_type_acc_z_title)
+    SensorDataType.GYRO_X -> context.getString(R.string.sensor_data_type_gyro_x_title)
+    SensorDataType.GYRO_Y -> context.getString(R.string.sensor_data_type_gyro_y_title)
+    SensorDataType.GYRO_Z -> context.getString(R.string.sensor_data_type_gyro_z_title)
+}
+
+@BindingAdapter("dataTypeTitle")
+fun TextView.setDataTypeTitle(sensorDataType: SensorDataType) {
+    text = sensorDataType.getTitle(context)
+}
+
+@BindingAdapter("dataEntries", "dataType")
+fun LineChart.setDataEntries(entries: List<Entry>, dataType: SensorDataType) {
+    val title = dataType.getTitle(context)
+    val dataSet = LineDataSet(entries, title).apply {
+        color = context.themeColor(R.attr.colorSecondary) // TODO extract
+        setDrawValues(false)
+        setDrawCircles(false)
+        lineWidth = 2f
+        axisDependency = YAxis.AxisDependency.LEFT
+    }
+
+    data = LineData(dataSet)
+    setVisibleXRange(50f, 250f)
+    animateX(1000)
 }

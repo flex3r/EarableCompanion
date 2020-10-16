@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.sensordata.detail
 
+import com.github.mikephil.charting.data.Entry
 import edu.teco.earablecompanion.data.SensorDataType
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
@@ -16,5 +17,5 @@ sealed class SensorDataDetailItem {
         }
     }
 
-    data class Chart(val type: SensorDataType, val data: List<Pair<LocalDateTime, Double>>) : SensorDataDetailItem()
+    data class Chart(val type: SensorDataType, val data: List<Entry>) : SensorDataDetailItem()
 }

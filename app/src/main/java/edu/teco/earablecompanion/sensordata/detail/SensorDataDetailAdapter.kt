@@ -5,10 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataDetailChartItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailDescriptionItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailLoadingItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailNoDataItemBinding
+import edu.teco.earablecompanion.utils.themeColor
 
 class SensorDataDetailAdapter(private val onClick: () -> Unit) : ListAdapter<SensorDataDetailItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
@@ -38,9 +40,21 @@ class SensorDataDetailAdapter(private val onClick: () -> Unit) : ListAdapter<Sen
                 holder.binding.item = getItem(position) as SensorDataDetailItem.Description
                 holder.binding.sensorDataDetailDescriptionEdit.setOnClickListener { onClick() }
             }
-            is ChartViewHolder -> {
-                holder.binding.item = getItem(position) as SensorDataDetailItem.Chart
-                // TODO
+            is ChartViewHolder -> with(holder.binding) {
+                sensorDataDetailChart.apply {
+                    description.isEnabled = false
+                    legend.isEnabled = false
+                    isDoubleTapToZoomEnabled = false
+                    isKeepPositionOnRotation = true
+                    setDrawBorders(true)
+                    setBorderColor(context.themeColor(R.attr.colorPrimary))
+                    xAxis.setDrawGridLines(false)
+                    xAxis.setDrawLabels(false)
+                    axisLeft.setDrawGridLines(false)
+                    axisLeft.textColor = context.themeColor(android.R.attr.textColorPrimary)
+                    axisRight.isEnabled = false
+                }
+                item = getItem(position) as SensorDataDetailItem.Chart
             }
         }
     }
