@@ -6,7 +6,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailItem.Description.Companion.toDescriptionItem
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
