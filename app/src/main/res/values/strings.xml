@@ -64,8 +64,8 @@
     <string name="overview_no_devices_icon_description">Device hub icon</string>
     <string name="overview_no_devices_text">Start connecting your earables with the button below</string>
     <string name="sensor_data_overview_data_icon_description">Data chart icon</string>
-    <string name="overview_fragment_title">Overview</string>
-    <string name="sensor_data_overview_fragment_title">Data Overview</string>
+    <string name="overview_fragment_title">Devices</string>
+    <string name="sensor_data_overview_fragment_title">Data</string>
     <string name="settings_fragment_title">Settings</string>
     <string name="remove_device_item_title">Remove Device</string>
     <string name="remove_data_item_title">Remove Data</string>

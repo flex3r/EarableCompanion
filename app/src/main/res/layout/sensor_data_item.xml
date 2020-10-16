@@ -31,7 +31,6 @@
                 android:contentDescription="@string/sensor_data_overview_data_icon_description"
                 android:src="@drawable/ic_baseline_insert_chart_24"
                 app:layout_constraintBottom_toBottomOf="@id/sensor_data_overview_data_title"
-                app:layout_constraintEnd_toStartOf="@id/sensor_data_overview_data_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/sensor_data_overview_data_title"
                 app:tint="?attr/colorSecondary" />
@@ -46,7 +45,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintBottom_toTopOf="@id/sensor_data_overview_data_date"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/sensor_data_overview_data_icon"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView

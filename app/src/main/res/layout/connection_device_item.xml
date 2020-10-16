@@ -28,7 +28,6 @@
                 android:contentDescription="@string/connection_device_icon_description"
                 android:src="@drawable/ic_baseline_bluetooth_24"
                 app:layout_constraintBottom_toBottomOf="@id/connection_device_name"
-                app:layout_constraintEnd_toStartOf="@id/connection_device_name"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/connection_device_name"
                 app:tint="?attr/colorSecondary" />
@@ -44,7 +43,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintBottom_toTopOf="@id/connection_device_address"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/connection_device_icon"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
