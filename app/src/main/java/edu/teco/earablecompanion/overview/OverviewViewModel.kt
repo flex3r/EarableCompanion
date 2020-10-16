@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.overview
 
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -9,7 +10,6 @@ import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOvervi
 import edu.teco.earablecompanion.overview.OverviewItem.Recording.Companion.toOverviewItem
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 
 class OverviewViewModel @ViewModelInject constructor(
     private val connectionRepository: ConnectionRepository,
@@ -19,8 +19,9 @@ class OverviewViewModel @ViewModelInject constructor(
 
     val overviewItems: LiveData<List<OverviewItem>> = liveData(viewModelScope.coroutineContext) {
         val recordingFlow = sensorDataRepository.activeRecording
-        connectionRepository.connectedDevices.combine(recordingFlow) { devices, activeRecording  -> devices to activeRecording }
+        connectionRepository.connectedDevices.combine(recordingFlow) { devices, activeRecording -> devices to activeRecording }
             .collectLatest { (devices, activeRecording) ->
+                Log.i(TAG, "Connected devices: $devices")
                 val items = devices.values.toOverviewItems()
                 when {
                     items.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
@@ -46,4 +47,8 @@ class OverviewViewModel @ViewModelInject constructor(
     }
 
     fun getCurrentConfigs() = connectionRepository.getCurrentConfigs()
+
+    companion object {
+        private val TAG = OverviewViewModel::class.java.simpleName
+    }
 }
