@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import edu.teco.earablecompanion.databinding.SensorDataDetailChartItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailDescriptionItemBinding
+import edu.teco.earablecompanion.databinding.SensorDataDetailLoadingItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailNoDataItemBinding
 
 class SensorDataDetailAdapter(private val onClick: () -> Unit) : ListAdapter<SensorDataDetailItem, RecyclerView.ViewHolder>(DetectDiff()) {
@@ -14,11 +15,13 @@ class SensorDataDetailAdapter(private val onClick: () -> Unit) : ListAdapter<Sen
     class DescriptionViewHolder(val binding: SensorDataDetailDescriptionItemBinding) : RecyclerView.ViewHolder(binding.root)
     class ChartViewHolder(val binding: SensorDataDetailChartItemBinding) : RecyclerView.ViewHolder(binding.root)
     class NoDataViewHolder(binding: SensorDataDetailNoDataItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class LoadingViewHolder(binding: SensorDataDetailLoadingItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
         ITEM_VIEW_TYPE_DESCRIPTION -> DescriptionViewHolder(SensorDataDetailDescriptionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         ITEM_VIEW_TYPE_CHART -> ChartViewHolder(SensorDataDetailChartItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         ITEM_VIEW_TYPE_NO_DATA -> NoDataViewHolder(SensorDataDetailNoDataItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ITEM_VIEW_TYPE_LOADING -> LoadingViewHolder(SensorDataDetailLoadingItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         else -> throw ClassCastException("Unknown viewType $viewType")
     }
 
@@ -26,6 +29,7 @@ class SensorDataDetailAdapter(private val onClick: () -> Unit) : ListAdapter<Sen
         is SensorDataDetailItem.Description -> ITEM_VIEW_TYPE_DESCRIPTION
         is SensorDataDetailItem.Chart -> ITEM_VIEW_TYPE_CHART
         is SensorDataDetailItem.NoData -> ITEM_VIEW_TYPE_NO_DATA
+        is SensorDataDetailItem.Loading -> ITEM_VIEW_TYPE_LOADING
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -50,5 +54,6 @@ class SensorDataDetailAdapter(private val onClick: () -> Unit) : ListAdapter<Sen
         private const val ITEM_VIEW_TYPE_DESCRIPTION = 0
         private const val ITEM_VIEW_TYPE_CHART = 1
         private const val ITEM_VIEW_TYPE_NO_DATA = 2
+        private const val ITEM_VIEW_TYPE_LOADING = 3
     }
 }

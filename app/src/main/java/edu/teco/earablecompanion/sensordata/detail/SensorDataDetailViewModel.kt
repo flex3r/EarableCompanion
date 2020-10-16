@@ -6,6 +6,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailItem.Description.Companion.toDescriptionItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -24,12 +25,15 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
                 when {
                     data.entries.isEmpty() -> emit(listOf(data.toDescriptionItem(), SensorDataDetailItem.NoData))
                     else -> {
+                        val descriptionItem = data.toDescriptionItem()
+                        emit(listOf(descriptionItem, SensorDataDetailItem.Loading))
+
                         measureTimeMillis {
                             val charts = mutableListOf<SensorDataDetailItem>()
                             data.onEachDataTypeWithTitle { sensorDataType, list ->
                                 charts += SensorDataDetailItem.Chart(sensorDataType, list)
                             }
-                            emit(listOf(data.toDescriptionItem()) + charts)
+                            emit(listOf(descriptionItem) + charts)
                         }.let { Log.i(TAG, "Mapping data entries took $it ms") }
                     }
                 }

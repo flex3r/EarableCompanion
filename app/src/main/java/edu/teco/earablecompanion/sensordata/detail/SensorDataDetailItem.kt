@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 
 sealed class SensorDataDetailItem {
     object NoData : SensorDataDetailItem()
+    object Loading: SensorDataDetailItem()
 
     data class Description(val description: String?) : SensorDataDetailItem() {
         companion object {
