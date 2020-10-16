@@ -54,6 +54,8 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         sensorDataDao.insertEntry(entry)
     }
 
+    suspend fun updateSensorDataDescription(dataId: Long, text: String?) = sensorDataDao.updateDescription(dataId, text)
+
     companion object {
         private val TAG = SensorDataRecording::class.java.simpleName
     }

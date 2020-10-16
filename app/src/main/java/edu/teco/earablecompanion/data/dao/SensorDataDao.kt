@@ -25,6 +25,9 @@ interface SensorDataDao {
     @Update
     suspend fun update(data: SensorData)
 
+    @Query("UPDATE data_table SET data_desc = :text WHERE data_id =:id")
+    suspend fun updateDescription(id: Long, text: String?)
+
     @Insert
     suspend fun insertAll(data: List<SensorData>)
 

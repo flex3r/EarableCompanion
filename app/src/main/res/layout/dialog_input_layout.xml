@@ -5,17 +5,16 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dialog_input_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:hint="@string/start_recording_dialog_hint">
+        android:layout_margin="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/start_recording_input_text"
+            android:id="@+id/dialog_input_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text|textCapSentences"
-            android:singleLine="true" />
+            android:inputType="text|textCapSentences"/>
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>

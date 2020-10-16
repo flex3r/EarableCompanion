@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
@@ -76,12 +77,17 @@ class OverviewFragment : Fragment() {
 
     private fun displayStartRecordingDialog() {
         val builder = MaterialAlertDialogBuilder(requireContext())
-        val inputLayout = LayoutInflater.from(builder.context).inflate(R.layout.start_recording_input_layout, null) as LinearLayout
-        val editText = inputLayout.findViewById<TextInputEditText>(R.id.start_recording_input_text)
+        val layout = LayoutInflater.from(builder.context).inflate(R.layout.dialog_input_layout, null) as LinearLayout
+        layout.findViewById<TextInputLayout>(R.id.dialog_input_layout).apply {
+            hint = getString(R.string.start_recording_dialog_hint)
+        }
+        val editText = layout.findViewById<TextInputEditText>(R.id.dialog_input_text).apply {
+            isSingleLine = true
+        }
 
         builder
             .setTitle(R.string.start_recording_dialog_title)
-            .setView(inputLayout)
+            .setView(layout)
             .setPositiveButton(R.string.start_recording_dialog_positive) { _, _ ->
                 val input = editText.text?.toString()
                 val title = when {

@@ -37,8 +37,17 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     }
 
     val hasData = detailItems.map { items -> items.any { it is SensorDataDetailItem.Chart } }
+    val description: String?
+        get() = (detailItems.value?.first() as? SensorDataDetailItem.Description)?.description
 
     fun removeData() = viewModelScope.launch { sensorDataRepository.removeData(dataId) }
+    fun updateDescription(text: String?) = viewModelScope.launch {
+        val descriptionOrNull = when {
+            text.isNullOrBlank() -> null
+            else -> text
+        }
+        sensorDataRepository.updateSensorDataDescription(dataId, descriptionOrNull)
+    }
 
     companion object {
         private val TAG = SensorDataDetailViewModel::class.java.simpleName

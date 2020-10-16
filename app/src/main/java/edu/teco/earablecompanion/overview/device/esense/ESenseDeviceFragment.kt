@@ -53,8 +53,8 @@ class ESenseDeviceFragment : Fragment() {
         when (item.itemId) {
             R.id.remove_device -> MaterialAlertDialogBuilder(requireContext())
                 .setTitle(getString(R.string.remove_device_dialog_title))
-                .setPositiveButton(getString(R.string.remove_device_dialog_positive)) { _, _ -> disconnectDevice() }
-                .setNegativeButton(getString(R.string.remove_device_dialog_negative)) { d, _ -> d.dismiss() }
+                .setPositiveButton(getString(R.string.remove)) { _, _ -> disconnectDevice() }
+                .setNegativeButton(getString(R.string.cancel)) { d, _ -> d.dismiss() }
                 .show()
             else -> return false
         }
