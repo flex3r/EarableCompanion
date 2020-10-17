@@ -30,9 +30,8 @@ class OverviewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = OverviewAdapter { device ->
-            val name = device.name ?: getString(R.string.unknown_device_name)
             val action = when (device.type) {
-                EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(name, device.bluetoothDevice)
+                EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name ?: getString(R.string.unknown_esense_device_name), device.bluetoothDevice)
                 else -> null // TODO
             }
             action?.let { navController.navigate(it) }

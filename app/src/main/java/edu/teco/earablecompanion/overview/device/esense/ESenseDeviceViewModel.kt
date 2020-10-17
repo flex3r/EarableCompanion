@@ -17,10 +17,9 @@ class ESenseDeviceViewModel @ViewModelInject constructor(
 
     private val bluetoothDevice = savedStateHandle.get<BluetoothDevice>("device")
     val device: LiveData<ESenseDeviceItem> = liveData {
-        val name = bluetoothDevice?.name ?: "Unknown device"
         connectionRepository.deviceConfigs.collectLatest {
             val config = it[bluetoothDevice?.address] as? ESenseConfig ?: ESenseConfig()
-            emit(ESenseDeviceItem(name, config))
+            emit(ESenseDeviceItem(bluetoothDevice?.name, config))
         }
     }
 
