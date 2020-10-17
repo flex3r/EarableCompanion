@@ -18,18 +18,19 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
 
     private val dataId = savedStateHandle.get<Long>("dataId") ?: 0L
     val detailItems: LiveData<List<SensorDataDetailItem>> = liveData(viewModelScope.coroutineContext) {
+        val data = sensorDataRepository.getSensorDataById(dataId)
+        emit(listOf(data.toDescriptionItem(), SensorDataDetailItem.Loading))
+
         sensorDataRepository.getSensorDataWithEntries(dataId)
             .catch { Log.e(TAG, Log.getStackTraceString(it)) }
-            .collectLatest { data ->
+            .collectLatest { dataWithEntries ->
                 when {
-                    data.entries.isEmpty() -> emit(listOf(data.toDescriptionItem(), SensorDataDetailItem.NoData))
+                    dataWithEntries.entries.isEmpty() -> emit(listOf(dataWithEntries.toDescriptionItem(), SensorDataDetailItem.NoData))
                     else -> {
-                        val descriptionItem = data.toDescriptionItem()
-                        emit(listOf(descriptionItem, SensorDataDetailItem.Loading))
-
+                        val descriptionItem = dataWithEntries.toDescriptionItem()
                         measureTimeMillis {
                             val charts = mutableListOf<SensorDataDetailItem>()
-                            data.onEachDataTypeWithTitle { sensorDataType, list ->
+                            dataWithEntries.onEachDataTypeWithTitle { sensorDataType, list ->
                                 charts += SensorDataDetailItem.Chart(sensorDataType, list)
                             }
                             emit(listOf(descriptionItem) + charts)

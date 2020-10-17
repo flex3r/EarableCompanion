@@ -15,6 +15,9 @@ interface SensorDataDao {
     @Query("SELECT * FROM data_table")
     fun getAllFlow(): Flow<List<SensorData>>
 
+    @Query("SELECT * FROM data_table WHERE data_id = :id LIMIT 1")
+    suspend fun getById(id: Long): SensorData
+
     @Transaction
     @Query("SELECT * FROM data_table")
     suspend fun getAllWithEntries(): List<SensorDataWithEntries>
@@ -25,7 +28,7 @@ interface SensorDataDao {
     @Update
     suspend fun update(data: SensorData)
 
-    @Query("UPDATE data_table SET data_desc = :text WHERE data_id =:id")
+    @Query("UPDATE data_table SET data_desc = :text WHERE data_id = :id")
     suspend fun updateDescription(id: Long, text: String?)
 
     @Insert

@@ -20,7 +20,8 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     val isRecording: Boolean
         get() = activeRecording.value != null
 
-    suspend fun getSensorData(): List<SensorData> = sensorDataDao.getAll()
+    suspend fun getAllSensorData(): List<SensorData> = sensorDataDao.getAll()
+    suspend fun getSensorDataById(id: Long): SensorData = sensorDataDao.getById(id)
     fun getSensorDataFlow(): Flow<List<SensorData>> = sensorDataDao.getAllFlow()
 
     suspend fun getDataEntryCount(dataId: Long): Int = sensorDataDao.getEntryCountByDataId(dataId)
