@@ -11,7 +11,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -87,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     private fun startAndBindService() {
         Intent(this, EarableService::class.java).also {
             try {
-                ContextCompat.startForegroundService(this, it)
+                startService(it)
                 bindService(it, serviceConnection, Context.BIND_AUTO_CREATE)
             } catch (t: Throwable) {
                 Log.e(TAG, Log.getStackTraceString(t))

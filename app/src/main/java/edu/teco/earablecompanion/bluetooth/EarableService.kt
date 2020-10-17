@@ -102,7 +102,6 @@ class EarableService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground()
         return START_NOT_STICKY
     }
 
@@ -117,6 +116,7 @@ class EarableService : Service() {
     }
 
     fun startScan() {
+        startForeground()
         shouldIgnoreUnkownDevices = sharedPreferenceManager.getBoolean(getString(R.string.preference_ignore_unknown_devices_key), true)
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
@@ -131,6 +131,10 @@ class EarableService : Service() {
         if (isBluetoothEnabled) {
             scanner.stopScan(scanCallback)
             connectionRepository.clearScanResult()
+
+            if (!connectionRepository.hasConnectedDevicesOrIsConnecting) {
+                stopForeground(true)
+            }
         }
     }
 
@@ -150,6 +154,10 @@ class EarableService : Service() {
         gatts.remove(device)
         connectionRepository.removeConnectedDevice(device)
         connectionRepository.removeConfig(device.address)
+
+        if (!connectionRepository.hasConnectedDevicesOrIsConnecting) {
+            stopForeground(true)
+        }
     }
 
     fun setConfig(device: BluetoothDevice, config: Config): Boolean {
@@ -277,14 +285,19 @@ class EarableService : Service() {
                 BluetoothProfile.STATE_DISCONNECTED -> {
                     characteristics.remove(gatt.device)
                     gatts.remove(gatt.device)
+
+                    if (dataRepository.isRecording) {
+                        stopRecording(gatts.keys.toList(), connectionRepository.getCurrentConfigs())
+                    }
+
                     with(connectionRepository) {
                         updateConnectionEvent(ConnectionEvent.Empty)
                         removeConnectedDevice(gatt.device)
                         removeConfig(gatt.device.address)
-                    }
 
-                    if (dataRepository.isRecording) {
-                        stopRecording(gatts.keys.toList(), connectionRepository.getCurrentConfigs())
+                        if (!hasConnectedDevicesOrIsConnecting) {
+                            stopForeground(true)
+                        }
                     }
                 }
                 else -> Unit

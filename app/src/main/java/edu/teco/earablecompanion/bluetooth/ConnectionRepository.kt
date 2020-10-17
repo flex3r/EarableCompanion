@@ -24,6 +24,8 @@ class ConnectionRepository {
     private val _deviceConfigs = ConflatedBroadcastChannel<ConcurrentHashMap<String, Config>>().apply { offer(ConcurrentHashMap()) }
     val deviceConfigs: Flow<Map<String, Config>> get() = _deviceConfigs.asFlow()
 
+    val hasConnectedDevicesOrIsConnecting: Boolean
+        get() = _connectedDevices.value.isNotEmpty() || _connectionEvent.value.connectedOrConnecting
 
     @Synchronized
     fun updateScanResult(result: ScanResult) = _scanResult.updateValue {

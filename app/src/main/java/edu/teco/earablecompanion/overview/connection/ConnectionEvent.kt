@@ -8,4 +8,7 @@ sealed class ConnectionEvent {
     data class Pairing(val device: BluetoothDevice) : ConnectionEvent()
     data class Connected(val device: BluetoothDevice) : ConnectionEvent()
     data class Failed(val device: BluetoothDevice) : ConnectionEvent()
+
+    val connectedOrConnecting: Boolean
+        get() = this is Connecting || this is Pairing || this is Connected
 }
