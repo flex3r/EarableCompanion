@@ -6,16 +6,14 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.*
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.ParcelUuid
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
@@ -48,6 +46,8 @@ class EarableService : Service() {
     inner class LocalBinder(val service: EarableService = this@EarableService) : Binder()
 
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    private val sharedPreferenceManager: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    private var shouldIgnoreUnkownDevices = true
 
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
     private val characteristics = mutableMapOf<BluetoothDevice, Map<String, BluetoothGattCharacteristic>>()
@@ -117,6 +117,7 @@ class EarableService : Service() {
     }
 
     fun startScan() {
+        shouldIgnoreUnkownDevices = sharedPreferenceManager.getBoolean(getString(R.string.preference_ignore_unknown_devices_key), true)
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
             .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
@@ -231,8 +232,9 @@ class EarableService : Service() {
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            if (result.scanRecord?.serviceUuids?.any { SERVICE_UUID_FILTER.contains(it) } == true)
+            if (result.containsBlacklistedUuid || (shouldIgnoreUnkownDevices && result.device.name == null)) {
                 return
+            }
 
             when (callbackType) {
                 ScanSettings.CALLBACK_TYPE_ALL_MATCHES -> scope.launch {
@@ -361,10 +363,13 @@ class EarableService : Service() {
         private const val CHANNEL_ID_DEFAULT = "edu.teco.earablecompanion.default"
         private const val NOTIFICATION_ID = 77777
         private const val NOTIFICATION_START_INTENT_CODE = 66666
+
         private val SERVICE_UUID_FILTER = listOf(
             ParcelUuid.fromString("0000fd6f-0000-1000-8000-00805f9b34fb"), // Contact tracing
             ParcelUuid.fromString("0000fe9f-0000-1000-8000-00805f9b34fb"), // Google
         )
+        private val ScanResult.containsBlacklistedUuid: Boolean
+            get() = scanRecord?.serviceUuids?.any { SERVICE_UUID_FILTER.contains(it) } == true
     }
 
 }

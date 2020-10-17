@@ -6,6 +6,9 @@
     <string name="preference_about_summary">EarableCompanion %s</string>
     <string name="preference_clear_data_header">Clear data</string>
     <string name="preference_clear_data_key" translatable="false">preference_clear_data_key</string>
+    <string name="preference_ignore_unknown_devices_key" translatable="false">preference_ignore_unknown_devices_key</string>
+    <string name="preference_ignore_unknown_devices_title">Ignore unknown devices</string>
+    <string name="preference_ignore_unknown_devices_summary">Don\'t show devices without a name during scan</string>
 
     <string name="data_created_at">Created at %s</string>
     <string name="data_duration">Duration: %s</string>
