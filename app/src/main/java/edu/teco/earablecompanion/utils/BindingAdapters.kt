@@ -1,11 +1,9 @@
 package edu.teco.earablecompanion.utils
 
 import android.content.Context
-import android.graphics.Color
 import android.text.format.DateUtils
 import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.core.content.res.use
 import androidx.databinding.BindingAdapter
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.YAxis

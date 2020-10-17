@@ -23,7 +23,7 @@ sealed class OverviewItem {
         }
     }
 
-    data class Recording(val startedAt: LocalDateTime, val devices: List<BluetoothDevice>): OverviewItem() {
+    data class Recording(val startedAt: LocalDateTime, val devices: List<BluetoothDevice>) : OverviewItem() {
         companion object {
             fun SensorDataRecording.toOverviewItem() = Recording(
                 startedAt = data.createdAt,

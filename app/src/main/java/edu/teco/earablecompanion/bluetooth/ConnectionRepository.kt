@@ -54,6 +54,7 @@ class ConnectionRepository {
             else -> this[address] = block()
         }
     }
+
     fun getCurrentConfigs() = _deviceConfigs.value
     fun getConfigOrNull(address: String) = _deviceConfigs.value[address]
 

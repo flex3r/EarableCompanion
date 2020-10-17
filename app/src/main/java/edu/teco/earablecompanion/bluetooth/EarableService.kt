@@ -371,10 +371,8 @@ class EarableService : Service() {
                         }
                     }
                 }
-                ESenseConfig.ACC_OFFSET_UUID -> {
-                    connectionRepository.updateConfig(gatt.device.address) {
-                        (this as? ESenseConfig)?.setAccOffset(characteristic.value)
-                    }
+                ESenseConfig.ACC_OFFSET_UUID -> connectionRepository.updateConfig(gatt.device.address) {
+                    (this as? ESenseConfig)?.setAccOffset(characteristic.value)
                 }
                 else -> Unit
             }

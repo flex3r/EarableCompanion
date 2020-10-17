@@ -20,11 +20,11 @@
                 android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/sensor_data_overview_no_data_icon_description"
                 android:src="@drawable/ic_baseline_save_24"
-                app:tint="?attr/colorSecondary"
                 app:layout_constraintBottom_toBottomOf="@id/sensor_data_overview_no_data_text"
                 app:layout_constraintEnd_toStartOf="@id/sensor_data_overview_no_data_text"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/sensor_data_overview_no_data_text" />
+                app:layout_constraintTop_toTopOf="@id/sensor_data_overview_no_data_text"
+                app:tint="?attr/colorSecondary" />
 
             <TextView
                 android:id="@+id/sensor_data_overview_no_data_text"
