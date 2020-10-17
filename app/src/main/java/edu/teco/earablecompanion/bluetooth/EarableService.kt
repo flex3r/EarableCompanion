@@ -56,14 +56,26 @@ class EarableService : Service() {
         bluetoothManager.adapter
     }
     private val scanner: BluetoothLeScannerCompat by lazy { BluetoothLeScannerCompat.getScanner() }
-    private val bluetoothStateReceiver = object : BroadcastReceiver() {
+    private val bluetoothDeviceStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != BluetoothDevice.ACTION_BOND_STATE_CHANGED) return
             val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
-            when (intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, 0)) {
+            when (intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)) {
                 BluetoothDevice.BOND_BONDING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Pairing(device))
                 BluetoothDevice.BOND_BONDED -> device.connect(this@EarableService, GattCallback())
                 else -> Unit
+            }
+        }
+    }
+
+    private val bluetoothStateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != BluetoothAdapter.ACTION_STATE_CHANGED) return
+            when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
+                BluetoothAdapter.STATE_TURNING_OFF -> {
+                    stopScan()
+                    connectionRepository.updateConnectionEvent(ConnectionEvent.Failed)
+                }
             }
         }
     }
@@ -88,7 +100,8 @@ class EarableService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        registerReceiver(bluetoothStateReceiver, IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED))
+        registerReceiver(bluetoothDeviceStateReceiver, IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED))
+        registerReceiver(bluetoothStateReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             val name = getString(R.string.app_name)
@@ -107,6 +120,7 @@ class EarableService : Service() {
 
     override fun onDestroy() {
         scope.cancel()
+        unregisterReceiver(bluetoothDeviceStateReceiver)
         unregisterReceiver(bluetoothStateReceiver)
         closeConnections()
 
@@ -128,13 +142,11 @@ class EarableService : Service() {
     }
 
     fun stopScan() {
-        if (isBluetoothEnabled) {
-            scanner.stopScan(scanCallback)
-            connectionRepository.clearScanResult()
+        scanner.stopScan(scanCallback)
+        connectionRepository.clearScanResult()
 
-            if (!connectionRepository.hasConnectedDevicesOrIsConnecting) {
-                stopForeground(true)
-            }
+        if (!connectionRepository.hasConnectedDevicesOrIsConnecting) {
+            stopForeground(true)
         }
     }
 
@@ -253,6 +265,8 @@ class EarableService : Service() {
 
         override fun onScanFailed(errorCode: Int) {
             Log.e(TAG, "Scan failed: $errorCode")
+            stopScan()
+            connectionRepository.updateConnectionEvent(ConnectionEvent.Failed)
         }
     }
 

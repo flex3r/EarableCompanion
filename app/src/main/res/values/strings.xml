@@ -22,10 +22,10 @@
     <string name="connection_device_icon_description">Device icon</string>
     <string name="connection_handle_icon_description">Bottomsheet handle</string>
     <string name="connection_header_text">Searching for earables</string>
-    <string name="connection_header_text_connected">Connected to %s</string>
+    <string name="connection_snackbar_text_connected">Connected to %s</string>
     <string name="connection_header_text_connecting">Connecting to %s</string>
     <string name="connection_header_text_pairing">Pairing with %s</string>
-    <string name="connection_header_text_failed">Failed to connect to %s</string>
+    <string name="connection_snackbar_text_failed">An error occurred</string>
     <string name="sample_rate_text">Sample rate</string>
     <string name="sample_rate_label_formatter">%d Hz</string>
     <string name="acc_enabled_text">Accelerometer enabled</string>

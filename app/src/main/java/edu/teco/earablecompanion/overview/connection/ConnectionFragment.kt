@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -85,16 +86,22 @@ class ConnectionFragment : BottomSheetDialogFragment() {
 
     private fun handleConnectionEvent(event: ConnectionEvent) {
         when (event) {
-            is ConnectionEvent.Connected -> {
-                (parentFragment as? OverviewFragment)?.showSnackbar(getString(R.string.connection_header_text_connected, event.device.name ?: "unknown device"))
-                requireDialog().cancel()
-                viewModel.clearConnectionEvent()
-            }
-            is ConnectionEvent.Pairing -> binding.connectionHeaderText.text = getString(R.string.connection_header_text_pairing, event.device.name ?: "unknown device")
-            is ConnectionEvent.Connecting -> binding.connectionHeaderText.text = getString(R.string.connection_header_text_connecting, event.device.name ?: "unknown device")
-            is ConnectionEvent.Failed -> (parentFragment as? OverviewFragment)?.showSnackbar(getString(R.string.connection_header_text_failed, event.device.name ?: "unknown device"))
+            is ConnectionEvent.Connected -> showSnackbarAndCancelDialog(formatDeviceName(R.string.connection_snackbar_text_connected, event.device.name))
+            is ConnectionEvent.Pairing -> binding.connectionHeaderText.text = formatDeviceName(R.string.connection_header_text_pairing, event.device.name)
+            is ConnectionEvent.Connecting -> binding.connectionHeaderText.text = formatDeviceName(R.string.connection_header_text_connecting, event.device.name)
+            is ConnectionEvent.Failed -> showSnackbarAndCancelDialog(getString(R.string.connection_snackbar_text_failed))
             else -> binding.connectionHeaderText.text = getString(R.string.connection_header_text)
         }
+    }
+
+    private fun formatDeviceName(@StringRes stringFormatRes: Int, name: String?): String {
+        return getString(stringFormatRes, name ?: getString(R.string.unknown_device_name))
+    }
+
+    private fun showSnackbarAndCancelDialog(text: String) {
+        (parentFragment as? OverviewFragment)?.showSnackbar(text)
+        requireDialog().cancel()
+        viewModel.clearConnectionEvent()
     }
 
     companion object {
