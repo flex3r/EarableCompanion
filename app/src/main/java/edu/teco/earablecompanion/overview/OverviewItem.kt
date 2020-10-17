@@ -10,10 +10,10 @@ sealed class OverviewItem {
 
     object NoDevices : OverviewItem()
 
-    data class Device(val name: String, val address: String, val bluetoothDevice: BluetoothDevice, val type: EarableType) : OverviewItem() {
+    data class Device(val name: String?, val address: String, val bluetoothDevice: BluetoothDevice, val type: EarableType) : OverviewItem() {
         companion object {
             private fun BluetoothDevice.toOverviewItem() = Device(
-                name = name ?: "Unknown device",
+                name = name,
                 address = address,
                 bluetoothDevice = this,
                 type = earableType

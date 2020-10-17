@@ -68,6 +68,7 @@
     <string name="overview_no_devices_text">Start connecting your earables with the button below</string>
     <string name="sensor_data_overview_data_icon_description">Data chart icon</string>
     <string name="overview_fragment_title">Devices</string>
+    <string name="overview_device_unkown">Unknown device</string>
     <string name="sensor_data_overview_fragment_title">Data</string>
     <string name="settings_fragment_title">Settings</string>
     <string name="remove_device_item_title">Remove Device</string>
@@ -80,7 +81,7 @@
     <string name="clear_data_dialog_title">Are you sure you want to clear all data?</string>
     <string name="clear_data_dialog_positive">Clear data</string>
     <string name="clear_data_dialog_negative">Cancel</string>
-    <string name="earable_esense_description">Available sensors:\n- Accelerometer\n- Gyrosensor\n- Button presses</string>
+    <string name="earable_esense_description">Supported sensors:\n- Accelerometer\n- Gyrosensor\n- Button presses</string>
     <string name="config_saved_successful">Successfully saved configuration on device</string>
     <string name="config_saved_failed">Failed to save configuration on device</string>
     <string name="esense_device_save_fab_description">Save configuration to device</string>

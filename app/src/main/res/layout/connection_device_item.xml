@@ -39,7 +39,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center_horizontal"
-                android:text="@{item.name}"
+                android:text="@{item.name == null ? @string/overview_device_unkown : item.name}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintBottom_toTopOf="@id/connection_device_address"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -40,7 +40,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="16dp"
                 android:gravity="center_horizontal"
-                android:text="@{device.name}"
+                android:text="@{device.name == null ? @string/overview_device_unkown : device.name}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintBottom_toTopOf="@id/overview_device_address"
                 app:layout_constraintEnd_toEndOf="parent"
