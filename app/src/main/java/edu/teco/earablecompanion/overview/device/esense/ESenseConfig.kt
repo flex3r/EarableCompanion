@@ -13,6 +13,7 @@ data class ESenseConfig(
     var sampleRate: Int = 50,
     var accEnabled: Boolean = true,
     var gyroEnabled: Boolean = true,
+    var buttonEnabled: Boolean = true,
     var accRange: AccRange = AccRange.G_4,
     var gyroRange: GyroRange = GyroRange.DEG_500,
     var accLPF: AccLPF = AccLPF.BW_5,
@@ -22,7 +23,7 @@ data class ESenseConfig(
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
     override val configCharacteristic = CONFIG_UUID
-    override val sensorCharacteristic = SENSOR_UUID
+    override val sensorCharacteristics = listOf(SENSOR_UUID, BUTTON_UUID)
     override val notificationDescriptor: UUID = UUID.fromString(NOTIFICATION_DESCRIPTOR_UUID)
 
     override val sensorConfigCharacteristicData: ByteArray
@@ -48,25 +49,10 @@ data class ESenseConfig(
         gyroLPF = parseGyroLPF(bytes)
     }
 
-    override fun parseSensorValues(bytes: ByteArray): SensorDataEntry? {
-        if (!checkCheckSum(bytes, 2)) return null
-
-        val entry = SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()))
-        if (accEnabled) {
-            val (accX, accY, accZ) = bytes.parseAccSensorData()
-            entry.accX = accX
-            entry.accY = accY
-            entry.accZ = accZ
-        }
-
-        if (gyroEnabled) {
-            val (gyroX, gyroY, gyroZ) = bytes.parseGyroSensorData()
-            entry.gyroX = gyroX
-            entry.gyroY = gyroY
-            entry.gyroZ = gyroZ
-        }
-        
-        return entry
+    override fun parseSensorValues(bytes: ByteArray, uuid: String): SensorDataEntry? = when(uuid) {
+        SENSOR_UUID -> parseSensorData(bytes)
+        BUTTON_UUID -> parseButtonData(bytes)
+        else -> null
     }
 
     constructor(bytes: ByteArray) : this(
@@ -154,6 +140,34 @@ data class ESenseConfig(
         }
     }
 
+    private fun parseButtonData(bytes: ByteArray): SensorDataEntry? {
+        if (!checkCheckSum(bytes, 1)) return null
+
+        val pressed = bytes[3].toDouble()
+        return SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()), buttonPressed = pressed)
+    }
+
+    private fun parseSensorData(bytes: ByteArray): SensorDataEntry? {
+        if (!checkCheckSum(bytes, 2)) return null
+
+        val entry = SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()))
+        if (accEnabled) {
+            val (accX, accY, accZ) = bytes.parseAccSensorData()
+            entry.accX = accX
+            entry.accY = accY
+            entry.accZ = accZ
+        }
+
+        if (gyroEnabled) {
+            val (gyroX, gyroY, gyroZ) = bytes.parseGyroSensorData()
+            entry.gyroX = gyroX
+            entry.gyroY = gyroY
+            entry.gyroZ = gyroZ
+        }
+
+        return entry
+    }
+
     private fun ByteArray.parseAccSensorData(): Triple<Double, Double, Double> {
         val x = (((this[10] shl 8) or (this[11] and 0xff)) / accSensitivityFactor) + accOffset.first
         val y = (((this[12] shl 8) or (this[13] and 0xff)) / accSensitivityFactor) + accOffset.second
@@ -180,6 +194,7 @@ data class ESenseConfig(
         const val SENSOR_CONFIG_UUID = "0000ff0e-0000-1000-8000-00805f9b34fb"
         const val CONFIG_UUID = "0000ff07-0000-1000-8000-00805f9b34fb"
         const val ACC_OFFSET_UUID = "0000ff0d-0000-1000-8000-00805f9b34fb"
+        const val BUTTON_UUID = "0000ff09-0000-1000-8000-00805f9b34fb"
 
         private fun parseAccRange(data: ByteArray): AccRange = AccRange.values()[(data[4] and 0x18) shr 3]
 

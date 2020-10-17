@@ -20,5 +20,6 @@ data class SensorDataEntry(
     @ColumnInfo(name = "entry_gyro_X") var gyroX: Double? = null,
     @ColumnInfo(name = "entry_gyro_Y") var gyroY: Double? = null,
     @ColumnInfo(name = "entry_gyro_Z") var gyroZ: Double?= null,
+    @ColumnInfo(name = "entry_button_pressed") var buttonPressed: Double? = null
     // TODO cosinuss
 )

@@ -11,8 +11,8 @@ abstract class Config {
     // Characteristic to enable sensor
     abstract val configCharacteristic: String
 
-    // Characteristic for receiving data
-    abstract val sensorCharacteristic: String
+    // Characteristics for receiving data
+    abstract val sensorCharacteristics: List<String>
 
     abstract val notificationDescriptor: UUID
 
@@ -21,5 +21,5 @@ abstract class Config {
     abstract val disableSensorCharacteristicData: ByteArray
 
     abstract fun updateValues(bytes: ByteArray)
-    abstract fun parseSensorValues(bytes: ByteArray): SensorDataEntry?
+    abstract fun parseSensorValues(bytes: ByteArray, uuid: String): SensorDataEntry?
 }

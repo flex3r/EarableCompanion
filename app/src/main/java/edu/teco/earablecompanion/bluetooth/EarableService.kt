@@ -207,16 +207,20 @@ class EarableService : Service() {
         }
     }
 
-    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) {
-        val characteristic = characteristics[device]?.get(config.sensorCharacteristic) ?: return
-        val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
-        if (success) {
-            val descriptor = characteristic.getDescriptor(config.notificationDescriptor)
-            descriptor.value = when {
-                enable -> BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-                else -> BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) = scope.launch {
+        config.sensorCharacteristics.forEach { uuid ->
+            val characteristic = characteristics[device]?.get(uuid) ?: return@forEach
+            val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
+            if (success) {
+                val descriptor = characteristic.getDescriptor(config.notificationDescriptor)
+                descriptor.value = when {
+                    enable -> BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                    else -> BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
+                }
+                gatts[device]?.writeDescriptor(descriptor)
             }
-            gatts[device]?.writeDescriptor(descriptor)
+
+            delay(BASE_BLE_DELAY)
         }
     }
 
@@ -325,15 +329,10 @@ class EarableService : Service() {
             }
 
             val formattedCharacteristic = characteristic.uuid.toString().toLowerCase(Locale.ROOT)
-            when (gatt.device.earableType) {
-                EarableType.ESENSE -> if (formattedCharacteristic == ESenseConfig.SENSOR_UUID) {
-                    connectionRepository.getConfigOrNull(gatt.device.address)?.let {
-                        scope.launch {
-                            dataRepository.addSensorDataEntry(it, characteristic.value)
-                        }
-                    }
+            scope.launch {
+                connectionRepository.getConfigOrNull(gatt.device.address)?.let {
+                    dataRepository.addSensorDataEntry(it, characteristic.value, formattedCharacteristic)
                 }
-                else -> Unit
             }
         }
 
@@ -383,7 +382,7 @@ class EarableService : Service() {
         private fun readESenseCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>) = scope.launch {
             characteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.let { gatt.readCharacteristic(it) }
 
-            delay(250) // TODO replace with better mechanism
+            delay(BASE_BLE_DELAY) // TODO replace with better mechanism
             characteristics[ESenseConfig.ACC_OFFSET_UUID]?.let { gatt.readCharacteristic(it) }
         }
     }
@@ -395,6 +394,8 @@ class EarableService : Service() {
         private const val CHANNEL_ID_DEFAULT = "edu.teco.earablecompanion.default"
         private const val NOTIFICATION_ID = 77777
         private const val NOTIFICATION_START_INTENT_CODE = 66666
+
+        private const val BASE_BLE_DELAY = 250L
 
         private val SERVICE_UUID_FILTER = listOf(
             ParcelUuid.fromString("0000fd6f-0000-1000-8000-00805f9b34fb"), // Contact tracing

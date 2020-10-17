@@ -48,9 +48,9 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         _activeRecording.value = null
     }
 
-    suspend fun addSensorDataEntry(config: Config, bytes: ByteArray) {
+    suspend fun addSensorDataEntry(config: Config, bytes: ByteArray, uuid: String) {
         val dataId = activeRecording.value?.data?.dataId ?: return
-        val entry = config.parseSensorValues(bytes) ?: return
+        val entry = config.parseSensorValues(bytes, uuid) ?: return
         entry.dataId = dataId
 
         sensorDataDao.insertEntry(entry)
