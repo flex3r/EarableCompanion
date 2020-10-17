@@ -26,6 +26,8 @@ class ESenseDeviceViewModel @ViewModelInject constructor(
 
     fun setSampleRate(rate: Float) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? ESenseConfig)?.sampleRate = rate.toInt() }
 
+    fun setButtonPressEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? ESenseConfig)?.buttonEnabled = enabled }
+
     fun setAccelerometerEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? ESenseConfig)?.accEnabled = enabled }
     fun setAccelerometerRange(range: ESenseConfig.AccRange) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? ESenseConfig)?.accRange = range }
     fun setAccelerometerLPFBandwidth(bandwidth: ESenseConfig.AccLPF) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? ESenseConfig)?.accLPF = bandwidth }

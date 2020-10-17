@@ -29,6 +29,7 @@ class ESenseDeviceFragment : Fragment() {
             lifecycleOwner = this@ESenseDeviceFragment
 
             sampleRateSlider.setup()
+            buttonEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setButtonPressEnabled(isChecked) }
             setupAccelerometerSettings()
             setupGyroSensorSettings()
             esenseDeviceSaveFab.setOnClickListener {

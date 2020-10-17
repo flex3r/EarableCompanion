@@ -62,7 +62,39 @@
                     app:trackColorInactive="@color/material_slider_inactive_track_color_secondary" />
 
                 <View
-                    android:id="@+id/device_top_divider"
+                    android:id="@+id/esense_divider_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="4dp"
+                    android:background="?attr/colorControlHighlight"
+                    app:layout_constraintBottom_toTopOf="@id/button_enabled_switch"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sample_rate_slider" />
+
+                <TextView
+                    android:id="@+id/button_enabled_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="@string/button_enabled_text"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    app:layout_constraintBottom_toBottomOf="@id/button_enabled_switch"
+                    app:layout_constraintEnd_toStartOf="@id/button_enabled_switch"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/button_enabled_switch" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/button_enabled_switch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:checked="@{vm.device.config.buttonEnabled}"
+                    app:layout_constraintStart_toStartOf="@id/sample_rate_slider"
+                    app:layout_constraintTop_toBottomOf="@id/esense_divider_1" />
+
+                <View
+                    android:id="@+id/esense_divider_2"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="4dp"
@@ -70,7 +102,7 @@
                     app:layout_constraintBottom_toTopOf="@id/acc_enabled_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sample_rate_slider" />
+                    app:layout_constraintTop_toBottomOf="@id/button_enabled_switch" />
 
                 <TextView
                     android:id="@+id/acc_enabled_text"
@@ -91,7 +123,7 @@
                     android:layout_margin="16dp"
                     android:checked="@{vm.device.config.accEnabled}"
                     app:layout_constraintStart_toStartOf="@id/sample_rate_slider"
-                    app:layout_constraintTop_toBottomOf="@id/device_top_divider" />
+                    app:layout_constraintTop_toBottomOf="@id/esense_divider_2" />
 
                 <TextView
                     android:id="@+id/acc_range_text"
@@ -234,7 +266,7 @@
                 </RadioGroup>
 
                 <View
-                    android:id="@+id/device_bottom_divider"
+                    android:id="@+id/esense_divider_3"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginVertical="4dp"
@@ -263,7 +295,7 @@
                     android:layout_margin="16dp"
                     android:checked="@{vm.device.config.gyroEnabled}"
                     app:layout_constraintStart_toStartOf="@id/acc_low_pass_bandwidth_group"
-                    app:layout_constraintTop_toBottomOf="@id/device_bottom_divider" />
+                    app:layout_constraintTop_toBottomOf="@id/esense_divider_3" />
 
                 <TextView
                     android:id="@+id/gyro_range_text"

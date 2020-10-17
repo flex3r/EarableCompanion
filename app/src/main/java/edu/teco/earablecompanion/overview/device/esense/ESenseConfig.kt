@@ -49,7 +49,7 @@ data class ESenseConfig(
         gyroLPF = parseGyroLPF(bytes)
     }
 
-    override fun parseSensorValues(bytes: ByteArray, uuid: String): SensorDataEntry? = when(uuid) {
+    override fun parseSensorValues(bytes: ByteArray, uuid: String): SensorDataEntry? = when (uuid) {
         SENSOR_UUID -> parseSensorData(bytes)
         BUTTON_UUID -> parseButtonData(bytes)
         else -> null

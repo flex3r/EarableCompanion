@@ -28,6 +28,7 @@
     <string name="connection_snackbar_text_failed">An error occurred</string>
     <string name="sample_rate_text">Sample rate</string>
     <string name="sample_rate_label_formatter">%d Hz</string>
+    <string name="button_enabled_text">Button presses enabled</string>
     <string name="acc_enabled_text">Accelerometer enabled</string>
     <string name="acc_range_text">Accelerometer range</string>
     <string name="acc_range_2">± 2 g</string>
