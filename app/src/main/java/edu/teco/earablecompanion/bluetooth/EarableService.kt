@@ -275,12 +275,17 @@ class EarableService : Service() {
                 }
                 BluetoothProfile.STATE_CONNECTING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
                 BluetoothProfile.STATE_DISCONNECTED -> {
-                    // disconnected TODO stop recording if active
                     characteristics.remove(gatt.device)
                     gatts.remove(gatt.device)
-                    connectionRepository.updateConnectionEvent(ConnectionEvent.Empty)
-                    connectionRepository.removeConnectedDevice(gatt.device)
-                    connectionRepository.removeConfig(gatt.device.address)
+                    with(connectionRepository) {
+                        updateConnectionEvent(ConnectionEvent.Empty)
+                        removeConnectedDevice(gatt.device)
+                        removeConfig(gatt.device.address)
+                    }
+
+                    if (dataRepository.isRecording) {
+                        stopRecording(gatts.keys.toList(), connectionRepository.getCurrentConfigs())
+                    }
                 }
                 else -> Unit
             }

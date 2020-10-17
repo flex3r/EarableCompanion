@@ -17,6 +17,8 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
 
     private val _activeRecording = MutableStateFlow<SensorDataRecording?>(null)
     val activeRecording: StateFlow<SensorDataRecording?> = _activeRecording
+    val isRecording: Boolean
+        get() = activeRecording.value != null
 
     suspend fun getSensorData(): List<SensorData> = sensorDataDao.getAll()
     fun getSensorDataFlow(): Flow<List<SensorData>> = sensorDataDao.getAllFlow()
