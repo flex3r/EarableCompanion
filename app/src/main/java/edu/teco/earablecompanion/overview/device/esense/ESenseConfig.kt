@@ -1,12 +1,12 @@
 package edu.teco.earablecompanion.overview.device.esense
 
 import android.util.Log
-import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.and
 import edu.teco.earablecompanion.utils.shl
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 data class ESenseConfig(
@@ -51,17 +51,22 @@ data class ESenseConfig(
     override fun parseSensorValues(bytes: ByteArray): SensorDataEntry? {
         if (!checkCheckSum(bytes, 2)) return null
 
-        val (accX, accY, accZ) = bytes.parseAccSensorData()
-        val (gyroX, gyroY, gyroZ) = bytes.parseGyroSensorData()
-        return SensorDataEntry(
-            timestamp = LocalDateTime.now(),
-            accX = accX,
-            accY = accY,
-            accZ = accZ,
-            gyroX = gyroX,
-            gyroY = gyroY,
-            gyroZ = gyroZ
-        )
+        val entry = SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()))
+        if (accEnabled) {
+            val (accX, accY, accZ) = bytes.parseAccSensorData()
+            entry.accX = accX
+            entry.accY = accY
+            entry.accZ = accZ
+        }
+
+        if (gyroEnabled) {
+            val (gyroX, gyroY, gyroZ) = bytes.parseGyroSensorData()
+            entry.gyroX = gyroX
+            entry.gyroY = gyroY
+            entry.gyroZ = gyroZ
+        }
+        
+        return entry
     }
 
     constructor(bytes: ByteArray) : this(
