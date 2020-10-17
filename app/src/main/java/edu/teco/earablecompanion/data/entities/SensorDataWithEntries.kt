@@ -6,7 +6,6 @@ import com.github.mikephil.charting.data.Entry
 import edu.teco.earablecompanion.data.SensorDataType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.time.LocalDateTime
 
 data class SensorDataWithEntries(
     @Embedded val data: SensorData,
@@ -18,25 +17,25 @@ data class SensorDataWithEntries(
 ) {
 
     suspend inline fun onEachDataTypeWithTitle(crossinline action: (SensorDataType, List<Entry>) -> Unit) = withContext(Dispatchers.Default) {
+        val sorted = entries.sortedBy { it.timestamp }
         SensorDataType.values().forEach {
-            val mapped = mapByDataType(it)
+            val mapped = sorted.mapByDataType(it)
             if (mapped.isNotEmpty()) {
                 action(it, mapped)
             }
         }
     }
 
-    fun mapByDataType(dataType: SensorDataType): List<Entry> = when (dataType) {
+    fun List<SensorDataEntry>.mapByDataType(dataType: SensorDataType): List<Entry> = when (dataType) {
         // TODO handle timestamp in chart
-        SensorDataType.ACC_X -> entries.mapIndexedNotNull { index, entry -> entry.mapToEntry(index) { accX } }
-        SensorDataType.ACC_Y -> entries.mapIndexedNotNull { index, entry -> entry.mapToEntry(index) { accY } }
-        SensorDataType.ACC_Z -> entries.mapIndexedNotNull { index, entry -> entry.mapToEntry(index) { accZ } }
-        SensorDataType.GYRO_X -> entries.mapIndexedNotNull { index, entry -> entry.mapToEntry(index) { gyroX } }
-        SensorDataType.GYRO_Y -> entries.mapIndexedNotNull { index, entry -> entry.mapToEntry(index) { gyroY } }
-        SensorDataType.GYRO_Z -> entries.mapIndexedNotNull { index, entry -> entry.mapToEntry(index) { gyroZ } }
+        SensorDataType.ACC_X -> mapNotNull { entry -> entry.accX }.mapToEntry()
+        SensorDataType.ACC_Y -> mapNotNull { entry -> entry.accY }.mapToEntry()
+        SensorDataType.ACC_Z -> mapNotNull { entry -> entry.accZ }.mapToEntry()
+        SensorDataType.GYRO_X -> mapNotNull { entry -> entry.gyroX }.mapToEntry()
+        SensorDataType.GYRO_Y -> mapNotNull { entry -> entry.gyroY }.mapToEntry()
+        SensorDataType.GYRO_Z -> mapNotNull { entry -> entry.gyroZ }.mapToEntry()
+        SensorDataType.BUTTON -> mapNotNull { entry -> entry.buttonPressed }.mapToEntry()
     }
 
-    inline fun SensorDataEntry.mapToEntry(index: Int, selector: SensorDataEntry.() -> Double?): Entry? {
-        return selector()?.let { Entry(index.toFloat(), it.toFloat()) }
-    }
+    private fun List<Double>.mapToEntry() = mapIndexed { index, value -> Entry(index.toFloat(), value.toFloat()) }
 }

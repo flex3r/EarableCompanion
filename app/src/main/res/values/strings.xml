@@ -117,4 +117,5 @@
     <string name="sensor_data_type_gyro_x_title">Gyrosensor X</string>
     <string name="sensor_data_type_gyro_y_title">Gyrosensor Y</string>
     <string name="sensor_data_type_gyro_z_title">Gyrosensor Z</string>
+    <string name="sensor_data_type_button_title">Button presses</string>
 </resources>

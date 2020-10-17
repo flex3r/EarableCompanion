@@ -7,5 +7,6 @@ enum class SensorDataType {
     GYRO_X,
     GYRO_Y,
     GYRO_Z,
+    BUTTON,
     // TODO
 }

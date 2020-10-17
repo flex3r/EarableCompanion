@@ -23,7 +23,14 @@ data class ESenseConfig(
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
     override val configCharacteristic = CONFIG_UUID
-    override val sensorCharacteristics = listOf(SENSOR_UUID, BUTTON_UUID)
+    override val sensorCharacteristics: List<String>
+        get() = buildList {
+            if (buttonEnabled)
+                add(BUTTON_UUID)
+            if (accEnabled || gyroEnabled)
+                add(SENSOR_UUID)
+        }
+
     override val notificationDescriptor: UUID = UUID.fromString(NOTIFICATION_DESCRIPTOR_UUID)
 
     override val sensorConfigCharacteristicData: ByteArray

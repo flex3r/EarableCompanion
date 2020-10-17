@@ -21,6 +21,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.math.min
 
 @BindingAdapter("accRange")
 fun RadioGroup.setAccelerometerRange(range: ESenseConfig.AccRange) {
@@ -106,6 +107,7 @@ private fun SensorDataType.getTitle(context: Context): String = when (this) {
     SensorDataType.GYRO_X -> context.getString(R.string.sensor_data_type_gyro_x_title)
     SensorDataType.GYRO_Y -> context.getString(R.string.sensor_data_type_gyro_y_title)
     SensorDataType.GYRO_Z -> context.getString(R.string.sensor_data_type_gyro_z_title)
+    SensorDataType.BUTTON -> context.getString(R.string.sensor_data_type_button_title)
 }
 
 @BindingAdapter("dataTypeTitle")
@@ -125,7 +127,7 @@ fun LineChart.setDataEntries(entries: List<Entry>, dataType: SensorDataType) {
     }
 
     data = LineData(dataSet)
-    setVisibleXRange(50f, 250f)
+    setVisibleXRange(min(250f, entries.size.toFloat()), min(250f, entries.size.toFloat()))
     invalidate()
     //animateX(1000)
 }
