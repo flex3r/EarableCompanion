@@ -1,25 +1,34 @@
 package edu.teco.earablecompanion.overview.device
 
+import android.bluetooth.BluetoothGattCharacteristic
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import java.util.*
 
 abstract class Config {
 
     // Characteristic to change sensor configuration
-    abstract val sensorConfigCharacteristic: String
+    open val sensorConfigCharacteristic: String? = null
 
     // Characteristic to enable sensor
-    abstract val configCharacteristic: String
+    open val configCharacteristic: String? = null
 
-    // Characteristics for receiving data
-    abstract val sensorCharacteristics: List<String>
+    // Characteristics to read after service discovery
+    open val characteristicsToRead: List<String>? = null
 
-    abstract val notificationDescriptor: UUID
+    // Characteristics for receiving data and if data is received via indication instead of notification
+    abstract val sensorCharacteristics: List<Pair<String, Boolean>>
 
-    abstract val sensorConfigCharacteristicData: ByteArray
-    abstract val enableSensorCharacteristicData: ByteArray
-    abstract val disableSensorCharacteristicData: ByteArray
+    val notificationDescriptor: UUID
+        get() = UUID.fromString(NOTIFICATION_DESCRIPTOR_UUID)
 
-    abstract fun updateValues(bytes: ByteArray)
-    abstract fun parseSensorValues(bytes: ByteArray, uuid: String): SensorDataEntry?
+    open val sensorConfigCharacteristicData: ByteArray? = null
+    open val enableSensorCharacteristicData: ByteArray? = null
+    open val disableSensorCharacteristicData: ByteArray? = null
+
+    abstract fun updateValues(uuid: String, bytes: ByteArray): Config?
+    abstract fun parseSensorValues(characteristic: BluetoothGattCharacteristic): SensorDataEntry?
+
+    companion object {
+        private const val NOTIFICATION_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
+    }
 }

@@ -22,10 +22,12 @@ import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.device.Config
+import edu.teco.earablecompanion.overview.device.cosinuss.CosinussConfig
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
 import edu.teco.earablecompanion.utils.collectCharacteristics
 import edu.teco.earablecompanion.utils.connect
 import edu.teco.earablecompanion.utils.earableType
+import edu.teco.earablecompanion.utils.formattedUuid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -153,9 +155,10 @@ class EarableService : Service() {
     fun connectOrBond(device: BluetoothDevice) {
         connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(device))
 
-        device.connect(this, GattCallback())
-//        if (!device.createBond())
-//            device.connect(this, GattCallback())
+//        device.connect(this, GattCallback())
+        if (!device.createBond()) {
+            device.connect(this, GattCallback())
+        }
     }
 
     fun disconnect(device: BluetoothDevice) {
@@ -183,9 +186,10 @@ class EarableService : Service() {
     fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>) {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
-            val configCharacteristic = characteristics[device]?.get(config.configCharacteristic) ?: return@forEach
-            configCharacteristic.value = config.enableSensorCharacteristicData
-            gatts[device]?.writeCharacteristic(configCharacteristic)
+            characteristics[device]?.get(config.configCharacteristic)?.let { characteristic ->
+                characteristic.value = config.enableSensorCharacteristicData
+                gatts[device]?.writeCharacteristic(characteristic)
+            }
 
             setSensorNotificationEnabled(device, config, enable = true)
         }
@@ -197,9 +201,10 @@ class EarableService : Service() {
     fun stopRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
-            val configCharacteristic = characteristics[device]?.get(config.configCharacteristic) ?: return@forEach
-            configCharacteristic.value = config.disableSensorCharacteristicData
-            gatts[device]?.writeCharacteristic(configCharacteristic)
+            characteristics[device]?.get(config.configCharacteristic)?.let { characteristic ->
+                characteristic.value = config.disableSensorCharacteristicData
+                gatts[device]?.writeCharacteristic(characteristic)
+            }
 
             setSensorNotificationEnabled(device, config, enable = false)
         }
@@ -209,13 +214,13 @@ class EarableService : Service() {
     }
 
     private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) = scope.launch {
-        config.sensorCharacteristics.forEach { uuid ->
+        config.sensorCharacteristics.forEach { (uuid, isIndication) ->
             val characteristic = characteristics[device]?.get(uuid) ?: return@forEach
             val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
             if (success) {
                 val descriptor = characteristic.getDescriptor(config.notificationDescriptor)
                 descriptor.value = when {
-                    enable -> BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                    enable -> if (isIndication) BluetoothGattDescriptor.ENABLE_INDICATION_VALUE else BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                     else -> BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
                 }
                 gatts[device]?.writeDescriptor(descriptor)
@@ -281,14 +286,16 @@ class EarableService : Service() {
                 return
             }
 
+            val defaultConfig = when (gatt.device.earableType) {
+                EarableType.ESENSE -> ESenseConfig()
+                EarableType.COSINUSS -> CosinussConfig()
+                else -> return
+            }
+            connectionRepository.setConfig(gatt.device.address, defaultConfig)
+
             val deviceCharacteristics = gatt.collectCharacteristics()
             characteristics[gatt.device] = deviceCharacteristics
-
-            when (gatt.device.earableType) {
-                EarableType.ESENSE -> readESenseCharacteristics(gatt, deviceCharacteristics)
-                else -> Unit // TODO
-            }
-
+            readCharacteristics(gatt, deviceCharacteristics, defaultConfig)
         }
 
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -329,10 +336,9 @@ class EarableService : Service() {
                 return
             }
 
-            val formattedCharacteristic = characteristic.uuid.toString().toLowerCase(Locale.ROOT)
             scope.launch {
                 connectionRepository.getConfigOrNull(gatt.device.address)?.let {
-                    dataRepository.addSensorDataEntry(it, characteristic.value, formattedCharacteristic)
+                    dataRepository.addSensorDataEntryFromCharacteristic(it, characteristic)
                 }
             }
         }
@@ -343,10 +349,7 @@ class EarableService : Service() {
                 return
             }
 
-            when (gatt.device.earableType) {
-                EarableType.ESENSE -> handleESenseCharacteristics(gatt, characteristic)
-                else -> Unit
-            }
+            updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
@@ -355,34 +358,20 @@ class EarableService : Service() {
                 return
             }
 
-            when (gatt.device.earableType) {
-                EarableType.ESENSE -> handleESenseCharacteristics(gatt, characteristic)
-                else -> Unit
-            }
+            updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
         }
 
-        private fun handleESenseCharacteristics(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
-            when (characteristic.uuid.toString().toLowerCase(Locale.ROOT)) {
-                ESenseConfig.SENSOR_CONFIG_UUID -> {
-                    val bytes = characteristic.value
-                    if (ESenseConfig.checkCheckSum(bytes, index = 1)) {
-                        connectionRepository.setOrUpdateConfigFromBytes(gatt.device.address, bytes) {
-                            ESenseConfig(bytes)
-                        }
-                    }
-                }
-                ESenseConfig.ACC_OFFSET_UUID -> connectionRepository.updateConfig(gatt.device.address) {
-                    (this as? ESenseConfig)?.setAccOffset(characteristic.value)
-                }
-                else -> Unit
-            }
+        private fun updateConfig(gatt: BluetoothGatt, uuid: String, bytes: ByteArray) {
+            val address = gatt.device.address
+
+            connectionRepository.updateConfigFromBytes(address, uuid, bytes)
         }
 
-        private fun readESenseCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>) = scope.launch {
-            characteristics[ESenseConfig.SENSOR_CONFIG_UUID]?.let { gatt.readCharacteristic(it) }
-
-            delay(BASE_BLE_DELAY) // TODO replace with better mechanism
-            characteristics[ESenseConfig.ACC_OFFSET_UUID]?.let { gatt.readCharacteristic(it) }
+        private fun readCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>, config: Config) = scope.launch {
+            config.characteristicsToRead?.forEach { uuid ->
+                characteristics[uuid]?.let { gatt.readCharacteristic(it) }
+                delay(BASE_BLE_DELAY)
+            }
         }
     }
 

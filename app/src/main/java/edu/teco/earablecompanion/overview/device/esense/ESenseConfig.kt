@@ -1,13 +1,14 @@
 package edu.teco.earablecompanion.overview.device.esense
 
+import android.bluetooth.BluetoothGattCharacteristic
 import android.util.Log
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.and
+import edu.teco.earablecompanion.utils.formattedUuid
 import edu.teco.earablecompanion.utils.shl
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.*
 
 data class ESenseConfig(
     var sampleRate: Int = 50,
@@ -23,15 +24,14 @@ data class ESenseConfig(
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
     override val configCharacteristic = CONFIG_UUID
-    override val sensorCharacteristics: List<String>
+    override val characteristicsToRead = listOf(SENSOR_CONFIG_UUID, ACC_OFFSET_UUID)
+    override val sensorCharacteristics: List<Pair<String, Boolean>>
         get() = buildList {
             if (buttonEnabled)
-                add(BUTTON_UUID)
+                add(BUTTON_UUID to false)
             if (accEnabled || gyroEnabled)
-                add(SENSOR_UUID)
+                add(SENSOR_UUID to false)
         }
-
-    override val notificationDescriptor: UUID = UUID.fromString(NOTIFICATION_DESCRIPTOR_UUID)
 
     override val sensorConfigCharacteristicData: ByteArray
         get() = byteArrayOf(0x59, 0x00, 0x04, 0x06, 0x08, 0x08, 0x06).apply {
@@ -49,25 +49,17 @@ data class ESenseConfig(
     override val disableSensorCharacteristicData: ByteArray
         get() = byteArrayOf(0x53, 0x02, 0x02, 0x00, 0x00)
 
-    override fun updateValues(bytes: ByteArray) {
-        accRange = parseAccRange(bytes)
-        gyroRange = parseGyroRange(bytes)
-        accLPF = parseAccLPF(bytes)
-        gyroLPF = parseGyroLPF(bytes)
-    }
-
-    override fun parseSensorValues(bytes: ByteArray, uuid: String): SensorDataEntry? = when (uuid) {
-        SENSOR_UUID -> parseSensorData(bytes)
-        BUTTON_UUID -> parseButtonData(bytes)
+    override fun updateValues(uuid: String, bytes: ByteArray): Config? = when (uuid) {
+        SENSOR_CONFIG_UUID -> setConfig(bytes)
+        ACC_OFFSET_UUID -> setAccOffset(bytes)
         else -> null
     }
 
-    constructor(bytes: ByteArray) : this(
-        accRange = parseAccRange(bytes),
-        gyroRange = parseGyroRange(bytes),
-        accLPF = parseAccLPF(bytes),
-        gyroLPF = parseGyroLPF(bytes)
-    )
+    override fun parseSensorValues(characteristic: BluetoothGattCharacteristic): SensorDataEntry? = when (characteristic.formattedUuid) {
+        SENSOR_UUID -> parseSensorData(characteristic.value)
+        BUTTON_UUID -> parseButtonData(characteristic.value)
+        else -> null
+    }
 
     // +-g
     enum class AccRange {
@@ -105,7 +97,7 @@ data class ESenseConfig(
             GyroRange.DEG_2000 -> 16.4
         }
 
-    fun setAccOffset(bytes: ByteArray) {
+    private fun setAccOffset(bytes: ByteArray): ESenseConfig? {
         if (checkCheckSum(bytes, 1)) {
             // "The values for the accelerometer are in ±16G format, therefore 1g = 2048 read from the registers"
             val x = ((bytes[9] shl 8) or (bytes[10] and 0xff)) / 2048.0
@@ -114,7 +106,22 @@ data class ESenseConfig(
 
             accOffset = Triple(x, y, z)
             Log.i(TAG, "Parsed new accOffset $accOffset")
+            return this
         }
+
+        return null
+    }
+
+    private fun setConfig(bytes: ByteArray): ESenseConfig? {
+        if (checkCheckSum(bytes, index = 1)) {
+            accRange = parseAccRange(bytes)
+            gyroRange = parseGyroRange(bytes)
+            accLPF = parseAccLPF(bytes)
+            gyroLPF = parseGyroLPF(bytes)
+            return this
+        }
+
+        return null
     }
 
     // [4:3] -> 11100111 -> 0xE7
@@ -150,7 +157,7 @@ data class ESenseConfig(
     private fun parseButtonData(bytes: ByteArray): SensorDataEntry? {
         if (!checkCheckSum(bytes, 1)) return null
 
-        val pressed = bytes[3].toDouble()
+        val pressed = bytes[3].toInt()
         return SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()), buttonPressed = pressed)
     }
 
@@ -196,12 +203,11 @@ data class ESenseConfig(
     companion object {
         private val TAG = ESenseConfig::class.java.simpleName
 
-        private const val NOTIFICATION_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
-        const val SENSOR_UUID = "0000ff08-0000-1000-8000-00805f9b34fb"
-        const val SENSOR_CONFIG_UUID = "0000ff0e-0000-1000-8000-00805f9b34fb"
-        const val CONFIG_UUID = "0000ff07-0000-1000-8000-00805f9b34fb"
-        const val ACC_OFFSET_UUID = "0000ff0d-0000-1000-8000-00805f9b34fb"
-        const val BUTTON_UUID = "0000ff09-0000-1000-8000-00805f9b34fb"
+        private const val SENSOR_UUID = "0000ff08-0000-1000-8000-00805f9b34fb"
+        private const val SENSOR_CONFIG_UUID = "0000ff0e-0000-1000-8000-00805f9b34fb"
+        private const val CONFIG_UUID = "0000ff07-0000-1000-8000-00805f9b34fb"
+        private const val ACC_OFFSET_UUID = "0000ff0d-0000-1000-8000-00805f9b34fb"
+        private const val BUTTON_UUID = "0000ff09-0000-1000-8000-00805f9b34fb"
 
         private fun parseAccRange(data: ByteArray): AccRange = AccRange.values()[(data[4] and 0x18) shr 3]
 

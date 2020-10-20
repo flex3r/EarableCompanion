@@ -37,5 +37,5 @@ data class SensorDataWithEntries(
         SensorDataType.BUTTON -> mapNotNull { entry -> entry.buttonPressed }.mapToEntry()
     }
 
-    private fun List<Double>.mapToEntry() = mapIndexed { index, value -> Entry(index.toFloat(), value.toFloat()) }
+    private fun List<Number>.mapToEntry() = mapIndexed { index, value -> Entry(index.toFloat(), value.toFloat()) }
 }

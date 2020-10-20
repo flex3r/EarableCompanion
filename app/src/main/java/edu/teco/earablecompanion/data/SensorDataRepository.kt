@@ -1,6 +1,7 @@
 package edu.teco.earablecompanion.data
 
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGattCharacteristic
 import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
@@ -49,9 +50,9 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         _activeRecording.value = null
     }
 
-    suspend fun addSensorDataEntry(config: Config, bytes: ByteArray, uuid: String) {
+    suspend fun addSensorDataEntryFromCharacteristic(config: Config, characteristic: BluetoothGattCharacteristic) {
         val dataId = activeRecording.value?.data?.dataId ?: return
-        val entry = config.parseSensorValues(bytes, uuid) ?: return
+        val entry = config.parseSensorValues(characteristic) ?: return
         entry.dataId = dataId
 
         sensorDataDao.insertEntry(entry)

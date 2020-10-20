@@ -47,12 +47,11 @@ class ConnectionRepository {
     fun removeConnectedDevice(device: BluetoothDevice) = _connectedDevices.updateValue { this.remove(device.address) }
 
     fun removeConfig(address: String) = _deviceConfigs.updateValue { this.remove(address) }
+    fun setConfig(address: String, config: Config) = _deviceConfigs.updateValue { this[address] = config }
     fun updateConfig(address: String?, action: Config.() -> Unit) = _deviceConfigs.updateValue { this[address]?.action() }
-    fun setOrUpdateConfigFromBytes(address: String, bytes: ByteArray, block: () -> Config) = _deviceConfigs.updateValue {
-        when {
-            containsKey(address) -> this[address]?.updateValues(bytes)
-            else -> this[address] = block()
-        }
+    fun updateConfigFromBytes(address: String, uuid: String, bytes: ByteArray) = _deviceConfigs.updateValue {
+        val config =  this[address] ?: return@updateValue
+        config.updateValues(uuid, bytes)?.let { this[address] = it }
     }
 
     fun getCurrentConfigs() = _deviceConfigs.value
