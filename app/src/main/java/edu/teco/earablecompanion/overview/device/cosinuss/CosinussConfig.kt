@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.util.Log
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.overview.device.Config
+import edu.teco.earablecompanion.utils.and
 import edu.teco.earablecompanion.utils.formattedUuid
 import java.math.BigInteger
 import java.time.LocalDateTime
@@ -32,7 +33,7 @@ data class CosinussConfig(
     }
 
     private fun parseHeartRate(characteristic: BluetoothGattCharacteristic): SensorDataEntry? {
-        val format = when (characteristic.properties and 0x01) {
+        val format = when (characteristic.value[0] and 0x01) {
             0x01 -> BluetoothGattCharacteristic.FORMAT_UINT16
             else -> BluetoothGattCharacteristic.FORMAT_UINT8
         }
@@ -44,7 +45,7 @@ data class CosinussConfig(
         val temp = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 1)
         if (temp.isNaN()) return null
 
-        val isCelsius = characteristic.properties and 0x01 == 0
+        val isCelsius = characteristic.value[0] and 0x01 == 0
         val tempInCelsius = when {
             isCelsius -> temp.toDouble()
             else -> temp.toCelsius
