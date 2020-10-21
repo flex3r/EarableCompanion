@@ -29,6 +29,8 @@ class ConnectionRepository {
 
     @Synchronized
     fun updateScanResult(result: ScanResult) = _scanResult.updateValue {
+        if (_connectedDevices.value.containsKey(result.device.address)) return@updateValue
+
         this[result.device.address] = result
         this.forEach { (address, currentResult) ->
             val elapsed = (result.timestampNanos - currentResult.timestampNanos).absoluteValue
