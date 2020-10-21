@@ -28,13 +28,15 @@ data class SensorDataWithEntries(
 
     fun List<SensorDataEntry>.mapByDataType(dataType: SensorDataType): List<Entry> = when (dataType) {
         // TODO handle timestamp in chart
-        SensorDataType.ACC_X -> mapNotNull { entry -> entry.accX }.mapToEntry()
-        SensorDataType.ACC_Y -> mapNotNull { entry -> entry.accY }.mapToEntry()
-        SensorDataType.ACC_Z -> mapNotNull { entry -> entry.accZ }.mapToEntry()
-        SensorDataType.GYRO_X -> mapNotNull { entry -> entry.gyroX }.mapToEntry()
-        SensorDataType.GYRO_Y -> mapNotNull { entry -> entry.gyroY }.mapToEntry()
-        SensorDataType.GYRO_Z -> mapNotNull { entry -> entry.gyroZ }.mapToEntry()
-        SensorDataType.BUTTON -> mapNotNull { entry -> entry.buttonPressed }.mapToEntry()
+        SensorDataType.ACC_X -> mapNotNull { it.accX }.mapToEntry()
+        SensorDataType.ACC_Y -> mapNotNull { it.accY }.mapToEntry()
+        SensorDataType.ACC_Z -> mapNotNull { it.accZ }.mapToEntry()
+        SensorDataType.GYRO_X -> mapNotNull {it.gyroX }.mapToEntry()
+        SensorDataType.GYRO_Y -> mapNotNull {it.gyroY }.mapToEntry()
+        SensorDataType.GYRO_Z -> mapNotNull {it.gyroZ }.mapToEntry()
+        SensorDataType.BUTTON -> mapNotNull {it.buttonPressed }.mapToEntry()
+        SensorDataType.HEART_RATE -> mapNotNull { it.heartRate }.mapToEntry()
+        SensorDataType.BODY_TEMPERATURE -> mapNotNull { it.bodyTemperature }.mapToEntry()
     }
 
     private fun List<Number>.mapToEntry() = mapIndexed { index, value -> Entry(index.toFloat(), value.toFloat()) }

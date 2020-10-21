@@ -10,6 +10,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataType
@@ -107,6 +108,16 @@ private fun SensorDataType.getTitle(context: Context): String = when (this) {
     SensorDataType.GYRO_Y -> context.getString(R.string.sensor_data_type_gyro_y_title)
     SensorDataType.GYRO_Z -> context.getString(R.string.sensor_data_type_gyro_z_title)
     SensorDataType.BUTTON -> context.getString(R.string.sensor_data_type_button_title)
+    SensorDataType.HEART_RATE -> context.getString(R.string.sensor_data_type_heart_rate_title)
+    SensorDataType.BODY_TEMPERATURE -> context.getString(R.string.sensor_data_type_body_temperature_title)
+}
+
+private fun SensorDataType.getUnit(context: Context): String = when (this) {
+    SensorDataType.ACC_X, SensorDataType.ACC_Y, SensorDataType.ACC_Z -> context.getString(R.string.sensor_data_type_acc_unit)
+    SensorDataType.GYRO_X, SensorDataType.GYRO_Y, SensorDataType.GYRO_Z -> context.getString(R.string.sensor_data_type_gyro_unit)
+    SensorDataType.HEART_RATE -> context.getString(R.string.sensor_data_type_heart_rate_unit)
+    SensorDataType.BODY_TEMPERATURE -> context.getString(R.string.sensor_data_type_body_temperature_unit)
+    SensorDataType.BUTTON -> ""
 }
 
 @BindingAdapter("dataTypeTitle")
@@ -123,6 +134,15 @@ fun LineChart.setDataEntries(entries: List<Entry>, dataType: SensorDataType) {
         setDrawCircles(false)
         lineWidth = 2f
         axisDependency = YAxis.AxisDependency.LEFT
+    }
+
+    val unit = dataType.getUnit(context)
+    axisLeft.valueFormatter = object : ValueFormatter() {
+        override fun getFormattedValue(value: Float): String = when (dataType) {
+            SensorDataType.HEART_RATE, SensorDataType.GYRO_X, SensorDataType.GYRO_Y, SensorDataType.GYRO_Z -> "${value.toInt()} $unit"
+            SensorDataType.BUTTON -> if (value == 1.0f) unit else ""
+            else -> "${String.format("%.3f", value)} $unit"
+        }
     }
 
     data = LineData(dataSet)

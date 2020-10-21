@@ -120,6 +120,13 @@
     <string name="sensor_data_type_gyro_y_title">Gyrosensor Y</string>
     <string name="sensor_data_type_gyro_z_title">Gyrosensor Z</string>
     <string name="sensor_data_type_button_title">Button presses</string>
+    <string name="sensor_data_type_heart_rate_title">Heart rate</string>
+    <string name="sensor_data_type_body_temperature_title">Body temperature</string>
+    <string name="sensor_data_type_acc_unit">g</string>
+    <string name="sensor_data_type_gyro_unit">deg/s</string>
+    <string name="sensor_data_type_button_unit">pressed</string>
+    <string name="sensor_data_type_heart_rate_unit">bpm</string>
+    <string name="sensor_data_type_body_temperature_unit">°C</string>
     <string name="overview_device_disconnect_text">Disconnect</string>
     <string name="heart_rate_enabled_text">Heart rate enabled</string>
     <string name="body_temperature_enabled_text">Body temperature enabled</string>

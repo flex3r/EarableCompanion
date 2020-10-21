@@ -8,5 +8,6 @@ enum class SensorDataType {
     GYRO_Y,
     GYRO_Z,
     BUTTON,
-    // TODO
+    HEART_RATE,
+    BODY_TEMPERATURE,
 }
