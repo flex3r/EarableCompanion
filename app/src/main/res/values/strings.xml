@@ -71,7 +71,7 @@
     <string name="overview_fragment_title">Devices</string>
     <string name="unknown_device_name">Unknown device</string>
     <string name="unknown_esense_device_name">eSense device</string>
-    <string name="unknown_cosinuss_device_name">eSense device</string>
+    <string name="unknown_cosinuss_device_name">cosinuss device</string>
     <string name="sensor_data_overview_fragment_title">Data</string>
     <string name="settings_fragment_title">Settings</string>
     <string name="remove_device_item_title">Remove Device</string>
