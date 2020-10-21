@@ -71,6 +71,7 @@
     <string name="overview_fragment_title">Devices</string>
     <string name="unknown_device_name">Unknown device</string>
     <string name="unknown_esense_device_name">eSense device</string>
+    <string name="unknown_cosinuss_device_name">eSense device</string>
     <string name="sensor_data_overview_fragment_title">Data</string>
     <string name="settings_fragment_title">Settings</string>
     <string name="remove_device_item_title">Remove Device</string>
@@ -87,7 +88,7 @@
     <string name="earable_cosinuss_description">Supported sensors:\n- Heart rate\n- Body temperature</string>
     <string name="config_saved_successful">Successfully saved configuration on device</string>
     <string name="config_saved_failed">Failed to save configuration on device</string>
-    <string name="esense_device_save_fab_description">Save configuration to device</string>
+    <string name="device_save_fab_description">Save configuration to device</string>
     <string name="radio_group_button_disabled">Disabled</string>
     <string name="record_fab_description">Start a recording</string>
     <string name="record_fab_text">Record</string>
@@ -120,4 +121,6 @@
     <string name="sensor_data_type_gyro_z_title">Gyrosensor Z</string>
     <string name="sensor_data_type_button_title">Button presses</string>
     <string name="overview_device_disconnect_text">Disconnect</string>
+    <string name="heart_rate_enabled_text">Heart rate enabled</string>
+    <string name="body_temperature_enabled_text">Body temperature enabled</string>
 </resources>

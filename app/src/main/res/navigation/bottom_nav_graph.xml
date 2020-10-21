@@ -20,12 +20,34 @@
                 android:name="device"
                 app:argType="android.bluetooth.BluetoothDevice" />
         </action>
+        <action
+            android:id="@+id/action_overviewFragment_to_cosinussDeviceFragment"
+            app:destination="@id/cosinussDeviceFragment">
+            <argument
+                android:name="name"
+                app:argType="string" />
+            <argument
+                android:name="device"
+                app:argType="android.bluetooth.BluetoothDevice" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/eSenseDeviceFragment"
         android:name="edu.teco.earablecompanion.overview.device.esense.ESenseDeviceFragment"
         android:label="{name}"
         tools:layout="@layout/esense_device_fragment">
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="device"
+            app:argType="android.bluetooth.BluetoothDevice" />
+    </fragment>
+    <fragment
+        android:id="@+id/cosinussDeviceFragment"
+        android:name="edu.teco.earablecompanion.overview.device.cosinuss.CosinussDeviceFragment"
+        android:label="{name}"
+        tools:layout="@layout/cosinuss_device_fragment">
         <argument
             android:name="name"
             app:argType="string" />

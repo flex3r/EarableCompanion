@@ -21,7 +21,6 @@
             android:layout_height="match_parent"
             android:padding="8dp">
 
-            <!--TODO disconnect button-->
             <ImageView
                 android:id="@+id/overview_device_icon"
                 android:layout_width="wrap_content"
