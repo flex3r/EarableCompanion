@@ -11,7 +11,8 @@ import edu.teco.earablecompanion.databinding.OverviewDeviceItemBinding
 import edu.teco.earablecompanion.databinding.OverviewNoDevicesItemBinding
 import edu.teco.earablecompanion.databinding.OverviewRecordItemBinding
 
-class OverviewAdapter(private val onClick: (item: OverviewItem.Device) -> Unit) : ListAdapter<OverviewItem, RecyclerView.ViewHolder>(DetectDiff()) {
+class OverviewAdapter(private val onDisconnect: (OverviewItem.Device) -> Unit, private val onClick: (item: OverviewItem.Device) -> Unit) :
+    ListAdapter<OverviewItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     class DeviceViewHolder(val binding: OverviewDeviceItemBinding) : RecyclerView.ViewHolder(binding.root)
     class NoDevicesViewHolder(binding: OverviewNoDevicesItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -34,8 +35,11 @@ class OverviewAdapter(private val onClick: (item: OverviewItem.Device) -> Unit) 
         when (holder) {
             is DeviceViewHolder -> {
                 val entry = getItem(position) as OverviewItem.Device
-                holder.binding.device = entry
-                holder.binding.root.setOnClickListener { onClick(entry) }
+                with(holder.binding) {
+                    device = entry
+                    root.setOnClickListener { onClick(entry) }
+                    overviewDeviceDisconnect.setOnClickListener { onDisconnect(entry) }
+                }
             }
             is RecordingViewHolder -> {
                 val entry = getItem(position) as OverviewItem.Recording

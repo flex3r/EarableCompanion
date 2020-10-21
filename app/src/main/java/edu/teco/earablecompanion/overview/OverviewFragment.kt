@@ -29,7 +29,7 @@ class OverviewFragment : Fragment() {
     private lateinit var binding: OverviewFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = OverviewAdapter { device ->
+        val adapter = OverviewAdapter(::disconnectDevice) { device ->
             val action = when (device.type) {
                 EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name ?: getString(R.string.unknown_esense_device_name), device.bluetoothDevice)
                 else -> null // TODO
@@ -68,6 +68,14 @@ class OverviewFragment : Fragment() {
     }
 
     fun showSnackbar(text: String) = Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT).show()
+
+    private fun disconnectDevice(item: OverviewItem.Device) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.remove_device_dialog_title))
+            .setPositiveButton(getString(R.string.remove)) { _, _ -> (activity as? MainActivity)?.earableService?.disconnect(item.bluetoothDevice) }
+            .setNegativeButton(getString(R.string.cancel)) { d, _ -> d.dismiss() }
+            .show()
+    }
 
     private fun showConnectionBottomSheet(view: View?) {
         viewModel.setConnectionOpen(true)

@@ -67,9 +67,21 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:description="@{device.type}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/overview_device_name"
+                app:layout_constraintEnd_toStartOf="@id/overview_device_disconnect"
                 app:layout_constraintStart_toStartOf="@id/overview_device_icon"
                 app:layout_constraintTop_toBottomOf="@id/overview_device_address" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/overview_device_disconnect"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/overview_device_disconnect_text"
+                app:icon="@drawable/ic_baseline_delete_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/overview_device_description" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>
