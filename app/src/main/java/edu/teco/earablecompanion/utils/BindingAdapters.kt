@@ -94,7 +94,8 @@ fun TextView.formatStartedLocalDateTime(localDateTime: LocalDateTime) {
 fun TextView.setEarableDescription(type: EarableType) {
     text = when (type) {
         EarableType.ESENSE -> context.getString(R.string.earable_esense_description)
-        else -> "" // TODO
+        EarableType.COSINUSS -> context.getString(R.string.earable_cosinuss_description)
+        EarableType.GENERIC -> ""
     }
 }
 
@@ -117,7 +118,7 @@ fun TextView.setDataTypeTitle(sensorDataType: SensorDataType) {
 fun LineChart.setDataEntries(entries: List<Entry>, dataType: SensorDataType) {
     val title = dataType.getTitle(context)
     val dataSet = LineDataSet(entries, title).apply {
-        color = context.themeColor(R.attr.colorSecondary) // TODO extract
+        color = context.themeColor(R.attr.colorSecondary)
         setDrawValues(false)
         setDrawCircles(false)
         lineWidth = 2f

@@ -32,7 +32,8 @@ class OverviewFragment : Fragment() {
         val adapter = OverviewAdapter(::disconnectDevice) { device ->
             val action = when (device.type) {
                 EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name ?: getString(R.string.unknown_esense_device_name), device.bluetoothDevice)
-                else -> null // TODO
+                EarableType.COSINUSS -> null // TODO
+                EarableType.GENERIC -> null
             }
             action?.let { navController.navigate(it) }
         }
