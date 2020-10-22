@@ -11,7 +11,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -110,36 +109,13 @@ class SensorDataDetailFragment : Fragment() {
 
     private fun handleExportEvent(event: SensorDataExportEvent) {
         when (event) {
-            is SensorDataExportEvent.Started -> {
-                binding.exportFab.hide()
-                binding.exportProgress.show()
-            }
-            is SensorDataExportEvent.Finished -> {
-                binding.exportProgress.hide()
-                showSnackbar(getString(R.string.export_file_finished)) {
-                    binding.exportFab.show()
-                }
-            }
-            is SensorDataExportEvent.Failed -> {
-                binding.exportProgress.hide()
-                showSnackbar(getString(R.string.export_file_export_error, event.cause)) {
-                    binding.exportFab.show()
-                }
-            }
+            is SensorDataExportEvent.Finished -> showSnackbar(getString(R.string.export_file_finished))
+            is SensorDataExportEvent.Failed -> showSnackbar(getString(R.string.export_file_export_error, event.cause))
+            else -> Unit
         }
     }
 
-    private fun showSnackbar(text: String, onDismissed: (() -> Unit)? = null) = Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT)
-        .apply {
-            onDismissed?.let {
-                addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
-                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                        onDismissed()
-                    }
-                })
-            }
-        }
-        .show()
+    private fun showSnackbar(text: String) = Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT).show()
 
     companion object {
         private val TAG = SensorDataDetailFragment::class.java.simpleName

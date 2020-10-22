@@ -9,6 +9,7 @@ import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailItem.Descript
 import edu.teco.earablecompanion.utils.ViewEventFlow
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.OutputStream
@@ -25,6 +26,12 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     }
 
     val exportEventFlow = ViewEventFlow<SensorDataExportEvent>()
+    val shouldShowProgress: LiveData<Boolean> = liveData {
+        emit(false)
+        exportEventFlow.collect {
+            emit(it is SensorDataExportEvent.Started)
+        }
+    }
 
     private val dataId = savedStateHandle.get<Long>("dataId") ?: 0L
     val detailItems: LiveData<List<SensorDataDetailItem>> = liveData(viewModelScope.coroutineContext) {

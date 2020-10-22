@@ -8,12 +8,10 @@ import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
 import edu.teco.earablecompanion.overview.device.Config
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
-import java.io.IOException
 import java.io.OutputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
