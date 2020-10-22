@@ -7,9 +7,14 @@ import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
 import edu.teco.earablecompanion.overview.device.Config
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.io.OutputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
@@ -26,7 +31,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     fun getSensorDataFlow(): Flow<List<SensorData>> = sensorDataDao.getAllFlow()
 
     suspend fun getDataEntryCount(dataId: Long): Int = sensorDataDao.getEntryCountByDataId(dataId)
-    suspend fun getSensorDataWithEntries(dataId: Long): Flow<SensorDataWithEntries> = sensorDataDao.getDataWithEntriesById(dataId)
+    suspend fun getSensorDataWithEntries(dataId: Long): Flow<SensorDataWithEntries> = sensorDataDao.getDataWithEntriesByIdFlow(dataId)
 
     suspend fun insertAll(data: List<SensorData>) = sensorDataDao.insertAll(data)
     suspend fun insertAllEntries(entries: List<SensorDataEntry>) = sensorDataDao.insertAllEntries(entries)
@@ -59,6 +64,18 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     }
 
     suspend fun updateSensorDataDescription(dataId: Long, text: String?) = sensorDataDao.updateDescription(dataId, text)
+
+    suspend fun exportData(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {
+        val dataWithEntries = sensorDataDao.getDataWithEntriesById(dataId)
+        outputStream.use { os ->
+            os.bufferedWriter().use { writer ->
+                writer.write(SensorDataEntry.CSV_HEADER_ROW)
+                dataWithEntries.entries.sortedBy { it.timestamp }.forEach {
+                    writer.write(it.asCsvEntry)
+                }
+            }
+        }
+    }
 
     companion object {
         private val TAG = SensorDataRecording::class.java.simpleName

@@ -9,30 +9,48 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataDetailFragmentBinding
+import edu.teco.earablecompanion.utils.CreateCsvDocumentContract
+import edu.teco.earablecompanion.utils.observe
 
 @AndroidEntryPoint
 class SensorDataDetailFragment : Fragment() {
+
     private val viewModel: SensorDataDetailViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
+    private val args: SensorDataDetailFragmentArgs by navArgs()
+    private lateinit var binding: SensorDataDetailFragmentBinding
+
+    private val createDocumentRegistration = registerForActivityResult(CreateCsvDocumentContract()) { result ->
+        when (result) {
+            null -> showSnackbar(getString(R.string.export_file_creation_error))
+            else -> requireContext().contentResolver.openOutputStream(result)?.let {
+                viewModel.exportData(it)
+            } ?: showSnackbar(getString(R.string.export_file_creation_error))
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = SensorDataDetailAdapter(::editDescription)
 
         viewModel.detailItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
+        observe(viewModel.exportEventFlow, ::handleExportEvent)
 
-        val binding = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
+        binding = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@SensorDataDetailFragment
             sensorDataDetailRecyclerview.adapter = adapter
             exportFab.setOnClickListener {
-                // TODO
+                createDocumentRegistration.launch("${args.dataTitle}.csv")
             }
         }
 
@@ -89,6 +107,39 @@ class SensorDataDetailFragment : Fragment() {
             .setNegativeButton(R.string.cancel) { d, _ -> d.dismiss() }
             .show()
     }
+
+    private fun handleExportEvent(event: SensorDataExportEvent) {
+        when (event) {
+            is SensorDataExportEvent.Started -> {
+                binding.exportFab.hide()
+                binding.exportProgress.show()
+            }
+            is SensorDataExportEvent.Finished -> {
+                binding.exportProgress.hide()
+                showSnackbar(getString(R.string.export_file_finished)) {
+                    binding.exportFab.show()
+                }
+            }
+            is SensorDataExportEvent.Failed -> {
+                binding.exportProgress.hide()
+                showSnackbar(getString(R.string.export_file_export_error, event.cause)) {
+                    binding.exportFab.show()
+                }
+            }
+        }
+    }
+
+    private fun showSnackbar(text: String, onDismissed: (() -> Unit)? = null) = Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT)
+        .apply {
+            onDismissed?.let {
+                addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        onDismissed()
+                    }
+                })
+            }
+        }
+        .show()
 
     companion object {
         private val TAG = SensorDataDetailFragment::class.java.simpleName

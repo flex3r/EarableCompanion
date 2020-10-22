@@ -51,7 +51,11 @@ interface SensorDataDao {
 
     @Transaction
     @Query("SELECT * FROM data_table WHERE data_id = :id")
-    fun getDataWithEntriesById(id: Long): Flow<SensorDataWithEntries>
+    fun getDataWithEntriesByIdFlow(id: Long): Flow<SensorDataWithEntries>
+
+    @Transaction
+    @Query("SELECT * FROM data_table WHERE data_id = :id")
+    suspend fun getDataWithEntriesById(id: Long): SensorDataWithEntries
 
     @Query("SELECT COUNT(data_entry_id) FROM data_entry_table WHERE data_id = :id")
     suspend fun getEntryCountByDataId(id: Long): Int

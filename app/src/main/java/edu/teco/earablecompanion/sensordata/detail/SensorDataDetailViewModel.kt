@@ -6,15 +6,25 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailItem.Description.Companion.toDescriptionItem
+import edu.teco.earablecompanion.utils.ViewEventFlow
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.io.OutputStream
 import kotlin.system.measureTimeMillis
 
 class SensorDataDetailViewModel @ViewModelInject constructor(
     private val sensorDataRepository: SensorDataRepository,
-    @Assisted savedStateHandle: SavedStateHandle
+    @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(TAG, Log.getStackTraceString(throwable))
+        exportEventFlow.postEvent(SensorDataExportEvent.Failed(throwable))
+    }
+
+    val exportEventFlow = ViewEventFlow<SensorDataExportEvent>()
 
     private val dataId = savedStateHandle.get<Long>("dataId") ?: 0L
     val detailItems: LiveData<List<SensorDataDetailItem>> = liveData(viewModelScope.coroutineContext) {
@@ -51,6 +61,12 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
             else -> text
         }
         sensorDataRepository.updateSensorDataDescription(dataId, descriptionOrNull)
+    }
+
+    fun exportData(outputStream: OutputStream) = viewModelScope.launch(exceptionHandler) {
+        exportEventFlow.postEvent(SensorDataExportEvent.Started)
+        sensorDataRepository.exportData(dataId, outputStream)
+        exportEventFlow.postEvent(SensorDataExportEvent.Finished)
     }
 
     companion object {

@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import edu.teco.earablecompanion.utils.zonedEpochMilli
 import java.time.LocalDateTime
 
 @Entity(tableName = "data_entry_table", foreignKeys = [ForeignKey(entity = SensorData::class, parentColumns = ["data_id"], childColumns = ["data_id"], onDelete = ForeignKey.CASCADE)])
@@ -23,4 +24,12 @@ data class SensorDataEntry(
     @ColumnInfo(name = "entry_button_pressed") var buttonPressed: Int? = null,
     @ColumnInfo(name = "entry_heart_rate") var heartRate: Int? = null,
     @ColumnInfo(name = "entry_body_temperature") var bodyTemperature: Double? = null,
-)
+) {
+
+    val asCsvEntry: String
+        get() = "${timestamp.zonedEpochMilli},${accX ?: ""},${accY ?: ""},${accZ ?: ""},${gyroX ?: ""},${gyroY ?: ""},${gyroZ ?: ""},${buttonPressed ?: ""},${heartRate ?: ""},${bodyTemperature ?: ""}\n"
+
+    companion object {
+        const val CSV_HEADER_ROW = "timestamp,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,button,heart_rate,body_temp\n"
+    }
+}

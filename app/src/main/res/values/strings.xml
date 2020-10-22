@@ -130,4 +130,7 @@
     <string name="overview_device_disconnect_text">Disconnect</string>
     <string name="heart_rate_enabled_text">Heart rate enabled</string>
     <string name="body_temperature_enabled_text">Body temperature enabled</string>
+    <string name="export_file_creation_error">Failed to create file</string>
+    <string name="export_file_finished">Export complete</string>
+    <string name="export_file_export_error">Failed to export data: %s</string>
 </resources>
