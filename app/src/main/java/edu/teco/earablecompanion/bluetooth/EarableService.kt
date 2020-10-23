@@ -36,7 +36,6 @@ import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
 import no.nordicsemi.android.support.v18.scanner.ScanCallback
 import no.nordicsemi.android.support.v18.scanner.ScanResult
 import no.nordicsemi.android.support.v18.scanner.ScanSettings
-import java.util.*
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
@@ -48,7 +47,7 @@ class EarableService : Service() {
     inner class LocalBinder(val service: EarableService = this@EarableService) : Binder()
 
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-    private val sharedPreferenceManager: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private var shouldIgnoreUnkownDevices = true
 
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
@@ -133,7 +132,7 @@ class EarableService : Service() {
 
     fun startScan() {
         startForeground()
-        shouldIgnoreUnkownDevices = sharedPreferenceManager.getBoolean(getString(R.string.preference_ignore_unknown_devices_key), true)
+        shouldIgnoreUnkownDevices = sharedPreferences.getBoolean(getString(R.string.preference_ignore_unknown_devices_key), true)
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
             .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
@@ -153,10 +152,10 @@ class EarableService : Service() {
     }
 
     fun connectOrBond(device: BluetoothDevice) {
-        connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(device))
+        val shouldBond = sharedPreferences.getBoolean(getString(R.string.preference_connection_bond_key), true)
 
-//        device.connect(this, GattCallback())
-        if (!device.createBond()) {
+        connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(device))
+        if (!shouldBond || !device.createBond()) {
             device.connect(this, GattCallback())
         }
     }
@@ -332,7 +331,7 @@ class EarableService : Service() {
         }
 
         override fun onCharacteristicChanged(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?) {
-            Log.i(TAG, "onCharacteristicChanged ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
+            //Log.i(TAG, "onCharacteristicChanged ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
             if (gatt == null || characteristic == null) {
                 return
             }
@@ -345,7 +344,7 @@ class EarableService : Service() {
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            Log.i(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
+            //Log.i(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
             if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
                 return
             }
@@ -354,7 +353,7 @@ class EarableService : Service() {
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            Log.i(TAG, "onCharacteristicRead ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
+            //Log.i(TAG, "onCharacteristicRead ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
             if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
                 return
             }
