@@ -1,6 +1,5 @@
 package edu.teco.earablecompanion.utils.extensions
 
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel

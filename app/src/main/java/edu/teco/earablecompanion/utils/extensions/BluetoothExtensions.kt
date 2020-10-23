@@ -20,7 +20,7 @@ val BluetoothDevice.earableType: EarableType
     get() = when {
         name.startsWith("eSense-") -> EarableType.ESENSE
         name.startsWith("earconnect") -> EarableType.COSINUSS
-        else -> EarableType.GENERIC // TODO
+        else -> EarableType.GENERIC
     }
 
 val BluetoothGattCharacteristic.formattedUuid: String

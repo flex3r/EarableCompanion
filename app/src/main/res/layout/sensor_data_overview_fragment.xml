@@ -21,5 +21,4 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/sensor_data_item" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 </layout>

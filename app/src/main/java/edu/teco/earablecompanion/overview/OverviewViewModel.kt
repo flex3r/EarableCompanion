@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.combine
 class OverviewViewModel @ViewModelInject constructor(
     private val connectionRepository: ConnectionRepository,
     private val sensorDataRepository: SensorDataRepository,
-    @Assisted savedStateHandle: SavedStateHandle
+    @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     val overviewItems: LiveData<List<OverviewItem>> = liveData(viewModelScope.coroutineContext) {

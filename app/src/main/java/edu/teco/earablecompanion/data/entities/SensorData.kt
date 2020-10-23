@@ -13,5 +13,5 @@ data class SensorData(
     @ColumnInfo(name = "data_title") var title: String,
     @ColumnInfo(name = "data_created") var createdAt: LocalDateTime,
     @ColumnInfo(name = "data_stopped") var stoppedAt: LocalDateTime? = null,
-    @ColumnInfo(name = "data_desc") var description: String? = null
+    @ColumnInfo(name = "data_desc") var description: String? = null,
 )

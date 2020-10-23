@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 class ESenseDeviceViewModel @ViewModelInject constructor(
     private val connectionRepository: ConnectionRepository,
-    @Assisted savedStateHandle: SavedStateHandle
+    @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val bluetoothDevice = savedStateHandle.get<BluetoothDevice>("device")

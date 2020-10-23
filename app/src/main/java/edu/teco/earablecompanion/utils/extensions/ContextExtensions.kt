@@ -10,5 +10,5 @@ import androidx.core.content.res.use
 @ColorInt
 @SuppressLint("Recycle")
 fun Context.themeColor(
-    @AttrRes themeAttrId: Int
+    @AttrRes themeAttrId: Int,
 ): Int = obtainStyledAttributes(intArrayOf(themeAttrId)).use { it.getColor(0, Color.MAGENTA) }

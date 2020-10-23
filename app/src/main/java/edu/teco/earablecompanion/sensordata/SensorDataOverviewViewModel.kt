@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class SensorDataOverviewViewModel @ViewModelInject constructor(
     private val sensorDataRepository: SensorDataRepository,
-    @Assisted savedStateHandle: SavedStateHandle
+    @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->

@@ -52,7 +52,7 @@ class ConnectionRepository {
     fun setConfig(address: String, config: Config) = _deviceConfigs.updateValue { this[address] = config }
     fun updateConfig(address: String?, action: Config.() -> Unit) = _deviceConfigs.updateValue { this[address]?.action() }
     fun updateConfigFromBytes(address: String, uuid: String, bytes: ByteArray) = _deviceConfigs.updateValue {
-        val config =  this[address] ?: return@updateValue
+        val config = this[address] ?: return@updateValue
         config.updateValues(uuid, bytes)?.let { this[address] = it }
     }
 

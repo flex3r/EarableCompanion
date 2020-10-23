@@ -19,7 +19,7 @@ data class ESenseConfig(
     var gyroRange: GyroRange = GyroRange.DEG_500,
     var accLPF: AccLPF = AccLPF.BW_5,
     var gyroLPF: GyroLPF = GyroLPF.BW_5,
-    var accOffset: Triple<Double, Double, Double> = Triple(0.0, 0.0, 0.0)
+    var accOffset: Triple<Double, Double, Double> = Triple(0.0, 0.0, 0.0),
 ) : Config() {
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID

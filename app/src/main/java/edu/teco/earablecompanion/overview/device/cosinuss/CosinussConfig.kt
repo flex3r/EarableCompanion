@@ -24,7 +24,7 @@ data class CosinussConfig(
         }
 
     override fun updateValues(uuid: String, bytes: ByteArray) = this
-    override fun parseSensorValues(characteristic: BluetoothGattCharacteristic): SensorDataEntry? = when(characteristic.formattedUuid) {
+    override fun parseSensorValues(characteristic: BluetoothGattCharacteristic): SensorDataEntry? = when (characteristic.formattedUuid) {
         HEART_RATE_SENSOR_UUID -> parseHeartRate(characteristic)
         BODY_TEMPERATURE_SENSOR_UUID -> parseBodyTemperature(characteristic)
         else -> null

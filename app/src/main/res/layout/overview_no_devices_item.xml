@@ -36,8 +36,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/overview_no_devices_icon"
                 app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
-
 </layout>
