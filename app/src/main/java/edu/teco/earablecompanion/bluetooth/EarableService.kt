@@ -24,10 +24,10 @@ import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.overview.device.cosinuss.CosinussConfig
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
-import edu.teco.earablecompanion.utils.collectCharacteristics
-import edu.teco.earablecompanion.utils.connect
-import edu.teco.earablecompanion.utils.earableType
-import edu.teco.earablecompanion.utils.formattedUuid
+import edu.teco.earablecompanion.utils.extensions.collectCharacteristics
+import edu.teco.earablecompanion.utils.extensions.connect
+import edu.teco.earablecompanion.utils.extensions.earableType
+import edu.teco.earablecompanion.utils.extensions.formattedUuid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay

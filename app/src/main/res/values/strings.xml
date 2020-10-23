@@ -113,8 +113,9 @@
     <string name="sensor_data_detail_description_edit_text">Edit</string>
     <string name="sensor_data_detail_no_data_icon_description">Info icon</string>
     <string name="sensor_data_detail_no_data_text">This data recording has no data</string>
-    <string name="edit_description_dialog_title">Edit description</string>
+    <string name="edit_dialog_title">Edit</string>
     <string name="edit_description_input_hint">Description</string>
+    <string name="edit_title_input_hint">Title</string>
     <string name="sensor_data_detail_chart_icon_description">Chart icon</string>
     <string name="sensor_data_type_acc_x_title">Accelerometer X</string>
     <string name="sensor_data_type_acc_y_title">Accelerometer Y</string>

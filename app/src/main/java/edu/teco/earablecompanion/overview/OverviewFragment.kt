@@ -19,7 +19,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.databinding.OverviewFragmentBinding
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
-import edu.teco.earablecompanion.utils.showOrHide
+import edu.teco.earablecompanion.utils.extensions.showOrHide
 
 @AndroidEntryPoint
 class OverviewFragment : Fragment() {

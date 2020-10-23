@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import edu.teco.earablecompanion.utils.zonedEpochMilli
+import edu.teco.earablecompanion.utils.extensions.zonedEpochMilli
 import java.time.LocalDateTime
 
 @Entity(tableName = "data_entry_table", foreignKeys = [ForeignKey(entity = SensorData::class, parentColumns = ["data_id"], childColumns = ["data_id"], onDelete = ForeignKey.CASCADE)])

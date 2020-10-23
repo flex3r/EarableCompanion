@@ -15,6 +15,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataType
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
+import edu.teco.earablecompanion.utils.extensions.themeColor
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneId

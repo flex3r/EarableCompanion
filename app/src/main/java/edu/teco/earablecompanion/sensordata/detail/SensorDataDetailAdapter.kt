@@ -11,7 +11,7 @@ import edu.teco.earablecompanion.databinding.SensorDataDetailChartItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailDescriptionItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailLoadingItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataDetailNoDataItemBinding
-import edu.teco.earablecompanion.utils.themeColor
+import edu.teco.earablecompanion.utils.extensions.themeColor
 
 class SensorDataDetailAdapter(private val onClick: () -> Unit) : ListAdapter<SensorDataDetailItem, RecyclerView.ViewHolder>(DetectDiff()) {
 

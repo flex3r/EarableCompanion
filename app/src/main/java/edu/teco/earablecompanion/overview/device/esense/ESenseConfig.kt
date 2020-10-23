@@ -4,9 +4,9 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.util.Log
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.overview.device.Config
-import edu.teco.earablecompanion.utils.and
-import edu.teco.earablecompanion.utils.formattedUuid
-import edu.teco.earablecompanion.utils.shl
+import edu.teco.earablecompanion.utils.extensions.and
+import edu.teco.earablecompanion.utils.extensions.formattedUuid
+import edu.teco.earablecompanion.utils.extensions.shl
 import java.time.LocalDateTime
 import java.time.ZoneId
 

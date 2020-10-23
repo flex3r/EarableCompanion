@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.InputType
 import android.view.*
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -19,7 +20,7 @@ import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataDetailFragmentBinding
 import edu.teco.earablecompanion.utils.CreateCsvDocumentContract
-import edu.teco.earablecompanion.utils.observe
+import edu.teco.earablecompanion.utils.extensions.observe
 
 @AndroidEntryPoint
 class SensorDataDetailFragment : Fragment() {
@@ -39,7 +40,7 @@ class SensorDataDetailFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = SensorDataDetailAdapter(::editDescription)
+        val adapter = SensorDataDetailAdapter(::editData)
 
         viewModel.detailItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
         observe(viewModel.exportEventFlow, ::handleExportEvent)
@@ -85,23 +86,29 @@ class SensorDataDetailFragment : Fragment() {
         navController.popBackStack()
     }
 
-    private fun editDescription() {
+    private fun editData() {
         val builder = MaterialAlertDialogBuilder(requireContext())
-        val layout = LayoutInflater.from(builder.context).inflate(R.layout.dialog_input_layout, null) as LinearLayout
-        layout.findViewById<TextInputLayout>(R.id.dialog_input_layout).apply {
-            hint = getString(R.string.edit_description_input_hint)
-        }
-        val editText = layout.findViewById<TextInputEditText>(R.id.dialog_input_text).apply {
+        val layout = LayoutInflater.from(builder.context).inflate(R.layout.dialog_multi_input_layout, null) as LinearLayout
+        layout.findViewById<TextInputLayout>(R.id.dialog_title_input_layout).hint = getString(R.string.edit_title_input_hint)
+        layout.findViewById<TextInputLayout>(R.id.dialog_body_input_layout).hint = getString(R.string.edit_description_input_hint)
+
+        val descriptionEditText = layout.findViewById<TextInputEditText>(R.id.dialog_body_input_text).apply {
             inputType = inputType or InputType.TYPE_TEXT_FLAG_MULTI_LINE
             setText(viewModel.description)
         }
+        val titleEditText = layout.findViewById<TextInputEditText>(R.id.dialog_title_input_text).apply {
+            setText(viewModel.title)
+        }
 
         builder
-            .setTitle(R.string.edit_description_dialog_title)
+            .setTitle(R.string.edit_dialog_title)
             .setView(layout)
             .setPositiveButton(R.string.save) { _, _ ->
-                val input = editText.text?.toString()
-                viewModel.updateDescription(input)
+                val description = descriptionEditText.text?.toString()
+                val title = titleEditText.text?.toString() ?: getString(R.string.start_recording_dialog_title_default)
+                viewModel.editData(title, description)
+                navController.currentDestination?.label = title
+                (requireActivity() as AppCompatActivity).supportActionBar?.title = title
             }
             .setNegativeButton(R.string.cancel) { d, _ -> d.dismiss() }
             .show()

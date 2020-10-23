@@ -9,10 +9,16 @@ sealed class SensorDataDetailItem {
     object NoData : SensorDataDetailItem()
     object Loading : SensorDataDetailItem()
 
-    data class Description(val description: String?) : SensorDataDetailItem() {
+    data class Description(val title: String, val description: String?) : SensorDataDetailItem() {
         companion object {
-            fun SensorDataWithEntries.toDescriptionItem() = Description(data.description)
-            fun SensorData.toDescriptionItem() = Description(description)
+            fun SensorDataWithEntries.toDescriptionItem() = Description(
+                title = data.title,
+                description = data.description,
+            )
+            fun SensorData.toDescriptionItem() = Description(
+                title = title,
+                description = description,
+            )
         }
     }
 

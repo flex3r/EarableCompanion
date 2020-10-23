@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailItem.Description.Companion.toDescriptionItem
 import edu.teco.earablecompanion.utils.ViewEventFlow
+import edu.teco.earablecompanion.utils.extensions.notBlankOrNull
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -58,16 +59,13 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     }
 
     val hasData = detailItems.map { items -> items.any { it is SensorDataDetailItem.Chart } }
-    val description: String?
-        get() = (detailItems.value?.first() as? SensorDataDetailItem.Description)?.description
+    
+    val description: String? get() = (detailItems.value?.first() as? SensorDataDetailItem.Description)?.description
+    val title: String? get() = (detailItems.value?.first() as? SensorDataDetailItem.Description)?.title
 
     fun removeData() = viewModelScope.launch { sensorDataRepository.removeData(dataId) }
-    fun updateDescription(text: String?) = viewModelScope.launch {
-        val descriptionOrNull = when {
-            text.isNullOrBlank() -> null
-            else -> text
-        }
-        sensorDataRepository.updateSensorDataDescription(dataId, descriptionOrNull)
+    fun editData(title: String, description: String?) = viewModelScope.launch {
+        sensorDataRepository.updateSensorData(dataId, title, description.notBlankOrNull())
     }
 
     fun exportData(outputStream: OutputStream) = viewModelScope.launch(exceptionHandler) {

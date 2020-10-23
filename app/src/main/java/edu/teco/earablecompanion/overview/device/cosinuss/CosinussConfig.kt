@@ -1,12 +1,10 @@
 package edu.teco.earablecompanion.overview.device.cosinuss
 
 import android.bluetooth.BluetoothGattCharacteristic
-import android.util.Log
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.overview.device.Config
-import edu.teco.earablecompanion.utils.and
-import edu.teco.earablecompanion.utils.formattedUuid
-import java.math.BigInteger
+import edu.teco.earablecompanion.utils.extensions.and
+import edu.teco.earablecompanion.utils.extensions.formattedUuid
 import java.time.LocalDateTime
 import java.time.ZoneId
 

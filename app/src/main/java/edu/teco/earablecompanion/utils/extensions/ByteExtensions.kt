@@ -1,4 +1,4 @@
-package edu.teco.earablecompanion.utils
+package edu.teco.earablecompanion.utils.extensions
 
 infix fun Byte.shl(that: Int): Int = this.toInt().shl(that)
 infix fun Int.shl(that: Byte): Int = this.shl(that.toInt())

@@ -1,4 +1,4 @@
-package edu.teco.earablecompanion.utils
+package edu.teco.earablecompanion.utils.extensions
 
 import android.annotation.SuppressLint
 import android.content.Context
