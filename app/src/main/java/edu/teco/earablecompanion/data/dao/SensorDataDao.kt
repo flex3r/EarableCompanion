@@ -10,17 +10,10 @@ import kotlinx.coroutines.flow.Flow
 interface SensorDataDao {
 
     @Query("SELECT * FROM data_table")
-    suspend fun getAll(): List<SensorData>
-
-    @Query("SELECT * FROM data_table")
     fun getAllFlow(): Flow<List<SensorData>>
 
     @Query("SELECT * FROM data_table WHERE data_id = :id LIMIT 1")
-    suspend fun getById(id: Long): SensorData
-
-    @Transaction
-    @Query("SELECT * FROM data_table")
-    suspend fun getAllWithEntries(): List<SensorDataWithEntries>
+    fun getByIdFlow(id: Long): Flow<SensorData>
 
     @Insert
     suspend fun insert(data: SensorData): Long
@@ -31,12 +24,6 @@ interface SensorDataDao {
     @Query("UPDATE data_table SET data_title = :title, data_desc = :description WHERE data_id = :id")
     suspend fun updateData(id: Long, title: String, description: String?)
 
-    @Insert
-    suspend fun insertAll(data: List<SensorData>)
-
-    @Delete
-    suspend fun delete(data: SensorData)
-
     @Query("DELETE FROM data_table WHERE data_id = :id")
     suspend fun deleteById(id: Long)
 
@@ -45,9 +32,6 @@ interface SensorDataDao {
 
     @Insert
     suspend fun insertEntry(entry: SensorDataEntry)
-
-    @Insert
-    suspend fun insertAllEntries(entries: List<SensorDataEntry>)
 
     @Transaction
     @Query("SELECT * FROM data_table WHERE data_id = :id")

@@ -3,6 +3,7 @@ package edu.teco.earablecompanion.sensordata.detail
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
+import android.text.method.ScrollingMovementMethod
 import android.view.*
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -40,15 +41,17 @@ class SensorDataDetailFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = SensorDataDetailAdapter(::editData)
+        val adapter = SensorDataDetailAdapter()
 
-        viewModel.detailItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
-        observe(viewModel.exportEventFlow, ::handleExportEvent)
+        viewModel.detailData.observe(viewLifecycleOwner) { adapter.submitList(it) }
+        viewModel.exportEventFlow.observe(viewLifecycleOwner, ::handleExportEvent)
 
         binding = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@SensorDataDetailFragment
             sensorDataDetailRecyclerview.adapter = adapter
+            sensorDataDetailDescriptionText.movementMethod = ScrollingMovementMethod()
+            sensorDataDetailDescriptionEdit.setOnClickListener { editData() }
             exportFab.setOnClickListener {
                 createDocumentRegistration.launch("${args.dataTitle}.csv")
             }

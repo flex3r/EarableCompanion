@@ -36,12 +36,137 @@
             android:visibility="@{vm.hasData &amp;&amp; !vm.shouldShowProgress ? View.VISIBLE : View.GONE}"
             app:icon="@drawable/ic_baseline_save_alt_24" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/sensor_data_detail_recyclerview"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/sensor_data_detail_description_item" />
+            android:layout_height="match_parent">
 
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sensor_data_detail_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_recyclerview"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:id="@+id/sensor_data_detail_description_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:contentDescription="@string/sensor_data_detail_description_icon_description"
+                        android:src="@drawable/ic_baseline_description_24"
+                        app:layout_constraintBottom_toBottomOf="@id/sensor_data_detail_description_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/sensor_data_detail_description_title"
+                        app:tint="?attr/colorSecondary" />
+
+                    <TextView
+                        android:id="@+id/sensor_data_detail_description_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:gravity="center_horizontal"
+                        android:text="@{vm.detailDescription.title}"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                        app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_description_text"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/sensor_data_detail_description_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:maxLines="3"
+                        android:scrollbars="vertical"
+                        android:requiresFadingEdge="vertical"
+                        android:text="@{vm.detailDescription.description}"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:visibility="@{vm.detailDescription.description == null ? View.GONE : View.VISIBLE}"
+                        app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_description_title"
+                        app:layout_constraintStart_toStartOf="@id/sensor_data_detail_description_icon"
+                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_description_title" />
+
+                    <TextView
+                        android:id="@+id/sensor_data_detail_created_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_stopped_date"
+                        app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_description_title"
+                        app:layout_constraintStart_toStartOf="@id/sensor_data_detail_description_icon"
+                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_description_text"
+                        app:startedLocalDateTime="@{vm.detailDescription.createdAt}" />
+
+                    <TextView
+                        android:id="@+id/sensor_data_detail_stopped_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_data_duration"
+                        app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_description_title"
+                        app:layout_constraintStart_toStartOf="@id/sensor_data_detail_description_icon"
+                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_created_date"
+                        app:stoppedLocalDateTime="@{vm.detailDescription.stoppedAt}" />
+
+                    <TextView
+                        android:id="@+id/sensor_data_detail_data_duration"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:visibility="@{vm.detailDescription.duration == null ? View.GONE : View.VISIBLE}"
+                        app:duration="@{vm.detailDescription.duration}"
+                        app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_data_amount"
+                        app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_description_title"
+                        app:layout_constraintStart_toStartOf="@id/sensor_data_detail_description_icon"
+                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_stopped_date" />
+
+                    <TextView
+                        android:id="@+id/sensor_data_detail_data_amount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@{@string/data_entry_amount(vm.detailDescription.entryCount)}"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_description_edit"
+                        app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_description_title"
+                        app:layout_constraintStart_toStartOf="@id/sensor_data_detail_description_icon"
+                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_data_duration" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sensor_data_detail_description_edit"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sensor_data_detail_description_edit_text"
+                        app:icon="@drawable/ic_baseline_edit_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_data_amount" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sensor_data_detail_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_description"
+                tools:listitem="@layout/sensor_data_detail_chart_item" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

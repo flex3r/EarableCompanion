@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.utils.extensions
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
@@ -23,9 +24,9 @@ inline fun <T> MutableStateFlow<T>.setValue(block: () -> T) {
     value = block()
 }
 
-inline fun <T> LifecycleOwner.observe(flow: Flow<T>, crossinline action: (value: T) -> Unit) {
-    lifecycleScope.launchWhenResumed {
-        flow.collect {
+inline fun <T> Flow<T>.observe(viewLifecycleOwner: LifecycleOwner, crossinline action: (value: T) -> Unit) {
+    viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+        collect {
             action(it)
         }
     }

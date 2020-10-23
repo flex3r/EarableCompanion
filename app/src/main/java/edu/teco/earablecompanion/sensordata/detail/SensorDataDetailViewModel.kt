@@ -5,7 +5,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
-import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailItem.Description.Companion.toDescriptionItem
+import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailDescription.Companion.toDescriptionItem
 import edu.teco.earablecompanion.utils.ViewEventFlow
 import edu.teco.earablecompanion.utils.extensions.notBlankOrNull
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -21,6 +21,7 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    private val dataId = savedStateHandle.get<Long>("dataId") ?: 0L
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, Log.getStackTraceString(throwable))
         exportEventFlow.postEvent(SensorDataExportEvent.Failed(throwable))
@@ -34,34 +35,40 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
         }
     }
 
-    private val dataId = savedStateHandle.get<Long>("dataId") ?: 0L
-    val detailItems: LiveData<List<SensorDataDetailItem>> = liveData(viewModelScope.coroutineContext) {
-        val data = sensorDataRepository.getSensorDataById(dataId)
-        emit(listOf(data.toDescriptionItem(), SensorDataDetailItem.Loading))
+    val detailDescription: LiveData<SensorDataDetailDescription> = liveData(viewModelScope.coroutineContext) {
+        sensorDataRepository.getSensorDataByIdFlow(dataId)
+            .catch { Log.e(TAG, Log.getStackTraceString(it)) }
+            .collectLatest {
+                val entryCount = sensorDataRepository.getDataEntryCount(dataId)
+                emit(it.toDescriptionItem(entryCount))
+            }
+    }
+
+    val detailData: LiveData<List<SensorDataDetailItem>> = liveData(viewModelScope.coroutineContext) {
+        emit(listOf(SensorDataDetailItem.Loading))
 
         sensorDataRepository.getSensorDataWithEntries(dataId)
             .catch { Log.e(TAG, Log.getStackTraceString(it)) }
             .collectLatest { dataWithEntries ->
                 when {
-                    dataWithEntries.entries.isEmpty() -> emit(listOf(dataWithEntries.toDescriptionItem(), SensorDataDetailItem.NoData))
+                    dataWithEntries.entries.isEmpty() -> emit(listOf(SensorDataDetailItem.NoData))
                     else -> {
-                        val descriptionItem = dataWithEntries.toDescriptionItem()
                         measureTimeMillis {
                             val charts = mutableListOf<SensorDataDetailItem>()
                             dataWithEntries.onEachDataTypeWithTitle { sensorDataType, list ->
                                 charts += SensorDataDetailItem.Chart(sensorDataType, list)
                             }
-                            emit(listOf(descriptionItem) + charts)
+                            emit(charts)
                         }.let { Log.i(TAG, "Mapping data entries took $it ms") }
                     }
                 }
             }
     }
 
-    val hasData = detailItems.map { items -> items.any { it is SensorDataDetailItem.Chart } }
-    
-    val description: String? get() = (detailItems.value?.first() as? SensorDataDetailItem.Description)?.description
-    val title: String? get() = (detailItems.value?.first() as? SensorDataDetailItem.Description)?.title
+    val hasData = detailDescription.map { it.entryCount > 0 }
+
+    val description: String? get() = detailDescription.value?.description
+    val title: String? get() = detailDescription.value?.title
 
     fun removeData() = viewModelScope.launch { sensorDataRepository.removeData(dataId) }
     fun editData(title: String, description: String?) = viewModelScope.launch {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.format.DateUtils
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.YAxis
@@ -85,11 +86,31 @@ fun TextView.formatDuration(duration: Duration?) {
 }
 
 @BindingAdapter("startedLocalDateTime")
-fun TextView.formatStartedLocalDateTime(localDateTime: LocalDateTime) {
+fun TextView.formatStartedLocalDateTime(localDateTime: LocalDateTime?) {
+    isVisible = localDateTime != null
+    if (localDateTime == null) {
+        text = ""
+        return
+    }
+
     val formatter = DateTimeFormatter
         .ofLocalizedDateTime(FormatStyle.SHORT)
         .withZone(ZoneId.systemDefault())
     text = context.getString(R.string.recording_started_datetime_format, localDateTime.format(formatter))
+}
+
+@BindingAdapter("stoppedLocalDateTime")
+fun TextView.formatStoppedLocalDateTime(localDateTime: LocalDateTime?) {
+    isVisible = localDateTime != null
+    if (localDateTime == null) {
+        text = ""
+        return
+    }
+
+    val formatter = DateTimeFormatter
+        .ofLocalizedDateTime(FormatStyle.SHORT)
+        .withZone(ZoneId.systemDefault())
+    text = context.getString(R.string.recording_stopped_datetime_format, localDateTime.format(formatter))
 }
 
 @BindingAdapter("description")

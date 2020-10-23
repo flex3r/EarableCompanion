@@ -24,15 +24,13 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     val isRecording: Boolean
         get() = activeRecording.value != null
 
-    suspend fun getAllSensorData(): List<SensorData> = sensorDataDao.getAll()
-    suspend fun getSensorDataById(id: Long): SensorData = sensorDataDao.getById(id)
+    fun getSensorDataByIdFlow(id: Long): Flow<SensorData> = sensorDataDao.getByIdFlow(id)
     fun getSensorDataFlow(): Flow<List<SensorData>> = sensorDataDao.getAllFlow()
 
     suspend fun getDataEntryCount(dataId: Long): Int = sensorDataDao.getEntryCountByDataId(dataId)
-    suspend fun getSensorDataWithEntries(dataId: Long): Flow<SensorDataWithEntries> = sensorDataDao.getDataWithEntriesByIdFlow(dataId)
+    fun getSensorDataWithEntries(dataId: Long): Flow<SensorDataWithEntries> = sensorDataDao.getDataWithEntriesByIdFlow(dataId)
 
-    suspend fun insertAll(data: List<SensorData>) = sensorDataDao.insertAll(data)
-    suspend fun insertAllEntries(entries: List<SensorDataEntry>) = sensorDataDao.insertAllEntries(entries)
+
     suspend fun clearData() = sensorDataDao.deleteAll()
     suspend fun removeData(id: Long) = sensorDataDao.deleteById(id)
 
