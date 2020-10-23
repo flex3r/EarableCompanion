@@ -4,7 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.github.mikephil.charting.data.Entry
+import edu.teco.earablecompanion.data.SensorDataType
 import edu.teco.earablecompanion.utils.extensions.zonedEpochMilli
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 
 @Entity(tableName = "data_entry_table", foreignKeys = [ForeignKey(entity = SensorData::class, parentColumns = ["data_id"], childColumns = ["data_id"], onDelete = ForeignKey.CASCADE)])
@@ -31,5 +36,27 @@ data class SensorDataEntry(
 
     companion object {
         const val CSV_HEADER_ROW = "timestamp,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,button,heart_rate,body_temp\n"
+
+        suspend fun List<SensorDataEntry>.mapToEntries() = withContext(Dispatchers.Default) {
+            val sorted = sortedBy { it.timestamp }
+            SensorDataType.values().map {
+                async { it to sorted.mapByDataType(it) }
+            }
+        }
+
+        fun List<SensorDataEntry>.mapByDataType(dataType: SensorDataType): List<Entry> = when (dataType) {
+            // TODO handle timestamp in chart
+            SensorDataType.ACC_X -> mapNotNull { it.accX }.mapToEntry()
+            SensorDataType.ACC_Y -> mapNotNull { it.accY }.mapToEntry()
+            SensorDataType.ACC_Z -> mapNotNull { it.accZ }.mapToEntry()
+            SensorDataType.GYRO_X -> mapNotNull {it.gyroX }.mapToEntry()
+            SensorDataType.GYRO_Y -> mapNotNull {it.gyroY }.mapToEntry()
+            SensorDataType.GYRO_Z -> mapNotNull {it.gyroZ }.mapToEntry()
+            SensorDataType.BUTTON -> mapNotNull {it.buttonPressed }.mapToEntry()
+            SensorDataType.HEART_RATE -> mapNotNull { it.heartRate }.mapToEntry()
+            SensorDataType.BODY_TEMPERATURE -> mapNotNull { it.bodyTemperature }.mapToEntry()
+        }
+
+        private fun List<Number>.mapToEntry() = mapIndexed { index, value -> Entry(index.toFloat(), value.toFloat()) }
     }
 }

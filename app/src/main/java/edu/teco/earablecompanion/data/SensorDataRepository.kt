@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothGattCharacteristic
 import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
-import edu.teco.earablecompanion.data.entities.SensorDataWithEntries
 import edu.teco.earablecompanion.overview.device.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -24,15 +23,14 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     val isRecording: Boolean
         get() = activeRecording.value != null
 
-    fun getSensorDataByIdFlow(id: Long): Flow<SensorData> = sensorDataDao.getByIdFlow(id)
+    fun getSensorDataByIdFlow(id: Long): Flow<SensorData> = sensorDataDao.getDataFlow(id)
     fun getSensorDataFlow(): Flow<List<SensorData>> = sensorDataDao.getAllFlow()
 
     suspend fun getDataEntryCount(dataId: Long): Int = sensorDataDao.getEntryCountByDataId(dataId)
-    fun getSensorDataWithEntries(dataId: Long): Flow<SensorDataWithEntries> = sensorDataDao.getDataWithEntriesByIdFlow(dataId)
-
+    suspend fun getSensorDataEntries(dataId: Long): List<SensorDataEntry> = sensorDataDao.getEntries(dataId)
 
     suspend fun clearData() = sensorDataDao.deleteAll()
-    suspend fun removeData(id: Long) = sensorDataDao.deleteById(id)
+    suspend fun removeData(id: Long) = sensorDataDao.delete(id)
 
     suspend fun startRecording(title: String, devices: List<BluetoothDevice>) {
         val data = SensorData(title = title, createdAt = LocalDateTime.now(ZoneId.systemDefault()))
@@ -62,11 +60,11 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     suspend fun updateSensorData(dataId: Long, title: String, description: String?) = sensorDataDao.updateData(dataId, title, description)
 
     suspend fun exportData(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {
-        val dataWithEntries = sensorDataDao.getDataWithEntriesById(dataId)
+        val entries = sensorDataDao.getEntries(dataId)
         outputStream.use { os ->
             os.bufferedWriter().use { writer ->
                 writer.write(SensorDataEntry.CSV_HEADER_ROW)
-                dataWithEntries.entries.sortedBy { it.timestamp }.forEach {
+                entries.sortedBy { it.timestamp }.forEach {
                     writer.write(it.asCsvEntry)
                 }
             }
