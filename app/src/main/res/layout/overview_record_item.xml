@@ -23,11 +23,9 @@
                 android:id="@+id/overview_recording_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/overview_recording_icon_description"
                 app:layout_constraintBottom_toBottomOf="@id/overview_recording_title"
-                app:layout_constraintEnd_toStartOf="@id/overview_recording_title"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/overview_recording_title"
                 app:layout_constraintTop_toTopOf="@id/overview_recording_title"
                 app:tint="?attr/colorSecondary" />
 
@@ -49,11 +47,10 @@
                 android:id="@+id/overview_recording_start_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/overview_recording_title"
-                app:layout_constraintStart_toStartOf="@id/overview_recording_icon"
+                app:layout_constraintStart_toStartOf="@id/overview_recording_title"
                 app:layout_constraintTop_toBottomOf="@id/overview_recording_title"
                 app:startedLocalDateTime="@{recording.startedAt}" />
         </androidx.constraintlayout.widget.ConstraintLayout>
