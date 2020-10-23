@@ -43,46 +43,55 @@
                 android:gravity="center_horizontal"
                 android:text="@{data.title}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                app:layout_constraintBottom_toTopOf="@id/sensor_data_overview_data_date"
+                app:layout_constraintBottom_toTopOf="@id/sensor_data_overview_started_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/sensor_data_overview_data_date"
+                android:id="@+id/sensor_data_overview_started_date"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/sensor_data_overview_stopped_date"
+                app:layout_constraintEnd_toEndOf="@id/sensor_data_overview_data_title"
                 app:layout_constraintStart_toStartOf="@id/sensor_data_overview_data_icon"
                 app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_title"
                 app:startedLocalDateTime="@{data.createdAt}" />
+
+            <TextView
+                android:id="@+id/sensor_data_overview_stopped_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                app:layout_constraintEnd_toEndOf="@id/sensor_data_overview_data_title"
+                app:layout_constraintStart_toStartOf="@id/sensor_data_overview_data_icon"
+                app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_started_date"
+                app:stoppedLocalDateTime="@{data.stoppedAt}" />
 
             <TextView
                 android:id="@+id/sensor_data_overview_data_duration"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 android:visibility="@{data.duration == null ? View.GONE : View.VISIBLE}"
                 app:duration="@{data.duration}"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/sensor_data_overview_data_title"
                 app:layout_constraintStart_toStartOf="@id/sensor_data_overview_data_icon"
-                app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_date" />
+                app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_stopped_date" />
 
             <TextView
                 android:id="@+id/sensor_data_overview_data_amount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
                 android:text="@{@string/data_entry_amount(data.entryCount)}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toTopOf="@id/sensor_data_overview_remove"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/sensor_data_overview_data_title"
                 app:layout_constraintStart_toStartOf="@id/sensor_data_overview_data_icon"
                 app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_duration" />
 

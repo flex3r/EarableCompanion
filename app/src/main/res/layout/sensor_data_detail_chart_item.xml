@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/sensor_data_detail_chart_icon_description"
-                android:src="@drawable/ic_baseline_description_24"
+                android:src="@drawable/ic_baseline_insert_chart_24"
                 app:layout_constraintBottom_toBottomOf="@id/sensor_data_detail_chart_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/sensor_data_detail_chart_title"
