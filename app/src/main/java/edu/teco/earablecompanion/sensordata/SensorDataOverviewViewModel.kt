@@ -8,6 +8,7 @@ import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.sensordata.SensorDataOverviewItem.Data.Companion.toOverviewItem
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class SensorDataOverviewViewModel @ViewModelInject constructor(
     private val sensorDataRepository: SensorDataRepository,
@@ -28,6 +29,10 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
                 })
             }
         }
+    }
+
+    fun removeData(data: SensorDataOverviewItem.Data) = viewModelScope.launch {
+        sensorDataRepository.removeData(data.id)
     }
 
     companion object {

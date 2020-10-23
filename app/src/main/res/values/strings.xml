@@ -65,6 +65,7 @@
     <string name="gyro_low_pass_bandwidth_3600">3.6 kHz</string>
     <string name="sensor_data_overview_no_data_icon_description">Save icon</string>
     <string name="sensor_data_overview_no_data_text">No data has been recorded yet</string>
+    <string name="sensor_data_overview_remove_text">Remove</string>
     <string name="overview_device_icon_description">Device icon</string>
     <string name="connect_fab_description">Start a connection</string>
     <string name="connect_fab_text">Connect</string>

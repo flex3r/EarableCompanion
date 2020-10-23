@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.teco.earablecompanion.databinding.NoSensorDataItemBinding
 import edu.teco.earablecompanion.databinding.SensorDataItemBinding
 
-class SensorDataOverviewAdapter(private val onClick: (SensorDataOverviewItem.Data) -> Unit) : ListAdapter<SensorDataOverviewItem, RecyclerView.ViewHolder>(DetectDiff()) {
+class SensorDataOverviewAdapter(
+    private val onRemove: (SensorDataOverviewItem.Data) -> Unit,
+    private val onClick: (SensorDataOverviewItem.Data) -> Unit,
+) : ListAdapter<SensorDataOverviewItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     class DataViewHolder(val binding: SensorDataItemBinding) : RecyclerView.ViewHolder(binding.root)
     class NoDataViewHolder(binding: NoSensorDataItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -28,8 +31,11 @@ class SensorDataOverviewAdapter(private val onClick: (SensorDataOverviewItem.Dat
         when (holder) {
             is DataViewHolder -> {
                 val entry = getItem(position) as SensorDataOverviewItem.Data
-                holder.binding.data = entry
-                holder.binding.root.setOnClickListener { onClick(entry) }
+                with(holder.binding) {
+                    data = entry
+                    root.setOnClickListener { onClick(entry) }
+                    sensorDataOverviewRemove.setOnClickListener { onRemove(entry) }
+                }
             }
         }
     }

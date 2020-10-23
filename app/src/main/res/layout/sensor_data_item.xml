@@ -81,10 +81,21 @@
                 android:layout_marginEnd="8dp"
                 android:text="@{@string/data_entry_amount(data.entryCount)}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/sensor_data_overview_remove"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/sensor_data_overview_data_icon"
                 app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_duration" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/sensor_data_overview_remove"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sensor_data_overview_remove_text"
+                app:icon="@drawable/ic_baseline_delete_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sensor_data_overview_data_amount" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

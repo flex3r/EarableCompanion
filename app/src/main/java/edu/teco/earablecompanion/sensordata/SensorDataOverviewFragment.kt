@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataOverviewFragmentBinding
 
 @AndroidEntryPoint
@@ -18,7 +20,7 @@ class SensorDataOverviewFragment : Fragment() {
     private val navController: NavController by lazy { findNavController() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = SensorDataOverviewAdapter {
+        val adapter = SensorDataOverviewAdapter(::onRemove) {
             val action = SensorDataOverviewFragmentDirections.actionSensorDataOverviewFragmentToSensorDataDetailFragment(it.title, it.id)
             navController.navigate(action)
         }
@@ -31,6 +33,14 @@ class SensorDataOverviewFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun onRemove(data: SensorDataOverviewItem.Data) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.remove_data_dialog_title))
+            .setPositiveButton(getString(R.string.remove)) { _, _ -> viewModel.removeData(data) }
+            .setNegativeButton(getString(R.string.cancel)) { d, _ -> d.dismiss() }
+            .show()
     }
 
     companion object {
