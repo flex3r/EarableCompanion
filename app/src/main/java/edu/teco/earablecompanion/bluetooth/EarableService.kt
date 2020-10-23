@@ -296,6 +296,9 @@ class EarableService : Service() {
             val deviceCharacteristics = gatt.collectCharacteristics()
             characteristics[gatt.device] = deviceCharacteristics
             readCharacteristics(gatt, deviceCharacteristics, defaultConfig)
+
+            connectionRepository.updateConnectionEvent(ConnectionEvent.Connected(gatt.device))
+            connectionRepository.updateConnectedDevice(gatt.device)
         }
 
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -304,8 +307,6 @@ class EarableService : Service() {
                 BluetoothProfile.STATE_CONNECTED -> {
                     gatt.discoverServices()
                     gatts[gatt.device] = gatt
-                    connectionRepository.updateConnectionEvent(ConnectionEvent.Connected(gatt.device))
-                    connectionRepository.updateConnectedDevice(gatt.device)
                 }
                 BluetoothProfile.STATE_CONNECTING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
                 BluetoothProfile.STATE_DISCONNECTED -> {
