@@ -55,8 +55,10 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
             else -> {
                 measureTimeMillis {
                     val charts = mutableListOf<SensorDataDetailItem>()
-                    entries.mapToEntries().awaitAll().forEach { (sensorDataType, list) ->
-                        charts += SensorDataDetailItem.Chart(sensorDataType, list)
+                    entries.mapToEntries().awaitAll().forEach { (sensorDataType, entries) ->
+                        if (entries.isNotEmpty()) {
+                            charts += SensorDataDetailItem.Chart(sensorDataType, entries)
+                        }
                     }
                     emit(charts)
                 }.let { Log.i(TAG, "Mapping data entries took $it ms") }
