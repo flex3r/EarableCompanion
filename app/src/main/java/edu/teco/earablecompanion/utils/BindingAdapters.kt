@@ -12,9 +12,11 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.progressindicator.ProgressIndicator
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataType
+import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
 import edu.teco.earablecompanion.utils.extensions.themeColor
 import java.time.Duration
@@ -171,4 +173,14 @@ fun LineChart.setDataEntries(entries: List<Entry>, dataType: SensorDataType) {
     setVisibleXRange(min(250f, entries.size.toFloat()), min(250f, entries.size.toFloat()))
     invalidate()
     //animateX(1000)
+}
+
+@BindingAdapter("connectionEvent")
+fun ProgressIndicator.setByConnectionEvent(event: ConnectionEvent) {
+    when (event) {
+        is ConnectionEvent.Connecting -> setProgressCompat(33, true)
+        is ConnectionEvent.Pairing -> setProgressCompat(66, true)
+        is ConnectionEvent.Connected -> setProgressCompat(100, true)
+        else -> isIndeterminate = true
+    }
 }

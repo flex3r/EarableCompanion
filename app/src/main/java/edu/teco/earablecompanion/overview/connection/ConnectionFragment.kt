@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -18,6 +19,8 @@ import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.ConnectionFragmentBinding
 import edu.teco.earablecompanion.overview.OverviewFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ConnectionFragment : BottomSheetDialogFragment() {
@@ -86,7 +89,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
 
     private fun handleConnectionEvent(event: ConnectionEvent) {
         when (event) {
-            is ConnectionEvent.Connected -> showSnackbarAndCancelDialog(formatDeviceName(R.string.connection_snackbar_text_connected, event.device.name))
+            is ConnectionEvent.Connected -> showSnackbarAndCancelDialog(formatDeviceName(R.string.connection_snackbar_text_connected, event.device.name), delay = 1_000L)
             is ConnectionEvent.Pairing -> binding.connectionHeaderText.text = formatDeviceName(R.string.connection_header_text_pairing, event.device.name)
             is ConnectionEvent.Connecting -> binding.connectionHeaderText.text = formatDeviceName(R.string.connection_header_text_connecting, event.device.name)
             is ConnectionEvent.Failed -> showSnackbarAndCancelDialog(getString(R.string.connection_snackbar_text_failed))
@@ -98,7 +101,8 @@ class ConnectionFragment : BottomSheetDialogFragment() {
         return getString(stringFormatRes, name ?: getString(R.string.unknown_device_name))
     }
 
-    private fun showSnackbarAndCancelDialog(text: String) {
+    private fun showSnackbarAndCancelDialog(text: String, delay: Long = 0L) = lifecycleScope.launch {
+        delay(delay)
         (parentFragment as? OverviewFragment)?.showSnackbar(text)
         requireDialog().cancel()
         viewModel.clearConnectionEvent()
