@@ -44,6 +44,7 @@ class SensorDataDetailAdapter : ListAdapter<SensorDataDetailItem, RecyclerView.V
         description.isEnabled = false
         legend.isEnabled = false
         isDoubleTapToZoomEnabled = false
+        isHighlightPerTapEnabled = false
         isKeepPositionOnRotation = true
         setDrawBorders(true)
         setBorderColor(context.themeColor(R.attr.colorPrimary))
