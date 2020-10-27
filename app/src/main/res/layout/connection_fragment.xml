@@ -17,11 +17,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.google.android.material.progressindicator.ProgressIndicator
+            android:id="@+id/connection_header_progress"
+            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:max="100"
+            app:connectionEvent="@{vm.connectionEvent}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <ImageView
             android:id="@+id/connection_handle_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:contentDescription="@string/connection_handle_icon_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,29 +46,15 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="4dp"
             android:ellipsize="marquee"
             android:gravity="center_horizontal"
             android:singleLine="true"
             android:text="@string/connection_header_text"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            app:layout_constraintBottom_toTopOf="@id/connection_header_progress"
+            app:layout_constraintBottom_toTopOf="@id/connection_devices_recyclerview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.progressindicator.ProgressIndicator
-            android:id="@+id/connection_header_progress"
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:max="100"
-            app:connectionEvent="@{vm.connectionEvent}"
-            app:layout_constraintBottom_toTopOf="@+id/connection_devices_recyclerview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/connection_header_text" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/connection_devices_recyclerview"
@@ -66,7 +64,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/connection_header_progress"
+            app:layout_constraintTop_toBottomOf="@+id/connection_header_text"
             tools:listitem="@layout/connection_device_item" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
