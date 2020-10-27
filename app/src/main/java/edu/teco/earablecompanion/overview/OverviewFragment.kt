@@ -67,10 +67,6 @@ class OverviewFragment : Fragment() {
         return binding.root
     }
 
-    fun onCancelConnectionBottomSheet() {
-        viewModel.setConnectionOpen(false)
-    }
-
     fun showSnackbar(text: String) = Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT).show()
 
     private fun disconnectDevice(item: OverviewItem.Device) {
@@ -82,7 +78,6 @@ class OverviewFragment : Fragment() {
     }
 
     private fun showConnectionBottomSheet(view: View?) {
-        viewModel.setConnectionOpen(true)
         val dialog = ConnectionFragment()
         dialog.show(childFragmentManager, ConnectionFragment::class.java.simpleName)
     }

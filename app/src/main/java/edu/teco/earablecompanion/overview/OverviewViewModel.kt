@@ -38,14 +38,6 @@ class OverviewViewModel @ViewModelInject constructor(
         addSource(isRecording) { value = (hasConnectedDevices.value ?: false) to it }
     }
 
-    private val _connectionOpen = MutableLiveData(false)
-    val connectionOpen: LiveData<Boolean>
-        get() = _connectionOpen
-
-    fun setConnectionOpen(open: Boolean) {
-        _connectionOpen.value = open
-    }
-
     fun getCurrentConfigs() = connectionRepository.getCurrentConfigs()
 
     companion object {

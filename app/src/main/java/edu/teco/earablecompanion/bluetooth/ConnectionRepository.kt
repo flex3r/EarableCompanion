@@ -4,32 +4,31 @@ import android.bluetooth.BluetoothDevice
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.extensions.updateValue
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import no.nordicsemi.android.support.v18.scanner.ScanResult
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.absoluteValue
 
 class ConnectionRepository {
-    private val _scanResult = ConflatedBroadcastChannel<ConcurrentHashMap<String, ScanResult>>().apply { offer(ConcurrentHashMap()) }
-    val scanResult: Flow<Map<String, ScanResult>> get() = _scanResult.asFlow()
+    private val _scanResult = MutableSharedFlow<ConcurrentHashMap<String, ScanResult>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConcurrentHashMap()) }
+    val scanResult = _scanResult.asSharedFlow()
 
-    private val _connectionEvent = ConflatedBroadcastChannel<ConnectionEvent>().apply { offer(ConnectionEvent.Empty) }
-    val connectionEvent: Flow<ConnectionEvent> get() = _connectionEvent.asFlow()
+    private val _connectionEvent = MutableSharedFlow<ConnectionEvent>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConnectionEvent.Empty) }
+    val connectionEvent = _connectionEvent.asSharedFlow()
 
-    private val _connectedDevices = ConflatedBroadcastChannel<ConcurrentHashMap<String, BluetoothDevice>>().apply { offer(ConcurrentHashMap()) }
-    val connectedDevices: Flow<Map<String, BluetoothDevice>> get() = _connectedDevices.asFlow()
+    private val _connectedDevices = MutableSharedFlow<ConcurrentHashMap<String, BluetoothDevice>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConcurrentHashMap()) }
+    val connectedDevices = _connectedDevices.asSharedFlow()
 
-    private val _deviceConfigs = ConflatedBroadcastChannel<ConcurrentHashMap<String, Config>>().apply { offer(ConcurrentHashMap()) }
-    val deviceConfigs: Flow<Map<String, Config>> get() = _deviceConfigs.asFlow()
+    private val _deviceConfigs = MutableSharedFlow<ConcurrentHashMap<String, Config>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConcurrentHashMap()) }
+    val deviceConfigs = _deviceConfigs.asSharedFlow()
 
     val hasConnectedDevicesOrIsConnecting: Boolean
-        get() = _connectedDevices.value.isNotEmpty() || _connectionEvent.value.connectedOrConnecting
+        get() = _connectedDevices.replayCache.first().isNotEmpty() || _connectionEvent.replayCache.first().connectedOrConnecting
 
-    @Synchronized
     fun updateScanResult(result: ScanResult) = _scanResult.updateValue {
-        if (_connectedDevices.value.containsKey(result.device.address)) return@updateValue
+        if (_connectedDevices.replayCache.first().containsKey(result.device.address)) return@updateValue
 
         this[result.device.address] = result
         this.forEach { (address, currentResult) ->
@@ -40,10 +39,10 @@ class ConnectionRepository {
         }
     }
 
-    fun clearScanResult() = _scanResult.offer(ConcurrentHashMap())
+    fun clearScanResult() = _scanResult.tryEmit(ConcurrentHashMap())
 
-    fun updateConnectionEvent(event: ConnectionEvent) = _connectionEvent.offer(event)
-    fun clearConnectionEvent() = _connectionEvent.offer(ConnectionEvent.Empty)
+    fun updateConnectionEvent(event: ConnectionEvent) = _connectionEvent.tryEmit(event)
+    fun clearConnectionEvent() = _connectionEvent.tryEmit(ConnectionEvent.Empty)
 
     fun updateConnectedDevice(device: BluetoothDevice) = _connectedDevices.updateValue { this[device.address] = device }
     fun removeConnectedDevice(device: BluetoothDevice) = _connectedDevices.updateValue { this.remove(device.address) }
@@ -56,10 +55,11 @@ class ConnectionRepository {
         config.updateValues(uuid, bytes)?.let { this[address] = it }
     }
 
-    fun getCurrentConfigs() = _deviceConfigs.value
-    fun getConfigOrNull(address: String) = _deviceConfigs.value[address]
+    fun getCurrentConfigs() = _deviceConfigs.replayCache.first()
+    fun getConfigOrNull(address: String) = _deviceConfigs.replayCache.first()[address]
 
     companion object {
+        private val TAG = ConnectionRepository::class.java.simpleName
         private const val ELAPSED_TIMESTAMP_NANOS_LIMIT = 10_000_000_000L
     }
 }

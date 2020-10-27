@@ -7,13 +7,10 @@ import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.data.entities.SensorDataEntry.Companion.mapToEntries
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailDescription.Companion.toDescriptionItem
-import edu.teco.earablecompanion.utils.ViewEventFlow
 import edu.teco.earablecompanion.utils.extensions.notBlankOrNull
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.OutputStream
 import kotlin.system.measureTimeMillis
@@ -26,10 +23,11 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     private val dataId = savedStateHandle.get<Long>("dataId") ?: 0L
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, Log.getStackTraceString(throwable))
-        exportEventFlow.postEvent(SensorDataExportEvent.Failed(throwable))
+        _exportEventFlow.tryEmit(SensorDataExportEvent.Failed(throwable))
     }
 
-    val exportEventFlow = ViewEventFlow<SensorDataExportEvent>()
+    private val _exportEventFlow = MutableSharedFlow<SensorDataExportEvent>(0, extraBufferCapacity = 1)
+    val exportEventFlow = _exportEventFlow.asSharedFlow()
     val shouldShowProgress: LiveData<Boolean> = liveData {
         emit(false)
         exportEventFlow.collect {
@@ -77,9 +75,9 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     }
 
     fun exportData(outputStream: OutputStream) = viewModelScope.launch(exceptionHandler) {
-        exportEventFlow.postEvent(SensorDataExportEvent.Started)
+        _exportEventFlow.emit(SensorDataExportEvent.Started)
         sensorDataRepository.exportData(dataId, outputStream)
-        exportEventFlow.postEvent(SensorDataExportEvent.Finished)
+        _exportEventFlow.emit(SensorDataExportEvent.Finished)
     }
 
     companion object {

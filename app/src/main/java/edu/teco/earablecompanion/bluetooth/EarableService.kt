@@ -344,7 +344,7 @@ class EarableService : Service() {
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            //Log.i(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
+            Log.i(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
             if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
                 return
             }
@@ -362,9 +362,7 @@ class EarableService : Service() {
         }
 
         private fun updateConfig(gatt: BluetoothGatt, uuid: String, bytes: ByteArray) {
-            val address = gatt.device.address
-
-            connectionRepository.updateConfigFromBytes(address, uuid, bytes)
+            connectionRepository.updateConfigFromBytes(gatt.device.address, uuid, bytes)
         }
 
         private fun readCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>, config: Config) = scope.launch {
