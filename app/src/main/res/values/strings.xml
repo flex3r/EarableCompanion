@@ -90,9 +90,9 @@
     <string name="clear_data_dialog_negative">Cancel</string>
     <string name="earable_esense_description">Supported sensors:\n- Accelerometer\n- Gyrosensor\n- Button presses</string>
     <string name="earable_cosinuss_description">Supported sensors:\n- Heart rate\n- Body temperature</string>
-    <string name="config_saved_successful">Successfully saved configuration on device</string>
-    <string name="config_saved_failed">Failed to save configuration on device</string>
-    <string name="device_save_fab_description">Save configuration to device</string>
+    <string name="config_saved_successful">Configuration has been sent to device</string>
+    <string name="config_saved_failed">Failed to send configuration to device</string>
+    <string name="device_save_fab_description">Send configuration to device</string>
     <string name="radio_group_button_disabled">Disabled</string>
     <string name="record_fab_description">Start a recording</string>
     <string name="record_fab_text">Record</string>
