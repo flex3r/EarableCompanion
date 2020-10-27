@@ -9,7 +9,7 @@ import edu.teco.earablecompanion.overview.device.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import java.io.OutputStream
 import java.time.LocalDateTime
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class SensorDataRepository @Inject constructor(private val sensorDataDao: SensorDataDao) {
 
     private val _activeRecording = MutableStateFlow<SensorDataRecording?>(null)
-    val activeRecording: StateFlow<SensorDataRecording?> = _activeRecording
+    val activeRecording = _activeRecording.asStateFlow()
     val isRecording: Boolean
         get() = activeRecording.value != null
 
