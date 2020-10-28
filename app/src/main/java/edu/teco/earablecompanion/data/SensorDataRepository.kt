@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
+import okio.buffer
+import okio.sink
 import java.io.OutputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -66,20 +68,19 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
             timestamp = LocalDateTime.now(ZoneId.systemDefault()),
             message = message
         )
-        
+
         sensorDataDao.insertLogEntry(entry)
     }
 
     suspend fun updateSensorData(dataId: Long, title: String, description: String?) = sensorDataDao.updateData(dataId, title, description)
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun exportData(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {
         val entries = sensorDataDao.getEntries(dataId)
-        outputStream.use { os ->
-            os.bufferedWriter().use { writer ->
-                writer.write(SensorDataEntry.CSV_HEADER_ROW)
-                entries.sortedBy { it.timestamp }.forEach {
-                    writer.write(it.asCsvEntry)
-                }
+        outputStream.sink().buffer().use { sink ->
+            sink.writeUtf8(SensorDataEntry.CSV_HEADER_ROW)
+            entries.sortedBy { it.timestamp }.forEach {
+                sink.writeUtf8(it.asCsvEntry)
             }
         }
     }
