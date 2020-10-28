@@ -3,6 +3,7 @@ package edu.teco.earablecompanion.data
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGattCharacteristic
 import edu.teco.earablecompanion.data.dao.SensorDataDao
+import edu.teco.earablecompanion.data.entities.LogEntry
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.overview.device.Config
@@ -28,6 +29,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
 
     suspend fun getDataEntryCount(dataId: Long): Int = sensorDataDao.getEntryCountByDataId(dataId)
     suspend fun getSensorDataEntries(dataId: Long): List<SensorDataEntry> = sensorDataDao.getEntries(dataId)
+    suspend fun getLogEntries(dataId: Long): List<LogEntry> = sensorDataDao.getLogEntries(dataId)
 
     suspend fun clearData() = sensorDataDao.deleteAll()
     suspend fun removeData(id: Long) = sensorDataDao.delete(id)
@@ -55,6 +57,17 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         entry.dataId = dataId
 
         sensorDataDao.insertEntry(entry)
+    }
+
+    suspend fun addLogEntry(message: String) {
+        val dataId = activeRecording.value?.data?.dataId ?: return
+        val entry = LogEntry(
+            dataId = dataId,
+            timestamp = LocalDateTime.now(ZoneId.systemDefault()),
+            message = message
+        )
+        
+        sensorDataDao.insertLogEntry(entry)
     }
 
     suspend fun updateSensorData(dataId: Long, title: String, description: String?) = sensorDataDao.updateData(dataId, title, description)

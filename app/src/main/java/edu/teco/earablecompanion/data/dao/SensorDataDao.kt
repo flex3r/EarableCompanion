@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import edu.teco.earablecompanion.data.entities.LogEntry
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import kotlinx.coroutines.flow.Flow
@@ -40,4 +41,10 @@ interface SensorDataDao {
 
     @Query("SELECT COUNT(data_entry_id) FROM data_entry_table WHERE data_id = :id")
     suspend fun getEntryCountByDataId(id: Long): Int
+
+    @Insert
+    suspend fun insertLogEntry(entry: LogEntry)
+
+    @Query("SELECT * FROM log_entry_table WHERE data_id = :dataId")
+    suspend fun getLogEntries(dataId: Long): List<LogEntry>
 }
