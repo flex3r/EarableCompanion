@@ -13,36 +13,54 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.bluetooth.EarableService
 import edu.teco.earablecompanion.databinding.MainActivityBinding
+import edu.teco.earablecompanion.overview.OverviewFragment
+import edu.teco.earablecompanion.overview.connection.ConnectionFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
     private lateinit var binding: MainActivityBinding
+
+    private val currentFragment: Fragment?
+        get() = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
+    private val bottomSheetDialogFragment: BottomSheetDialogFragment?
+        get() = currentFragment?.childFragmentManager?.fragments?.first() as? BottomSheetDialogFragment
+
     private val enableBluetoothRegistration = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
             Activity.RESULT_OK -> earableService?.startScan()
-            else -> Snackbar.make(binding.root, R.string.bluetooth_disclaimer, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.enable) { enableBluetoothIfDisabled() }
-                .show()
+            else -> {
+                bottomSheetDialogFragment?.requireDialog()?.cancel()
+
+                Snackbar.make(binding.root, R.string.bluetooth_disclaimer, Snackbar.LENGTH_LONG)
+                    .setAnchorView(binding.bottomNavView)
+                    .show()
+            }
         }
     }
     private val requestPermissionsRegistration = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { map ->
         when {
             // all permissions granted, start/bind service
             map.all { it.value } -> earableService?.let { enableBluetoothIfDisabled() } ?: startAndBindService()
-            else -> Snackbar.make(binding.root, R.string.permissions_disclaimer, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.accept) { requestPermissions() }
-                .show()
+            else -> {
+                bottomSheetDialogFragment?.requireDialog()?.cancel()
+
+                Snackbar.make(binding.root, R.string.permissions_disclaimer, Snackbar.LENGTH_LONG)
+                    .setAnchorView(binding.bottomNavView)
+                    .show()
+            }
         }
     }
 
