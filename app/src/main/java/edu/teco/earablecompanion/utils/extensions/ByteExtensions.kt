@@ -11,3 +11,6 @@ infix fun Byte.and(that: Byte): Int = this.toInt().and(that.toInt())
 infix fun Byte.shr(that: Int): Int = this.toInt().shr(that)
 infix fun Int.shr(that: Byte): Int = this.shr(that.toInt())
 infix fun Byte.shr(that: Byte): Int = this.toInt().shr(that.toInt())
+
+inline val ByteArray.asHexString: String
+    get() = joinToString(separator = " ").format("%02X")

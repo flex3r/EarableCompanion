@@ -24,10 +24,7 @@ import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.overview.device.cosinuss.CosinussConfig
 import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
-import edu.teco.earablecompanion.utils.extensions.collectCharacteristics
-import edu.teco.earablecompanion.utils.extensions.connect
-import edu.teco.earablecompanion.utils.extensions.earableType
-import edu.teco.earablecompanion.utils.extensions.formattedUuid
+import edu.teco.earablecompanion.utils.extensions.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -49,7 +46,7 @@ class EarableService : Service() {
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
     private val preferenceChangedListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-        when(key) {
+        when (key) {
             getString(R.string.preference_record_logs_key) -> loggingEnabled = sharedPreferences.getBoolean(key, false)
         }
     }
@@ -261,6 +258,12 @@ class EarableService : Service() {
         gatts.clear()
     }
 
+    private fun addLogEntryIfEnabled(device: BluetoothDevice, message: String) = scope.launch {
+        if (loggingEnabled) {
+            dataRepository.addLogEntry(device, message)
+        }
+    }
+
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             if (result.containsBlacklistedUuid || (shouldIgnoreUnkownDevices && result.device.name == null)) {
@@ -315,6 +318,7 @@ class EarableService : Service() {
                     gatts.remove(gatt.device)
 
                     if (dataRepository.isRecording) {
+                        addLogEntryIfEnabled(gatt.device, "DISCONNECTED")
                         stopRecording(gatts.keys.toList(), connectionRepository.getCurrentConfigs())
                     }
 
@@ -339,6 +343,7 @@ class EarableService : Service() {
             }
 
             scope.launch {
+                addLogEntryIfEnabled(gatt.device, "Characteristic changed: [${characteristic.formattedUuid}] (${characteristic.value.asHexString})")
                 connectionRepository.getConfigOrNull(gatt.device.address)?.let {
                     dataRepository.addSensorDataEntryFromCharacteristic(it, characteristic)
                 }
@@ -346,11 +351,12 @@ class EarableService : Service() {
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            Log.i(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
+            //Log.i(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
             if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
                 return
             }
 
+            scope.launch { addLogEntryIfEnabled(gatt.device, "Characteristic write: [${characteristic.formattedUuid}] (${characteristic.value.asHexString})") }
             updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
         }
 
@@ -360,6 +366,7 @@ class EarableService : Service() {
                 return
             }
 
+            scope.launch { addLogEntryIfEnabled(gatt.device, "Characteristic read: [${characteristic.formattedUuid}] (${characteristic.value.asHexString})") }
             updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
         }
 

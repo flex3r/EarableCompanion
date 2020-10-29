@@ -5,6 +5,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
+import edu.teco.earablecompanion.data.entities.LogEntry
 import edu.teco.earablecompanion.data.entities.SensorDataEntry.Companion.mapToEntries
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailDescription.Companion.toDescriptionItem
 import edu.teco.earablecompanion.utils.extensions.notBlankOrNull
@@ -64,7 +65,16 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
         }
     }
 
+    val logs: LiveData<List<LogEntry>> = liveData(viewModelScope.coroutineContext) {
+        sensorDataRepository.getLogEntries(dataId).forEach {
+            Log.d(TAG, it.toString())
+        }
+    }
+
     val hasData = detailDescription.map { it.entryCount > 0 }
+    val hasLogs: LiveData<Boolean> = liveData(viewModelScope.coroutineContext) {
+        emit(sensorDataRepository.hasLogs(dataId))
+    }
 
     val description: String? get() = detailDescription.value?.description
     val title: String? get() = detailDescription.value?.title
@@ -78,6 +88,11 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
         _exportEventFlow.emit(SensorDataExportEvent.Started)
         sensorDataRepository.exportData(dataId, outputStream)
         _exportEventFlow.emit(SensorDataExportEvent.Finished)
+    }
+
+    suspend fun loadLogs() = flow {
+        emit(emptyList())
+        emit(sensorDataRepository.getLogEntries(dataId))
     }
 
     companion object {

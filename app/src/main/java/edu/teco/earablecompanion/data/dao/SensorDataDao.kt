@@ -47,4 +47,7 @@ interface SensorDataDao {
 
     @Query("SELECT * FROM log_entry_table WHERE data_id = :dataId")
     suspend fun getLogEntries(dataId: Long): List<LogEntry>
+
+    @Query("SELECT COUNT(log_entry_id) FROM log_entry_table WHERE data_id = :id")
+    suspend fun getLogEntryCountByDataId(id: Long): Int
 }
