@@ -65,12 +65,6 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
         }
     }
 
-    val logs: LiveData<List<LogEntry>> = liveData(viewModelScope.coroutineContext) {
-        sensorDataRepository.getLogEntries(dataId).forEach {
-            Log.d(TAG, it.toString())
-        }
-    }
-
     val hasData = detailDescription.map { it.entryCount > 0 }
     val hasLogs: LiveData<Boolean> = liveData(viewModelScope.coroutineContext) {
         emit(sensorDataRepository.hasLogs(dataId))
@@ -90,10 +84,7 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
         _exportEventFlow.emit(SensorDataExportEvent.Finished)
     }
 
-    suspend fun loadLogs() = flow {
-        emit(emptyList())
-        emit(sensorDataRepository.getLogEntries(dataId))
-    }
+    suspend fun loadLogs() = sensorDataRepository.getLogEntries(dataId)
 
     companion object {
         private val TAG = SensorDataDetailViewModel::class.java.simpleName

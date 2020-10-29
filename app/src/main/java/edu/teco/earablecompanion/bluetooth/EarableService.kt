@@ -44,7 +44,11 @@ class EarableService : Service() {
     inner class LocalBinder(val service: EarableService = this@EarableService) : Binder()
 
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
-    private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    private val sharedPreferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(this).also {
+            loggingEnabled = it.getBoolean(getString(R.string.preference_record_logs_key), false)
+        }
+    }
     private val preferenceChangedListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
             getString(R.string.preference_record_logs_key) -> loggingEnabled = sharedPreferences.getBoolean(key, false)

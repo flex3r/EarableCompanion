@@ -23,6 +23,7 @@
     <string name="bluetooth_disclaimer">Bluetooth needs to be enabled before a connection can be made</string>
     <string name="enable">Enable</string>
     <string name="accept">Accept</string>
+    <string name="close">Close</string>
     <string name="notification_title">EarableCompanion</string>
     <string name="notification_message">EarableCompanion running in the background</string>
     <string name="connection_device_icon_description">Device icon</string>
@@ -115,10 +116,12 @@
     <string name="sensor_data_detail_description_title">Description</string>
     <string name="sensor_data_detail_description_icon_description">Description icon</string>
     <string name="sensor_data_detail_description_edit_text">Edit</string>
+    <string name="sensor_data_detail_description_logs_text">Logs</string>
     <string name="sensor_data_detail_no_data_icon_description">Info icon</string>
     <string name="sensor_data_detail_no_data_text">This data recording has no data</string>
     <string name="edit_dialog_title">Edit</string>
     <string name="edit_description_input_hint">Description</string>
+    <string name="logs_dialog_title">Logs</string>
     <string name="edit_title_input_hint">Title</string>
     <string name="sensor_data_detail_chart_icon_description">Chart icon</string>
     <string name="sensor_data_type_acc_x_title">Accelerometer X</string>

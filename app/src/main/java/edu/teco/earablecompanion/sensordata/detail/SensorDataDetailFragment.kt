@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -52,9 +53,8 @@ class SensorDataDetailFragment : Fragment() {
             sensorDataDetailRecyclerview.adapter = adapter
             sensorDataDetailDescriptionText.movementMethod = ScrollingMovementMethod()
             sensorDataDetailDescriptionEdit.setOnClickListener { editData() }
-            exportFab.setOnClickListener {
-                createDocumentRegistration.launch("${args.dataTitle}.csv")
-            }
+            sensorDataDetailDescriptionLogs.setOnClickListener { showLogs() }
+            exportFab.setOnClickListener { createDocumentRegistration.launch("${args.dataTitle}.csv") }
         }
 
         setHasOptionsMenu(true)
@@ -114,6 +114,15 @@ class SensorDataDetailFragment : Fragment() {
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = title
             }
             .setNegativeButton(R.string.cancel) { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun showLogs() = lifecycleScope.launchWhenResumed {
+        val logs = viewModel.loadLogs().map { "${it.timestamp}\n${it.message}\n" }
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.logs_dialog_title)
+            .setPositiveButton(R.string.close) { d, _ -> d.dismiss() }
+            .setItems(logs.toTypedArray()) { _, _ -> Unit }
             .show()
     }
 
