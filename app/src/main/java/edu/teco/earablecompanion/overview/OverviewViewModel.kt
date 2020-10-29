@@ -5,6 +5,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
+import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOverviewItems
 import edu.teco.earablecompanion.overview.OverviewItem.Recording.Companion.toOverviewItem
@@ -31,11 +32,11 @@ class OverviewViewModel @ViewModelInject constructor(
             }
     }
 
-    private val hasConnectedDevices = overviewItems.map { items -> items.any { it is OverviewItem.Device } }
+    private val hasConnectedDevices = overviewItems.map { items -> items.any { it is OverviewItem.Device && it.type != EarableType.NOT_SUPPORTED } }
     private val isRecording = overviewItems.map { items -> items.any { it is OverviewItem.Recording } }
     val connectedDevicesAndRecording = MediatorLiveData<Pair<Boolean, Boolean>>().apply {
-        addSource(hasConnectedDevices) { value = it to (isRecording.value ?: false) }
-        addSource(isRecording) { value = (hasConnectedDevices.value ?: false) to it }
+        addSource(hasConnectedDevices) { value = Pair(it, isRecording.value ?: false) }
+        addSource(isRecording) { value = Pair(hasConnectedDevices.value ?: false, it) }
     }
 
     fun getCurrentConfigs() = connectionRepository.getCurrentConfigs()
