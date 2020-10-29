@@ -2,6 +2,7 @@ package edu.teco.earablecompanion
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -24,19 +25,20 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.bluetooth.EarableService
 import edu.teco.earablecompanion.databinding.MainActivityBinding
-import edu.teco.earablecompanion.overview.OverviewFragment
-import edu.teco.earablecompanion.overview.connection.ConnectionFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val navController: NavController by lazy { findNavController(R.id.main_content) }
+    private val bluetoothAdapter: BluetoothAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bluetoothManager.adapter
+    }
     private lateinit var binding: MainActivityBinding
 
-    private val currentFragment: Fragment?
-        get() = supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.first()
-    private val bottomSheetDialogFragment: BottomSheetDialogFragment?
-        get() = currentFragment?.childFragmentManager?.fragments?.first() as? BottomSheetDialogFragment
+    private inline val Fragment?.childFragment get() = this?.childFragmentManager?.fragments?.first()
+    private val currentFragment get() = supportFragmentManager.primaryNavigationFragment?.childFragment
+    private val bottomSheetDialogFragment get() = currentFragment?.childFragment as? BottomSheetDialogFragment
 
     private val enableBluetoothRegistration = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {
@@ -53,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private val requestPermissionsRegistration = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { map ->
         when {
             // all permissions granted, start/bind service
-            map.all { it.value } -> earableService?.let { enableBluetoothIfDisabled() } ?: startAndBindService()
+            map.all { it.value } -> enableBluetoothIfDisabled()
             else -> {
                 bottomSheetDialogFragment?.requireDialog()?.cancel()
 
@@ -83,11 +85,34 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (earableService == null) Intent(this, EarableService::class.java).also {
+            try {
+                startService(it)
+                bindService(it, serviceConnection, Context.BIND_AUTO_CREATE)
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
+        }
+    }
+
+    override fun onStop() {
+        try {
+            unbindService(serviceConnection)
+        } catch (t: Throwable) {
+            Log.e(TAG, Log.getStackTraceString(t))
+        }
+
+        super.onStop()
+    }
+
     override fun onDestroy() {
-        super.onDestroy()
         if (!isChangingConfigurations) {
             stopService(Intent(this, EarableService::class.java))
         }
+
+        super.onDestroy()
     }
 
     override fun onSupportNavigateUp(): Boolean = navController.navigateUp() || super.onSupportNavigateUp()
@@ -101,20 +126,9 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun startAndBindService() {
-        Intent(this, EarableService::class.java).also {
-            try {
-                startService(it)
-                bindService(it, serviceConnection, Context.BIND_AUTO_CREATE)
-            } catch (t: Throwable) {
-                Log.e(TAG, Log.getStackTraceString(t))
-            }
-        }
-    }
-
     private fun enableBluetoothIfDisabled() {
-        when (earableService?.isBluetoothEnabled) {
-            true -> earableService?.startScan()
+        when {
+            bluetoothAdapter.isEnabled -> earableService?.startScan()
             else -> enableBluetoothRegistration.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
     }
@@ -122,7 +136,6 @@ class MainActivity : AppCompatActivity() {
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             earableService = (service as EarableService.LocalBinder).service
-            enableBluetoothIfDisabled()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {

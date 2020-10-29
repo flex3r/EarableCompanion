@@ -12,6 +12,9 @@
     <string name="preference_connection_bond_key" translatable="false">preference_connection_bond</string>
     <string name="preference_connection_bond_title">Bond with devices</string>
     <string name="preference_connection_bond_summary">Initiates a bonding request during connection process</string>
+    <string name="preference_record_logs_key" translatable="false">preference_record_logs_key</string>
+    <string name="preference_record_logs_title">Enable logging</string>
+    <string name="preference_record_logs_summary">Saves Bluetooth status and connection information during a recording</string>
 
     <string name="data_created_at">Created at %s</string>
     <string name="data_duration">Duration: %s</string>

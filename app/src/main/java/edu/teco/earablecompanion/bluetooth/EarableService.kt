@@ -48,14 +48,16 @@ class EarableService : Service() {
 
     private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
     private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+    private val preferenceChangedListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        when(key) {
+            getString(R.string.preference_record_logs_key) -> loggingEnabled = sharedPreferences.getBoolean(key, false)
+        }
+    }
+    private var loggingEnabled: Boolean = false
     private var shouldIgnoreUnkownDevices = true
 
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
     private val characteristics = mutableMapOf<BluetoothDevice, Map<String, BluetoothGattCharacteristic>>()
-    private val bluetoothAdapter: BluetoothAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothManager.adapter
-    }
     private val scanner: BluetoothLeScannerCompat by lazy { BluetoothLeScannerCompat.getScanner() }
     private val bluetoothDeviceStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -91,8 +93,6 @@ class EarableService : Service() {
     @IOSupervisorScope
     lateinit var scope: CoroutineScope
 
-    val isBluetoothEnabled get() = bluetoothAdapter.isEnabled
-
     override fun onBind(intent: Intent?): IBinder? = binder
     override fun onUnbind(intent: Intent?): Boolean {
         closeConnections()
@@ -101,6 +101,7 @@ class EarableService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangedListener)
         registerReceiver(bluetoothDeviceStateReceiver, IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED))
         registerReceiver(bluetoothStateReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -121,6 +122,7 @@ class EarableService : Service() {
 
     override fun onDestroy() {
         scope.cancel()
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangedListener)
         unregisterReceiver(bluetoothDeviceStateReceiver)
         unregisterReceiver(bluetoothStateReceiver)
         closeConnections()
