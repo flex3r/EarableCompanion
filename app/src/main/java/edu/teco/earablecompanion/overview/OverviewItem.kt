@@ -1,9 +1,9 @@
 package edu.teco.earablecompanion.overview
 
 import android.bluetooth.BluetoothDevice
+import edu.teco.earablecompanion.bluetooth.earable.Config
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataRecording
-import edu.teco.earablecompanion.utils.extensions.earableType
 import java.time.LocalDateTime
 
 sealed class OverviewItem {
@@ -12,14 +12,14 @@ sealed class OverviewItem {
 
     data class Device(val name: String?, val address: String, val bluetoothDevice: BluetoothDevice, val type: EarableType) : OverviewItem() {
         companion object {
-            private fun BluetoothDevice.toOverviewItem() = Device(
+            private fun BluetoothDevice.toOverviewItem(config: Config?) = Device(
                 name = name,
                 address = address,
                 bluetoothDevice = this,
-                type = earableType
+                type = config?.earableType ?: EarableType.NOT_SUPPORTED
             )
 
-            fun Collection<BluetoothDevice>.toOverviewItems(): List<OverviewItem> = map { it.toOverviewItem() }
+            fun Collection<BluetoothDevice>.toOverviewItems(configs: Map<String, Config>): List<OverviewItem> = map { it.toOverviewItem(configs[it.address]) }
         }
     }
 

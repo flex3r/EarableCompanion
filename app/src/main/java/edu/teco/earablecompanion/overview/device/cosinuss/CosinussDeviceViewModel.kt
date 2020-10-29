@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
+import edu.teco.earablecompanion.bluetooth.earable.CosinussConfig
 import kotlinx.coroutines.flow.collectLatest
 
 class CosinussDeviceViewModel @ViewModelInject constructor(

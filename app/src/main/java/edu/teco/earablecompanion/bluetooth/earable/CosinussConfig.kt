@@ -1,8 +1,7 @@
-package edu.teco.earablecompanion.overview.device.cosinuss
+package edu.teco.earablecompanion.bluetooth.earable
 
 import android.bluetooth.BluetoothGattCharacteristic
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
-import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.extensions.and
 import edu.teco.earablecompanion.utils.extensions.formattedUuid
 import java.time.LocalDateTime
@@ -12,6 +11,8 @@ data class CosinussConfig(
     var heartRateEnabled: Boolean = true,
     var bodyTemperatureEnabled: Boolean = true,
 ) : Config() {
+
+    override val earableType: EarableType = EarableType.COSINUSS
 
     override val sensorCharacteristics: List<Pair<String, Boolean>>
         get() = buildList {

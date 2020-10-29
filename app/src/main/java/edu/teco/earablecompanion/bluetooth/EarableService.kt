@@ -21,9 +21,9 @@ import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
-import edu.teco.earablecompanion.overview.device.Config
-import edu.teco.earablecompanion.overview.device.cosinuss.CosinussConfig
-import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
+import edu.teco.earablecompanion.bluetooth.earable.Config
+import edu.teco.earablecompanion.bluetooth.earable.CosinussConfig
+import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
 import edu.teco.earablecompanion.utils.extensions.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -294,10 +294,11 @@ class EarableService : Service() {
                 return
             }
 
+            // TODO decide by manufacturer characteristic instead of name?
             val defaultConfig = when (gatt.device.earableType) {
                 EarableType.ESENSE -> ESenseConfig()
                 EarableType.COSINUSS -> CosinussConfig()
-                else -> return
+                else -> return // TODO Generic support with gatt profiles
             }
             connectionRepository.setConfig(gatt.device.address, defaultConfig)
 

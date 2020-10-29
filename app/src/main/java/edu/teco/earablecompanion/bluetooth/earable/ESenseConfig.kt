@@ -1,9 +1,8 @@
-package edu.teco.earablecompanion.overview.device.esense
+package edu.teco.earablecompanion.bluetooth.earable
 
 import android.bluetooth.BluetoothGattCharacteristic
 import android.util.Log
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
-import edu.teco.earablecompanion.overview.device.Config
 import edu.teco.earablecompanion.utils.extensions.and
 import edu.teco.earablecompanion.utils.extensions.formattedUuid
 import edu.teco.earablecompanion.utils.extensions.shl
@@ -21,6 +20,8 @@ data class ESenseConfig(
     var gyroLPF: GyroLPF = GyroLPF.BW_5,
     var accOffset: Triple<Double, Double, Double> = Triple(0.0, 0.0, 0.0),
 ) : Config() {
+
+    override val earableType: EarableType = EarableType.ESENSE
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
     override val configCharacteristic = CONFIG_UUID

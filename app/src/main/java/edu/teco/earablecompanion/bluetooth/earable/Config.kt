@@ -1,10 +1,12 @@
-package edu.teco.earablecompanion.overview.device
+package edu.teco.earablecompanion.bluetooth.earable
 
 import android.bluetooth.BluetoothGattCharacteristic
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import java.util.*
 
 abstract class Config {
+
+    open val earableType: EarableType = EarableType.NOT_SUPPORTED
 
     // Characteristic to change sensor configuration
     open val sensorConfigCharacteristic: String? = null

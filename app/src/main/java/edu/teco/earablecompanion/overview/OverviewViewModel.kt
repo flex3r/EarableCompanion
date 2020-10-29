@@ -22,7 +22,7 @@ class OverviewViewModel @ViewModelInject constructor(
         connectionRepository.connectedDevices.combine(recordingFlow) { devices, activeRecording -> devices to activeRecording }
             .collectLatest { (devices, activeRecording) ->
                 Log.i(TAG, "Connected devices: $devices")
-                val items = devices.values.toOverviewItems()
+                val items = devices.values.toOverviewItems(connectionRepository.getCurrentConfigs())
                 when {
                     items.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
                     activeRecording == null -> emit(items)

@@ -2,7 +2,7 @@ package edu.teco.earablecompanion.bluetooth
 
 import android.bluetooth.BluetoothDevice
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
-import edu.teco.earablecompanion.overview.device.Config
+import edu.teco.earablecompanion.bluetooth.earable.Config
 import edu.teco.earablecompanion.utils.extensions.updateValue
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -55,7 +55,7 @@ class ConnectionRepository {
         config.updateValues(uuid, bytes)?.let { this[address] = it }
     }
 
-    fun getCurrentConfigs() = _deviceConfigs.replayCache.first()
+    fun getCurrentConfigs(): Map<String, Config> = _deviceConfigs.replayCache.first()
     fun getConfigOrNull(address: String) = _deviceConfigs.replayCache.first()[address]
 
     companion object {

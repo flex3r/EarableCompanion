@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
+import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
 import edu.teco.earablecompanion.databinding.EsenseDeviceFragmentBinding
 
 @AndroidEntryPoint

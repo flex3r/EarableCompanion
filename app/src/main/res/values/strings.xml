@@ -94,6 +94,7 @@
     <string name="clear_data_dialog_negative">Cancel</string>
     <string name="earable_esense_description">Supported sensors:\n- Accelerometer\n- Gyrosensor\n- Button presses</string>
     <string name="earable_cosinuss_description">Supported sensors:\n- Heart rate\n- Body temperature</string>
+    <string name="earable_not_supported_description">Unsupported device</string>
     <string name="config_saved_successful">Configuration has been sent to device</string>
     <string name="config_saved_failed">Failed to send configuration to device</string>
     <string name="device_save_fab_description">Send configuration to device</string>

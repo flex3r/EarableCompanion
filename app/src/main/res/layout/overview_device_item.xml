@@ -7,14 +7,16 @@
         <variable
             name="device"
             type="edu.teco.earablecompanion.overview.OverviewItem.Device" />
+
+        <import type="edu.teco.earablecompanion.bluetooth.earable.EarableType" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:clickable="true"
-        android:focusable="true">
+        android:clickable="@{device.type == EarableType.NOT_SUPPORTED ? false : true}"
+        android:focusable="@{device.type == EarableType.NOT_SUPPORTED ? false : true}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -38,7 +40,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="8dp"
                 android:gravity="center_horizontal"
                 android:text="@{device.name == null ? @string/unknown_device_name : device.name}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
@@ -51,24 +53,33 @@
                 android:id="@+id/overview_device_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="4dp"
                 android:text="@{device.address}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:layout_constraintBottom_toTopOf="@id/overview_device_description"
+                app:layout_constraintBottom_toTopOf="@id/overview_device_barrier"
                 app:layout_constraintEnd_toEndOf="@id/overview_device_name"
                 app:layout_constraintStart_toStartOf="@id/overview_device_icon"
                 app:layout_constraintTop_toBottomOf="@id/overview_device_name" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/overview_device_barrier"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:barrierDirection="top"
+                app:constraint_referenced_ids="overview_device_description,overview_device_disconnect"/>
 
             <TextView
                 android:id="@+id/overview_device_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:description="@{device.type}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/overview_device_disconnect"
                 app:layout_constraintStart_toStartOf="@id/overview_device_icon"
-                app:layout_constraintTop_toBottomOf="@id/overview_device_address" />
+                app:layout_constraintTop_toBottomOf="@id/overview_device_barrier"
+                app:layout_constraintVertical_bias="0.0" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/overview_device_disconnect"

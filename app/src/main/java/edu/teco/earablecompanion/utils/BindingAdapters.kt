@@ -17,7 +17,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataType
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
-import edu.teco.earablecompanion.overview.device.esense.ESenseConfig
+import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
 import edu.teco.earablecompanion.utils.extensions.themeColor
 import java.time.Duration
 import java.time.LocalDateTime
@@ -120,7 +120,8 @@ fun TextView.setEarableDescription(type: EarableType) {
     text = when (type) {
         EarableType.ESENSE -> context.getString(R.string.earable_esense_description)
         EarableType.COSINUSS -> context.getString(R.string.earable_cosinuss_description)
-        EarableType.GENERIC -> ""
+        EarableType.GENERIC -> "" // TODO supported sensors
+        EarableType.NOT_SUPPORTED -> context.getString(R.string.earable_not_supported_description)
     }
 }
 

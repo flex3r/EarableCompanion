@@ -6,7 +6,7 @@ import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.LogEntry
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
-import edu.teco.earablecompanion.overview.device.Config
+import edu.teco.earablecompanion.bluetooth.earable.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
