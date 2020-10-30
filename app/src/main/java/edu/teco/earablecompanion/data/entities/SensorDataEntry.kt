@@ -40,9 +40,13 @@ data class SensorDataEntry(
         const val CSV_HEADER_ROW = "timestamp,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,button,heart_rate,body_temp\n"
 
         suspend fun List<SensorDataEntry>.mapToEntries() = withContext(Dispatchers.Default) {
-            val sorted = sortedBy { it.timestamp }
-            SensorDataType.values().map {
-                async { it to sorted.mapByDataType(it) }
+            groupBy { it.deviceAddress }.values.map { entries ->
+                async {
+                    val sorted = entries.sortedBy { it.timestamp }
+                    SensorDataType.values().map {
+                        it to sorted.mapByDataType(it)
+                    }
+                }
             }
         }
 
