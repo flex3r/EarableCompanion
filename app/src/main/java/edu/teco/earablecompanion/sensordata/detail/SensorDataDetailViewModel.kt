@@ -40,6 +40,7 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
         sensorDataRepository.getSensorDataByIdFlow(dataId)
             .catch { Log.e(TAG, Log.getStackTraceString(it)) }
             .collectLatest {
+                it ?: return@collectLatest
                 val entryCount = sensorDataRepository.getDataEntryCount(dataId)
                 emit(it.toDescriptionItem(entryCount))
             }

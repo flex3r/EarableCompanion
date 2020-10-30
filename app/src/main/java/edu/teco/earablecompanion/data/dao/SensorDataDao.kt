@@ -16,7 +16,7 @@ interface SensorDataDao {
     fun getAllFlow(): Flow<List<SensorData>>
 
     @Query("SELECT * FROM data_table WHERE data_id = :id LIMIT 1")
-    fun getDataFlow(id: Long): Flow<SensorData>
+    fun getDataFlow(id: Long): Flow<SensorData?>
 
     @Insert
     suspend fun insert(data: SensorData): Long

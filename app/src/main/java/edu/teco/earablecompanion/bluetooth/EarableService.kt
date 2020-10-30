@@ -294,7 +294,6 @@ class EarableService : Service() {
                 return
             }
 
-            // TODO decide by manufacturer characteristic instead of name?
             val defaultConfig = when (gatt.device.earableType) {
                 EarableType.ESENSE -> ESenseConfig()
                 EarableType.COSINUSS -> CosinussConfig()
