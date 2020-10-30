@@ -33,16 +33,13 @@ class ConnectionFragment : BottomSheetDialogFragment() {
         binding = ConnectionFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@ConnectionFragment
-            connectionLayout.minHeight = (resources.displayMetrics.heightPixels * 0.75).toInt()
-            connectionLayout.maxHeight = (resources.displayMetrics.heightPixels * 0.75).toInt()
+            connectionCloseIcon.setOnClickListener { requireDialog().cancel() }
         }
-        (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_EXPANDED
+        (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_COLLAPSED
 
         viewModel.apply {
             clearConnectionEvent()
-            devices.observe(viewLifecycleOwner) {
-                connectionAdapter.submitList(it)
-            }
+            devices.observe(viewLifecycleOwner) { connectionAdapter.submitList(it) }
             connectionEvent.observe(viewLifecycleOwner, ::handleConnectionEvent)
             isConnecting.observe(viewLifecycleOwner) {
                 connectionAdapter.clickEnabled = !it
@@ -70,6 +67,12 @@ class ConnectionFragment : BottomSheetDialogFragment() {
                 })
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val sheetContainer = requireView().parent as? ViewGroup ?: return
+        sheetContainer.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
     }
 
     override fun onAttach(context: Context) {

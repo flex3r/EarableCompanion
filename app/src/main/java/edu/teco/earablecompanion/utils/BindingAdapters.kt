@@ -182,6 +182,10 @@ fun ProgressIndicator.setByConnectionEvent(event: ConnectionEvent) {
         is ConnectionEvent.Connecting -> setProgressCompat(33, true)
         is ConnectionEvent.Pairing -> setProgressCompat(66, true)
         is ConnectionEvent.Connected -> setProgressCompat(100, true)
-        else -> isIndeterminate = true
+        else -> {
+            isVisible = false
+            isIndeterminate = true
+            isVisible = true
+        }
     }
 }

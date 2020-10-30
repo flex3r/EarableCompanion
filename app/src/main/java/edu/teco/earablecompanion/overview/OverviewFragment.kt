@@ -55,8 +55,8 @@ class OverviewFragment : Fragment() {
             lifecycleOwner = this@OverviewFragment
             vm = viewModel
             devicesRecyclerview.adapter = adapter
-            connectFab.setOnClickListener(::showConnectionBottomSheet)
-            connectFabSmall.setOnClickListener(::showConnectionBottomSheet)
+            connectFab.setOnClickListener { showConnectionBottomSheet() }
+            connectFabSmall.setOnClickListener { showConnectionBottomSheet() }
             recordFab.setOnClickListener { displayStartRecordingDialog() }
             stopRecordFab.setOnClickListener { stopRecording() }
         }
@@ -74,7 +74,7 @@ class OverviewFragment : Fragment() {
             .show()
     }
 
-    private fun showConnectionBottomSheet(view: View?) {
+    private fun showConnectionBottomSheet() {
         val dialog = ConnectionFragment()
         dialog.show(childFragmentManager, ConnectionFragment::class.java.simpleName)
     }

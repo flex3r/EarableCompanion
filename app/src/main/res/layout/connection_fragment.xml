@@ -25,9 +25,10 @@
             android:indeterminate="true"
             android:max="100"
             app:connectionEvent="@{vm.connectionEvent}"
-            app:layout_constraintTop_toTopOf="parent"
+            app:indicatorSize="3dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/connection_handle_icon"
@@ -52,9 +53,24 @@
             android:text="@string/connection_header_text"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             app:layout_constraintBottom_toTopOf="@id/connection_devices_recyclerview"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/connection_close_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/connection_close_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:clickable="true"
+            android:contentDescription="@string/connection_close_icon_description"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:layout_constraintBottom_toBottomOf="@id/connection_header_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/connection_header_text"
+            app:layout_constraintTop_toTopOf="@id/connection_header_text"
+            app:srcCompat="@drawable/ic_baseline_clear_24" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/connection_devices_recyclerview"
