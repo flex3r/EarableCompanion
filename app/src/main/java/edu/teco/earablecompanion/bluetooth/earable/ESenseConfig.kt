@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.bluetooth.earable
 
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGattCharacteristic
 import android.util.Log
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
@@ -56,9 +57,9 @@ data class ESenseConfig(
         else -> null
     }
 
-    override fun parseSensorValues(characteristic: BluetoothGattCharacteristic): SensorDataEntry? = when (characteristic.formattedUuid) {
-        SENSOR_UUID -> parseSensorData(characteristic.value)
-        BUTTON_UUID -> parseButtonData(characteristic.value)
+    override fun parseSensorValues(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry? = when (characteristic.formattedUuid) {
+        SENSOR_UUID -> parseSensorData(device, characteristic.value)
+        BUTTON_UUID -> parseButtonData(device, characteristic.value)
         else -> null
     }
 
@@ -155,17 +156,17 @@ data class ESenseConfig(
         }
     }
 
-    private fun parseButtonData(bytes: ByteArray): SensorDataEntry? {
+    private fun parseButtonData(device: BluetoothDevice, bytes: ByteArray): SensorDataEntry? {
         if (!checkCheckSum(bytes, 1)) return null
 
         val pressed = bytes[3].toInt()
-        return SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()), buttonPressed = pressed)
+        return SensorDataEntry(deviceName = device.name, deviceAddress = device.address, timestamp = LocalDateTime.now(ZoneId.systemDefault()), buttonPressed = pressed)
     }
 
-    private fun parseSensorData(bytes: ByteArray): SensorDataEntry? {
+    private fun parseSensorData(device: BluetoothDevice, bytes: ByteArray): SensorDataEntry? {
         if (!checkCheckSum(bytes, 2)) return null
 
-        val entry = SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()))
+        val entry = SensorDataEntry(deviceName = device.name, deviceAddress = device.address, timestamp = LocalDateTime.now(ZoneId.systemDefault()))
         if (accEnabled) {
             val (accX, accY, accZ) = bytes.parseAccSensorData()
             entry.accX = accX

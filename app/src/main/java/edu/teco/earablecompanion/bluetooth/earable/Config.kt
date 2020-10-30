@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.bluetooth.earable
 
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGattCharacteristic
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import java.util.*
@@ -28,7 +29,7 @@ abstract class Config {
     open val disableSensorCharacteristicData: ByteArray? = null
 
     abstract fun updateValues(uuid: String, bytes: ByteArray): Config?
-    abstract fun parseSensorValues(characteristic: BluetoothGattCharacteristic): SensorDataEntry?
+    abstract fun parseSensorValues(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry?
 
     companion object {
         private const val NOTIFICATION_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"

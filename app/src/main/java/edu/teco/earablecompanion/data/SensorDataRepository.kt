@@ -53,9 +53,9 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         _activeRecording.value = null
     }
 
-    suspend fun addSensorDataEntryFromCharacteristic(config: Config, characteristic: BluetoothGattCharacteristic) {
+    suspend fun addSensorDataEntryFromCharacteristic(device: BluetoothDevice, config: Config, characteristic: BluetoothGattCharacteristic) {
         val dataId = activeRecording.value?.data?.dataId ?: return
-        val entry = config.parseSensorValues(characteristic) ?: return
+        val entry = config.parseSensorValues(device, characteristic) ?: return
         entry.dataId = dataId
 
         sensorDataDao.insertEntry(entry)

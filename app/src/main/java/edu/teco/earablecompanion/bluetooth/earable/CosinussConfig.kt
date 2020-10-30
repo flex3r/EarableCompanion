@@ -1,7 +1,7 @@
 package edu.teco.earablecompanion.bluetooth.earable
 
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGattCharacteristic
-import android.util.Log
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.utils.extensions.and
 import edu.teco.earablecompanion.utils.extensions.formattedUuid
@@ -50,23 +50,28 @@ data class CosinussConfig(
         return this
     }
 
-    override fun parseSensorValues(characteristic: BluetoothGattCharacteristic): SensorDataEntry? = when (characteristic.formattedUuid) {
-        HEART_RATE_SENSOR_UUID -> parseHeartRate(characteristic)
-        BODY_TEMPERATURE_SENSOR_UUID -> parseBodyTemperature(characteristic)
-        ACC_SENSOR_UUID -> parseAccSensorData(characteristic.value)
+    override fun parseSensorValues(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry? = when (characteristic.formattedUuid) {
+        HEART_RATE_SENSOR_UUID -> parseHeartRate(device, characteristic)
+        BODY_TEMPERATURE_SENSOR_UUID -> parseBodyTemperature(device, characteristic)
+        ACC_SENSOR_UUID -> parseAccSensorData(device, characteristic.value)
         else -> null
     }
 
-    private fun parseHeartRate(characteristic: BluetoothGattCharacteristic): SensorDataEntry? {
+    private fun parseHeartRate(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry? {
         val format = when (characteristic.value[0] and 0x01) {
             0x01 -> BluetoothGattCharacteristic.FORMAT_UINT16
             else -> BluetoothGattCharacteristic.FORMAT_UINT8
         }
         val rate = characteristic.getIntValue(format, 1)
-        return SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()), heartRate = rate)
+        return SensorDataEntry(
+            deviceName = device.name,
+            deviceAddress = device.address,
+            timestamp = LocalDateTime.now(ZoneId.systemDefault()),
+            heartRate = rate
+        )
     }
 
-    private fun parseBodyTemperature(characteristic: BluetoothGattCharacteristic): SensorDataEntry? {
+    private fun parseBodyTemperature(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry? {
         val temp = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 1)
         if (temp.isNaN()) return null
 
@@ -75,13 +80,20 @@ data class CosinussConfig(
             isCelsius -> temp.toDouble()
             else -> temp.toCelsius
         }
-        return SensorDataEntry(timestamp = LocalDateTime.now(ZoneId.systemDefault()), bodyTemperature = tempInCelsius)
+        return SensorDataEntry(
+            deviceName = device.name,
+            deviceAddress = device.address,
+            timestamp = LocalDateTime.now(ZoneId.systemDefault()),
+            bodyTemperature = tempInCelsius
+        )
     }
 
-    private fun parseAccSensorData(bytes: ByteArray): SensorDataEntry? {
+    private fun parseAccSensorData(device: BluetoothDevice, bytes: ByteArray): SensorDataEntry? {
         val (x, y, z) = bytes.parseAccSensorData()
 
         return SensorDataEntry(
+            deviceName = device.name,
+            deviceAddress = device.address,
             timestamp = LocalDateTime.now(ZoneId.systemDefault()),
             accX = x,
             accY = y,

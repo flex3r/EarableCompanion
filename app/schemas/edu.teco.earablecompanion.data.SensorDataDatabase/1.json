@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f8d5f6252563373edc17599d9a06b918",
+    "identityHash": "d85ec0101ad860d2f643eeab3f85a7fc",
     "entities": [
       {
         "tableName": "data_table",
@@ -50,7 +50,7 @@
       },
       {
         "tableName": "data_entry_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_id` INTEGER NOT NULL, `entry_timestamp` INTEGER NOT NULL, `entry_acc_X` REAL, `entry_acc_Y` REAL, `entry_acc_Z` REAL, `entry_gyro_X` REAL, `entry_gyro_Y` REAL, `entry_gyro_Z` REAL, `entry_button_pressed` INTEGER, `entry_heart_rate` INTEGER, `entry_body_temperature` REAL, FOREIGN KEY(`data_id`) REFERENCES `data_table`(`data_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_id` INTEGER NOT NULL, `device_name` TEXT, `device_address` TEXT NOT NULL, `entry_timestamp` INTEGER NOT NULL, `entry_acc_X` REAL, `entry_acc_Y` REAL, `entry_acc_Z` REAL, `entry_gyro_X` REAL, `entry_gyro_Y` REAL, `entry_gyro_Z` REAL, `entry_button_pressed` INTEGER, `entry_heart_rate` INTEGER, `entry_body_temperature` REAL, FOREIGN KEY(`data_id`) REFERENCES `data_table`(`data_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "dataEntryId",
@@ -62,6 +62,18 @@
             "fieldPath": "dataId",
             "columnName": "data_id",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceName",
+            "columnName": "device_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "deviceAddress",
+            "columnName": "device_address",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -218,7 +230,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f8d5f6252563373edc17599d9a06b918')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd85ec0101ad860d2f643eeab3f85a7fc')"
     ]
   }
 }

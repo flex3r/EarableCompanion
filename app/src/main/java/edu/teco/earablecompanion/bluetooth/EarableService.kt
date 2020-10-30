@@ -349,7 +349,7 @@ class EarableService : Service() {
             scope.launch {
                 addLogEntryIfEnabled(gatt.device, "Characteristic changed: [${characteristic.formattedUuid}] (${characteristic.value.asHexString})")
                 connectionRepository.getConfigOrNull(gatt.device.address)?.let {
-                    dataRepository.addSensorDataEntryFromCharacteristic(it, characteristic)
+                    dataRepository.addSensorDataEntryFromCharacteristic(gatt.device, it, characteristic)
                 }
             }
         }
