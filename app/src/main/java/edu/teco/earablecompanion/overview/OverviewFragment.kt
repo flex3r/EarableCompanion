@@ -32,7 +32,7 @@ class OverviewFragment : Fragment() {
         val adapter = OverviewAdapter(::disconnectDevice) { device ->
             val action = when (device.type) {
                 EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name ?: getString(R.string.unknown_esense_device_name), device.bluetoothDevice)
-                EarableType.COSINUSS -> OverviewFragmentDirections.actionOverviewFragmentToCosinussDeviceFragment(device.name ?: getString(R.string.unknown_cosinuss_device_name), device.bluetoothDevice)
+                EarableType.COSINUSS, EarableType.COSINUSS_ACC -> OverviewFragmentDirections.actionOverviewFragmentToCosinussDeviceFragment(device.name ?: getString(R.string.unknown_cosinuss_device_name), device.bluetoothDevice)
                 else -> null // TODO ui for generic config
             }
             action?.let { navController.navigate(it) }

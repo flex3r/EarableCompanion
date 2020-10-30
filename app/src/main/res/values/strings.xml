@@ -95,6 +95,7 @@
     <string name="clear_data_dialog_negative">Cancel</string>
     <string name="earable_esense_description">Supported sensors:\n- Accelerometer\n- Gyrosensor\n- Button presses</string>
     <string name="earable_cosinuss_description">Supported sensors:\n- Heart rate\n- Body temperature</string>
+    <string name="earable_cosinuss_acc_description">Supported sensors:\n- Heart rate\n- Body temperature\n- Accelerometer</string>
     <string name="earable_not_supported_description">Unsupported device</string>
     <string name="config_saved_successful">Configuration has been sent to device</string>
     <string name="config_saved_failed">Failed to send configuration to device</string>
@@ -141,8 +142,9 @@
     <string name="sensor_data_type_heart_rate_unit">bpm</string>
     <string name="sensor_data_type_body_temperature_unit">°C</string>
     <string name="overview_device_disconnect_text">Disconnect</string>
-    <string name="heart_rate_enabled_text">Heart rate enabled</string>
-    <string name="body_temperature_enabled_text">Body temperature enabled</string>
+    <string name="cosinuss_heart_rate_enabled_text">Heart rate enabled</string>
+    <string name="cosinuss_body_temperature_enabled_text">Body temperature enabled</string>
+    <string name="cosinuss_acc_enabled_text">Accelerometer enabled</string>
     <string name="export_file_creation_error">Failed to create file</string>
     <string name="export_file_finished">Export complete</string>
     <string name="export_file_export_error">Failed to export data: %s</string>

@@ -120,6 +120,7 @@ fun TextView.setEarableDescription(type: EarableType) {
     text = when (type) {
         EarableType.ESENSE -> context.getString(R.string.earable_esense_description)
         EarableType.COSINUSS -> context.getString(R.string.earable_cosinuss_description)
+        EarableType.COSINUSS_ACC -> context.getString(R.string.earable_cosinuss_acc_description)
         EarableType.GENERIC -> "" // TODO supported sensors
         EarableType.NOT_SUPPORTED -> context.getString(R.string.earable_not_supported_description)
     }

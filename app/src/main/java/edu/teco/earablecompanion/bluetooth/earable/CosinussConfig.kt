@@ -13,10 +13,14 @@ data class CosinussConfig(
     var heartRateEnabled: Boolean = true,
     var bodyTemperatureEnabled: Boolean = true,
     var accSupported: Boolean = false,
-    var accEnabled: Boolean = true,
+    var accEnabled: Boolean = false,
 ) : Config() {
 
-    override val earableType: EarableType = EarableType.COSINUSS
+    override val earableType: EarableType
+        get() = when {
+            accSupported -> EarableType.COSINUSS_ACC
+            else -> EarableType.COSINUSS
+        }
 
     override val characteristicsToRead = listOf(ACC_SENSOR_UUID)
     override val configCharacteristic = ACC_SENSOR_UUID

@@ -20,10 +20,12 @@ class OverviewViewModel @ViewModelInject constructor(
 
     val overviewItems: LiveData<List<OverviewItem>> = liveData(viewModelScope.coroutineContext) {
         val recordingFlow = sensorDataRepository.activeRecording
-        connectionRepository.connectedDevices.combine(recordingFlow) { devices, activeRecording -> devices to activeRecording }
-            .collectLatest { (devices, activeRecording) ->
+        val deviceConfigs = connectionRepository.deviceConfigs
+        val connectedDevices = connectionRepository.connectedDevices
+        combine(connectedDevices, recordingFlow, deviceConfigs) { devices, activeRecording, configs -> Triple(devices, activeRecording, configs) }
+            .collectLatest { (devices, activeRecording, configs) ->
                 Log.i(TAG, "Connected devices: $devices")
-                val items = devices.values.toOverviewItems(connectionRepository.getCurrentConfigs())
+                val items = devices.values.toOverviewItems(configs)
                 when {
                     items.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
                     activeRecording == null -> emit(items)

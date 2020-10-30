@@ -3,10 +3,7 @@ package edu.teco.earablecompanion.overview.device.cosinuss
 import android.bluetooth.BluetoothDevice
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
 import edu.teco.earablecompanion.bluetooth.earable.CosinussConfig
 import kotlinx.coroutines.flow.collectLatest
@@ -24,6 +21,9 @@ class CosinussDeviceViewModel @ViewModelInject constructor(
         }
     }
 
+    val accSupported = device.map { it.config.accSupported }
+
     fun setHeartRateEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? CosinussConfig)?.heartRateEnabled = enabled }
     fun setBodyTemperatureEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? CosinussConfig)?.bodyTemperatureEnabled = enabled }
+    fun setAccelerometerEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? CosinussConfig)?.accEnabled = enabled }
 }
