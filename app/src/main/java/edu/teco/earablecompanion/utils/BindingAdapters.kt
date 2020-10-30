@@ -14,10 +14,10 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.progressindicator.ProgressIndicator
 import edu.teco.earablecompanion.R
+import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataType
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
-import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
 import edu.teco.earablecompanion.utils.extensions.themeColor
 import java.time.Duration
 import java.time.LocalDateTime
@@ -165,7 +165,7 @@ fun LineChart.setDataEntries(entries: List<Entry>, dataType: SensorDataType) {
     val unit = dataType.getUnit(context)
     axisLeft.valueFormatter = object : ValueFormatter() {
         override fun getFormattedValue(value: Float): String = when (dataType) {
-            SensorDataType.HEART_RATE, SensorDataType.GYRO_X, SensorDataType.GYRO_Y, SensorDataType.GYRO_Z -> "${value.toInt()} $unit"
+            SensorDataType.HEART_RATE -> "${value.toInt()} $unit"
             SensorDataType.BUTTON -> if (value == 1.0f) unit else ""
             else -> "${String.format("%.3f", value)} $unit"
         }
