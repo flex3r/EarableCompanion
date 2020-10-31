@@ -44,9 +44,10 @@ data class CosinussConfig(
         get() = byteArrayOf(0x00)
 
     override fun updateValues(uuid: String, bytes: ByteArray): Config? {
-        if (uuid == ACC_SENSOR_UUID) {
-            accSupported = true
-        }
+//        if (uuid == ACC_SENSOR_UUID) {
+//            Log.d(TAG, bytes.asHexString)
+//            accSupported = true
+//        }
         return this
     }
 

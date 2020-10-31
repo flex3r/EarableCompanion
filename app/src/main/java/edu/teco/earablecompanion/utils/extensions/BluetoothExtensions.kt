@@ -19,7 +19,8 @@ fun BluetoothDevice.connect(context: Context, callback: BluetoothGattCallback): 
 val BluetoothDevice.earableType: EarableType
     get() = when {
         name.startsWith("eSense-") -> EarableType.ESENSE
-        name.startsWith("earconnect") || name.startsWith("kit_acc") -> EarableType.COSINUSS
+        name.startsWith("earconnect") -> EarableType.COSINUSS
+        name.startsWith("kit_acc") -> EarableType.COSINUSS_ACC
         else -> EarableType.GENERIC
     }
 
