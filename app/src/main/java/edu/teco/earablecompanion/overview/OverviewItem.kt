@@ -10,6 +10,9 @@ sealed class OverviewItem {
 
     object NoDevices : OverviewItem()
 
+    object EnableMic : OverviewItem()
+    data class DisableMic(val socConnected: Boolean = false) : OverviewItem()
+
     data class Device(val name: String?, val address: String, val bluetoothDevice: BluetoothDevice, val type: EarableType) : OverviewItem() {
         companion object {
             private fun BluetoothDevice.toOverviewItem(config: Config?) = Device(

@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.*
 import android.content.*
+import android.media.AudioManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -17,13 +18,13 @@ import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
+import edu.teco.earablecompanion.bluetooth.earable.Config
+import edu.teco.earablecompanion.bluetooth.earable.CosinussConfig
+import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
-import edu.teco.earablecompanion.bluetooth.earable.Config
-import edu.teco.earablecompanion.bluetooth.earable.CosinussConfig
-import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
 import edu.teco.earablecompanion.utils.extensions.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -43,7 +44,7 @@ class EarableService : Service() {
 
     inner class LocalBinder(val service: EarableService = this@EarableService) : Binder()
 
-    private val manager: NotificationManager by lazy { getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
+    private val manager: NotificationManager by lazy { getSystemService(NotificationManager::class.java) }
     private val sharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this).also {
             loggingEnabled = it.getBoolean(getString(R.string.preference_record_logs_key), false)
@@ -55,7 +56,7 @@ class EarableService : Service() {
         }
     }
     private var loggingEnabled: Boolean = false
-    private var shouldIgnoreUnkownDevices = true
+    private var shouldIgnoreUnknownDevices = true
 
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
     private val characteristics = mutableMapOf<BluetoothDevice, Map<String, BluetoothGattCharacteristic>>()
@@ -84,6 +85,17 @@ class EarableService : Service() {
         }
     }
 
+    private val audioManager: AudioManager by lazy { getSystemService(AudioManager::class.java) }
+    private val bluetoothScoStateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED) return
+            when (intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.ERROR)) {
+                AudioManager.SCO_AUDIO_STATE_CONNECTED -> connectionRepository.setScoActive(true)
+                AudioManager.SCO_AUDIO_STATE_DISCONNECTED -> connectionRepository.setScoActive(false)
+            }
+        }
+    }
+
     @Inject
     lateinit var dataRepository: SensorDataRepository
 
@@ -105,8 +117,9 @@ class EarableService : Service() {
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangedListener)
         registerReceiver(bluetoothDeviceStateReceiver, IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED))
         registerReceiver(bluetoothStateReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        registerReceiver(bluetoothScoStateReceiver, IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED))
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = getString(R.string.app_name)
             val channel = NotificationChannel(CHANNEL_ID_LOW, name, NotificationManager.IMPORTANCE_LOW).apply {
                 enableVibration(false)
@@ -124,8 +137,11 @@ class EarableService : Service() {
     override fun onDestroy() {
         scope.cancel()
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangedListener)
+
         unregisterReceiver(bluetoothDeviceStateReceiver)
         unregisterReceiver(bluetoothStateReceiver)
+        unregisterReceiver(bluetoothScoStateReceiver)
+        disconnectSco()
         closeConnections()
 
         stopForeground(true)
@@ -135,7 +151,7 @@ class EarableService : Service() {
 
     fun startScan() {
         startForeground()
-        shouldIgnoreUnkownDevices = sharedPreferences.getBoolean(getString(R.string.preference_ignore_unknown_devices_key), true)
+        shouldIgnoreUnknownDevices = sharedPreferences.getBoolean(getString(R.string.preference_ignore_unknown_devices_key), true)
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
             .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
@@ -161,6 +177,22 @@ class EarableService : Service() {
         if (!shouldBond || !device.createBond()) {
             device.connect(this, GattCallback())
         }
+    }
+
+    fun connectSco(): Boolean = with(audioManager) {
+        if (!audioManager.isBluetoothScoAvailableOffCall) return false
+        mode = AudioManager.MODE_NORMAL
+        isBluetoothScoOn = true
+        startBluetoothSco()
+        //isSpeakerphoneOn = false
+        true
+    }
+
+    fun disconnectSco() = with(audioManager) {
+        stopBluetoothSco()
+        mode = AudioManager.MODE_NORMAL
+        isBluetoothScoOn = false
+        isSpeakerphoneOn = true
     }
 
     fun disconnect(device: BluetoothDevice) {
@@ -270,7 +302,7 @@ class EarableService : Service() {
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            if (result.containsBlacklistedUuid || (shouldIgnoreUnkownDevices && result.device.name == null)) {
+            if (result.containsBlacklistedUuid || (shouldIgnoreUnknownDevices && result.device.name == null)) {
                 return
             }
 

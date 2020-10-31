@@ -16,7 +16,7 @@ fun BluetoothGatt.collectCharacteristics(): Map<String, BluetoothGattCharacteris
 
 fun BluetoothDevice.connect(context: Context, callback: BluetoothGattCallback): BluetoothGatt = connectGatt(context, true, callback, BluetoothDevice.TRANSPORT_LE)
 
-val BluetoothDevice.earableType: EarableType
+inline val BluetoothDevice.earableType: EarableType
     get() = when {
         name.startsWith("eSense-") -> EarableType.ESENSE
         name.startsWith("earconnect") -> EarableType.COSINUSS
@@ -24,5 +24,8 @@ val BluetoothDevice.earableType: EarableType
         else -> EarableType.GENERIC
     }
 
-val BluetoothGattCharacteristic.formattedUuid: String
+inline val BluetoothGattCharacteristic.formattedUuid: String
     get() = uuid.toString().toLowerCase(Locale.ROOT)
+
+inline val BluetoothDevice.isBonded: Boolean get() = this.bondState == BluetoothDevice.BOND_BONDED
+inline val Collection<BluetoothDevice>.hasBondedDevice: Boolean get() = this.any { it.isBonded }

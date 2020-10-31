@@ -72,6 +72,14 @@
     <string name="sensor_data_overview_no_data_text">No data has been recorded yet</string>
     <string name="sensor_data_overview_remove_text">Remove</string>
     <string name="overview_device_icon_description">Device icon</string>
+    <string name="overview_enable_mic_icon_description">Enable mic icon</string>
+    <string name="overview_enable_mic_header">Microphone disabled</string>
+    <string name="overview_enable_mic_button">Enable</string>
+    <string name="overview_disable_mic_header">Microphone enabled</string>
+    <string name="overview_disable_mic_connected">Connection status: Connected</string>
+    <string name="overview_disable_mic_disconnected">Connection status: Disconnected</string>
+    <string name="overview_disable_mic_button">Disable</string>
+    <string name="overview_disable_mic_icon_description">Disable mic icon</string>
     <string name="connect_fab_description">Start a connection</string>
     <string name="connect_fab_text">Connect</string>
     <string name="overview_no_devices_icon_description">Device hub icon</string>

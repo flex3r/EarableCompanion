@@ -1,12 +1,14 @@
 package edu.teco.earablecompanion.bluetooth
 
 import android.bluetooth.BluetoothDevice
-import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.bluetooth.earable.Config
+import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.utils.extensions.updateValue
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import no.nordicsemi.android.support.v18.scanner.ScanResult
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.absoluteValue
@@ -23,6 +25,12 @@ class ConnectionRepository {
 
     private val _deviceConfigs = MutableSharedFlow<ConcurrentHashMap<String, Config>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConcurrentHashMap()) }
     val deviceConfigs = _deviceConfigs.asSharedFlow()
+
+    private val _bluetoothScoActive = MutableStateFlow(false)
+    val bluetoothScoActive = _bluetoothScoActive.asStateFlow()
+
+    private val _micEnabled = MutableStateFlow(false)
+    val micEnabled = _micEnabled.asStateFlow()
 
     val hasConnectedDevicesOrIsConnecting: Boolean
         get() = _connectedDevices.replayCache.first().isNotEmpty() || _connectionEvent.replayCache.first().connectedOrConnecting
@@ -57,6 +65,14 @@ class ConnectionRepository {
 
     fun getCurrentConfigs(): Map<String, Config> = _deviceConfigs.replayCache.first()
     fun getConfigOrNull(address: String) = _deviceConfigs.replayCache.first()[address]
+
+    fun setScoActive(active: Boolean) {
+        _bluetoothScoActive.value = active
+    }
+
+    fun setMicEnabled(enabled: Boolean) {
+        _micEnabled.value = enabled
+    }
 
     companion object {
         private val TAG = ConnectionRepository::class.java.simpleName

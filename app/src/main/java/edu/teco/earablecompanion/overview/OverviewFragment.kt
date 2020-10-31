@@ -29,10 +29,13 @@ class OverviewFragment : Fragment() {
     private lateinit var binding: OverviewFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = OverviewAdapter(::disconnectDevice) { device ->
+        val adapter = OverviewAdapter(::disconnectDevice, ::setMicEnabled) { device ->
             val action = when (device.type) {
                 EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name ?: getString(R.string.unknown_esense_device_name), device.bluetoothDevice)
-                EarableType.COSINUSS, EarableType.COSINUSS_ACC -> OverviewFragmentDirections.actionOverviewFragmentToCosinussDeviceFragment(device.name ?: getString(R.string.unknown_cosinuss_device_name), device.bluetoothDevice)
+                EarableType.COSINUSS, EarableType.COSINUSS_ACC -> OverviewFragmentDirections.actionOverviewFragmentToCosinussDeviceFragment(
+                    name = device.name ?: getString(R.string.unknown_cosinuss_device_name),
+                    device = device.bluetoothDevice
+                )
                 else -> null // TODO ui for generic config
             }
             action?.let { navController.navigate(it) }
@@ -72,6 +75,11 @@ class OverviewFragment : Fragment() {
             .setPositiveButton(getString(R.string.remove)) { _, _ -> (activity as? MainActivity)?.earableService?.disconnect(item.bluetoothDevice) }
             .setNegativeButton(getString(R.string.cancel)) { d, _ -> d.dismiss() }
             .show()
+    }
+
+    private fun setMicEnabled(enabled: Boolean) {
+        if (enabled) (activity as? MainActivity)?.earableService?.connectSco()
+        viewModel.setMicEnabled(enabled)
     }
 
     private fun showConnectionBottomSheet() {
