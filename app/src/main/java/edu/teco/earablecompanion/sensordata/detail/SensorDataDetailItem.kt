@@ -7,5 +7,5 @@ sealed class SensorDataDetailItem {
     object NoData : SensorDataDetailItem()
     object Loading : SensorDataDetailItem()
 
-    data class Chart(val type: SensorDataType, val data: List<Entry>) : SensorDataDetailItem()
+    data class Chart(val deviceName: String?, val deviceAddress: String?, val type: SensorDataType, val data: List<Entry>) : SensorDataDetailItem()
 }

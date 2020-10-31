@@ -5,8 +5,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
-import edu.teco.earablecompanion.data.entities.LogEntry
-import edu.teco.earablecompanion.data.entities.SensorDataEntry.Companion.mapToEntries
+import edu.teco.earablecompanion.data.entities.SensorDataEntry.Companion.mapToEntriesWithDevice
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailDescription.Companion.toDescriptionItem
 import edu.teco.earablecompanion.utils.extensions.notBlankOrNull
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -55,11 +54,15 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
             else -> {
                 measureTimeMillis {
                     val charts = mutableListOf<SensorDataDetailItem>()
-                    entries.mapToEntries().awaitAll().flatten().forEach { (sensorDataType, entries) ->
-                        if (entries.isNotEmpty()) {
-                            charts += SensorDataDetailItem.Chart(sensorDataType, entries)
+                    entries.mapToEntriesWithDevice()
+                        .awaitAll()
+                        .flatten()
+                        .forEach { (sensorDataType, mappedWithDevice) ->
+                            val (name, address, chartEntries) = mappedWithDevice
+                            if (chartEntries.isNotEmpty()) {
+                                charts += SensorDataDetailItem.Chart(name, address, sensorDataType, chartEntries)
+                            }
                         }
-                    }
                     emit(charts)
                 }.let { Log.i(TAG, "Mapping data entries took $it ms") }
             }
