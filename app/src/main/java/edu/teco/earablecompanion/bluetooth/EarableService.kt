@@ -8,6 +8,7 @@ import android.app.Service
 import android.bluetooth.*
 import android.content.*
 import android.media.AudioManager
+import android.media.MediaRecorder
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -34,6 +35,9 @@ import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
 import no.nordicsemi.android.support.v18.scanner.ScanCallback
 import no.nordicsemi.android.support.v18.scanner.ScanResult
 import no.nordicsemi.android.support.v18.scanner.ScanSettings
+import java.io.File
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
@@ -85,6 +89,7 @@ class EarableService : Service() {
         }
     }
 
+    private var mediaRecorder: MediaRecorder? = null
     private val audioManager: AudioManager by lazy { getSystemService(AudioManager::class.java) }
     private val bluetoothScoStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -184,15 +189,13 @@ class EarableService : Service() {
         mode = AudioManager.MODE_NORMAL
         isBluetoothScoOn = true
         startBluetoothSco()
-        //isSpeakerphoneOn = false
         true
     }
 
-    fun disconnectSco() = with(audioManager) {
+    private fun disconnectSco() = with(audioManager) {
         stopBluetoothSco()
         mode = AudioManager.MODE_NORMAL
         isBluetoothScoOn = false
-        isSpeakerphoneOn = true
     }
 
     fun disconnect(device: BluetoothDevice) {
@@ -217,7 +220,7 @@ class EarableService : Service() {
         return gatt.writeCharacteristic(characteristic)
     }
 
-    fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>) {
+    fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>, recordMic: Boolean) {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
             characteristics[device]?.get(config.configCharacteristic)?.let { characteristic ->
@@ -227,6 +230,12 @@ class EarableService : Service() {
 
             setSensorNotificationEnabled(device, config, enable = true)
         }
+
+        if (recordMic) {
+            val file = startMicRecording(title)
+            Log.d(TAG, file.toString())
+        }
+
         scope.launch {
             dataRepository.startRecording(title, devices)
         }
@@ -242,8 +251,34 @@ class EarableService : Service() {
 
             setSensorNotificationEnabled(device, config, enable = false)
         }
+
+        stopMicRecording()
         scope.launch {
             dataRepository.stopRecording()
+        }
+    }
+
+    private fun startMicRecording(title: String): File {
+        val storageDir = getExternalFilesDir("mic")
+        val timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+        val file = File.createTempFile("$title-$timestamp", ".3gp", storageDir)
+        mediaRecorder = MediaRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setOutputFile(file.absolutePath)
+            prepare()
+            start()
+        }
+
+        return file
+    }
+
+    private fun stopMicRecording() {
+        mediaRecorder = mediaRecorder?.run {
+            stop()
+            release()
+            null
         }
     }
 

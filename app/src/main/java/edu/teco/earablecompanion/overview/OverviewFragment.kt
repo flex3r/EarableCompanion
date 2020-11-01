@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -27,6 +28,13 @@ class OverviewFragment : Fragment() {
     private val viewModel: OverviewViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
     private lateinit var binding: OverviewFragmentBinding
+
+    private val requestPermissionRegistration = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+        when {
+            result -> displayStartRecordingDialog()
+            else -> showSnackbar(getString(R.string.audio_permission_disclaimer))
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = OverviewAdapter(::disconnectDevice, ::setMicEnabled) { device ->
@@ -60,7 +68,7 @@ class OverviewFragment : Fragment() {
             devicesRecyclerview.adapter = adapter
             connectFab.setOnClickListener { showConnectionBottomSheet() }
             connectFabSmall.setOnClickListener { showConnectionBottomSheet() }
-            recordFab.setOnClickListener { displayStartRecordingDialog() }
+            recordFab.setOnClickListener { requestPermissionIfNeeded() }
             stopRecordFab.setOnClickListener { stopRecording() }
         }
 
@@ -85,6 +93,11 @@ class OverviewFragment : Fragment() {
     private fun showConnectionBottomSheet() {
         val dialog = ConnectionFragment()
         dialog.show(childFragmentManager, ConnectionFragment::class.java.simpleName)
+    }
+
+    private fun requestPermissionIfNeeded() = when {
+        viewModel.micRecordingPossible -> requestPermissionRegistration.launch(android.Manifest.permission.RECORD_AUDIO)
+        else -> displayStartRecordingDialog()
     }
 
     private fun displayStartRecordingDialog() {
@@ -116,7 +129,7 @@ class OverviewFragment : Fragment() {
         val devices = viewModel.overviewItems.value?.filterIsInstance<OverviewItem.Device>()?.map { it.bluetoothDevice }
         val configs = viewModel.getCurrentConfigs()
         devices?.let {
-            (activity as? MainActivity)?.earableService?.startRecording(title, devices, configs)
+            (activity as? MainActivity)?.earableService?.startRecording(title, devices, configs, viewModel.micRecordingPossible)
         }
     }
 

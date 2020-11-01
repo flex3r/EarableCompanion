@@ -13,6 +13,7 @@ import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOverviewItems
 import edu.teco.earablecompanion.overview.OverviewItem.Recording.Companion.toOverviewItem
 import edu.teco.earablecompanion.utils.extensions.hasBondedDevice
+import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 
@@ -57,9 +58,8 @@ class OverviewViewModel @ViewModelInject constructor(
         addSource(isRecording) { value = Pair(hasConnectedDevices.valueOrFalse, it) }
     }
 
-
-    private val LiveData<Boolean>.valueOrFalse: Boolean
-        get() = value ?: false
+    val micRecordingPossible: Boolean
+        get() = connectionRepository.bluetoothScoActive.value && connectionRepository.micEnabled.value
 
     fun getCurrentConfigs() = connectionRepository.getCurrentConfigs()
 

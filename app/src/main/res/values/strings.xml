@@ -20,6 +20,7 @@
     <string name="data_duration">Duration: %s</string>
     <string name="data_entry_amount">%d datapoints</string>
     <string name="permissions_disclaimer">Permissions need to be accepted for bluetooth functionality</string>
+    <string name="audio_permission_disclaimer">Permission needs to be accepted for mic recording</string>
     <string name="bluetooth_disclaimer">Bluetooth needs to be enabled before a connection can be made</string>
     <string name="enable">Enable</string>
     <string name="accept">Accept</string>
