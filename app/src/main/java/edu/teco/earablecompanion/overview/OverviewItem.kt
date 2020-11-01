@@ -10,8 +10,8 @@ sealed class OverviewItem {
 
     object NoDevices : OverviewItem()
 
-    data class EnableMic(val recordingActive: Boolean = false) : OverviewItem()
-    data class DisableMic(val socConnected: Boolean = false, val recordingActive: Boolean = false) : OverviewItem()
+    data class MicDisabled(val recordingActive: Boolean = false) : OverviewItem()
+    data class MicEnabled(val socConnected: Boolean = false, val recordingActive: Boolean = false) : OverviewItem()
 
     data class Device(val name: String?, val address: String, val bluetoothDevice: BluetoothDevice, val type: EarableType) : OverviewItem() {
         companion object {

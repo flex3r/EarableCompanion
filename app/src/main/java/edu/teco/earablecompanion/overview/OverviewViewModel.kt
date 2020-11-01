@@ -45,8 +45,8 @@ class OverviewViewModel @ViewModelInject constructor(
                         } ?: false
 
                         if (devices.values.hasBondedDevice) when {
-                            micEnabled -> add(OverviewItem.DisableMic(socActive, recordingActive))
-                            else -> add(OverviewItem.EnableMic(recordingActive))
+                            micEnabled -> add(OverviewItem.MicEnabled(socActive, recordingActive))
+                            else -> add(OverviewItem.MicDisabled(recordingActive))
                         }
 
                         addAll(items)

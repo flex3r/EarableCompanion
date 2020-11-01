@@ -19,15 +19,15 @@ class OverviewAdapter(
     class DeviceViewHolder(val binding: OverviewDeviceItemBinding) : RecyclerView.ViewHolder(binding.root)
     class NoDevicesViewHolder(binding: OverviewNoDevicesItemBinding) : RecyclerView.ViewHolder(binding.root)
     class RecordingViewHolder(val binding: OverviewRecordItemBinding) : RecyclerView.ViewHolder(binding.root)
-    class EnableMicViewHolder(val binding: OverviewEnableMicItemBinding) : RecyclerView.ViewHolder(binding.root)
-    class DisableMicViewHolder(val binding: OverviewDisableMicItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class MicDisabledViewHolder(val binding: OverviewMicDisabledItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class MicEnabled(val binding: OverviewMicEnabledItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
         ITEM_VIEW_TYPE_DEVICE -> DeviceViewHolder(OverviewDeviceItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         ITEM_VIEW_TYPE_NO_DEVICES -> NoDevicesViewHolder(OverviewNoDevicesItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         ITEM_VIEW_TYPE_RECORDING -> RecordingViewHolder(OverviewRecordItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        ITEM_VIEW_TYPE_ENABLE_MIC -> EnableMicViewHolder(OverviewEnableMicItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        ITEM_VIEW_TYPE_DISABLE_MIC -> DisableMicViewHolder(OverviewDisableMicItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ITEM_VIEW_TYPE_ENABLE_MIC -> MicDisabledViewHolder(OverviewMicDisabledItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ITEM_VIEW_TYPE_DISABLE_MIC -> MicEnabled(OverviewMicEnabledItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         else -> throw ClassCastException("Unknown viewType $viewType")
     }
 
@@ -35,8 +35,8 @@ class OverviewAdapter(
         is OverviewItem.Device -> ITEM_VIEW_TYPE_DEVICE
         is OverviewItem.NoDevices -> ITEM_VIEW_TYPE_NO_DEVICES
         is OverviewItem.Recording -> ITEM_VIEW_TYPE_RECORDING
-        is OverviewItem.EnableMic -> ITEM_VIEW_TYPE_ENABLE_MIC
-        is OverviewItem.DisableMic -> ITEM_VIEW_TYPE_DISABLE_MIC
+        is OverviewItem.MicDisabled -> ITEM_VIEW_TYPE_ENABLE_MIC
+        is OverviewItem.MicEnabled -> ITEM_VIEW_TYPE_DISABLE_MIC
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -56,13 +56,13 @@ class OverviewAdapter(
                     post { (background as AnimationDrawable).start() }
                 }
             }
-            is EnableMicViewHolder -> {
-                holder.binding.item = getItem(position) as OverviewItem.EnableMic
-                holder.binding.overviewEnableMicButton.setOnClickListener { onMicEnabledClick(true) }
+            is MicDisabledViewHolder -> {
+                holder.binding.item = getItem(position) as OverviewItem.MicDisabled
+                holder.binding.overviewMicDisabledButton.setOnClickListener { onMicEnabledClick(true) }
             }
-            is DisableMicViewHolder -> {
-                holder.binding.item = getItem(position) as OverviewItem.DisableMic
-                holder.binding.overviewDisableMicButton.setOnClickListener { onMicEnabledClick(false) }
+            is MicEnabled -> {
+                holder.binding.item = getItem(position) as OverviewItem.MicEnabled
+                holder.binding.overviewMicEnabledButton.setOnClickListener { onMicEnabledClick(false) }
             }
         }
     }

@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="edu.teco.earablecompanion.overview.OverviewItem.DisableMic" />
+            type="edu.teco.earablecompanion.overview.OverviewItem.MicEnabled" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -20,54 +20,54 @@
             android:padding="8dp">
 
             <ImageView
-                android:id="@+id/overview_disable_mic_icon"
+                android:id="@+id/overview_mic_enabled_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
-                android:contentDescription="@string/overview_disable_mic_icon_description"
+                android:contentDescription="@string/overview_mic_enabled_icon_description"
                 android:src="@{item.socConnected ? @drawable/ic_baseline_mic_24 : @drawable/ic_baseline_mic_off_24}"
-                app:layout_constraintBottom_toBottomOf="@id/overview_disable_mic_header"
+                app:layout_constraintBottom_toBottomOf="@id/overview_mic_enabled_header"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/overview_disable_mic_header"
+                app:layout_constraintTop_toTopOf="@id/overview_mic_enabled_header"
                 app:tint="?attr/colorSecondary" />
 
             <TextView
-                android:id="@+id/overview_disable_mic_header"
+                android:id="@+id/overview_mic_enabled_header"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="8dp"
                 android:gravity="center_horizontal"
-                android:text="@string/overview_disable_mic_header"
+                android:text="@string/overview_mic_enabled_header"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/overview_disable_mic_status"
+                android:id="@+id/overview_mic_enabled_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="@{item.socConnected ? @string/overview_disable_mic_connected : @string/overview_disable_mic_disconnected}"
+                android:text="@{item.socConnected ? @string/overview_mic_enabled_connected : @string/overview_mic_enabled_disconnected}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/overview_disable_mic_button"
-                app:layout_constraintStart_toStartOf="@id/overview_disable_mic_icon"
-                app:layout_constraintTop_toBottomOf="@id/overview_disable_mic_header" />
+                app:layout_constraintEnd_toStartOf="@id/overview_mic_enabled_button"
+                app:layout_constraintStart_toStartOf="@id/overview_mic_enabled_icon"
+                app:layout_constraintTop_toBottomOf="@id/overview_mic_enabled_header" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/overview_disable_mic_button"
+                android:id="@+id/overview_mic_enabled_button"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:enabled="@{!item.recordingActive}"
-                android:text="@string/overview_disable_mic_button"
+                android:text="@string/overview_mic_enabled_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/overview_disable_mic_status"
-                app:layout_constraintTop_toBottomOf="@id/overview_disable_mic_header" />
+                app:layout_constraintStart_toEndOf="@id/overview_mic_enabled_status"
+                app:layout_constraintTop_toBottomOf="@id/overview_mic_enabled_header" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>
