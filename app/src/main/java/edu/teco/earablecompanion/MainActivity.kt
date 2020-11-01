@@ -74,6 +74,8 @@ class MainActivity : AppCompatActivity() {
                 field = value
             }
         }
+
+    private var isBound = false
     var earableService: EarableService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,8 +89,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (earableService == null) Intent(this, EarableService::class.java).also {
+        if (!isBound) Intent(this, EarableService::class.java).also {
             try {
+                isBound =  true
                 startService(it)
                 bindService(it, serviceConnection, Context.BIND_AUTO_CREATE)
             } catch (t: Throwable) {
@@ -98,13 +101,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        try {
-            unbindService(serviceConnection)
-        } catch (t: Throwable) {
-            Log.e(TAG, Log.getStackTraceString(t))
-        }
-
         super.onStop()
+        if (isBound) {
+            isBound = false
+            try {
+                unbindService(serviceConnection)
+            } catch (t: Throwable) {
+                Log.e(TAG, Log.getStackTraceString(t))
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -135,10 +140,12 @@ class MainActivity : AppCompatActivity() {
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            isBound = true
             earableService = (service as EarableService.LocalBinder).service
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
             earableService = null
         }
     }
