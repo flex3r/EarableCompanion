@@ -57,6 +57,7 @@ class OverviewAdapter(
                 }
             }
             is EnableMicViewHolder -> {
+                holder.binding.item = getItem(position) as OverviewItem.EnableMic
                 holder.binding.overviewEnableMicButton.setOnClickListener { onMicEnabledClick(true) }
             }
             is DisableMicViewHolder -> {

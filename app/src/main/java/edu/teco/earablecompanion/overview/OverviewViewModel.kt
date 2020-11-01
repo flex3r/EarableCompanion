@@ -38,11 +38,15 @@ class OverviewViewModel @ViewModelInject constructor(
                 val items = devices.values.toOverviewItems(configs)
                 when {
                     items.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
-                    activeRecording != null -> emit(listOf(activeRecording.toOverviewItem()) + items)
                     else -> emit(buildList {
+                        val recordingActive = activeRecording?.let {
+                            add(it.toOverviewItem())
+                            true
+                        } ?: false
+
                         if (devices.values.hasBondedDevice) when {
-                            micEnabled -> add(OverviewItem.DisableMic(socActive)) // TODO UI
-                            else -> add(OverviewItem.EnableMic)
+                            micEnabled -> add(OverviewItem.DisableMic(socActive, recordingActive))
+                            else -> add(OverviewItem.EnableMic(recordingActive))
                         }
 
                         addAll(items)
