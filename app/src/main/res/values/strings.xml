@@ -130,8 +130,11 @@
     <string name="sensor_data_detail_description_icon_description">Description icon</string>
     <string name="sensor_data_detail_description_edit_text">Edit</string>
     <string name="sensor_data_detail_description_logs_text">Logs</string>
+    <string name="sensor_data_detail_description_mic_text">Export recording</string>
     <string name="sensor_data_detail_no_data_icon_description">Info icon</string>
     <string name="sensor_data_detail_no_data_text">This data recording has no data</string>
+    <string name="sensor_data_detail_has_mic">Has microphone recording</string>
+    <string name="sensor_data_detail_no_mic">No microphone recording</string>
     <string name="edit_dialog_title">Edit</string>
     <string name="edit_description_input_hint">Description</string>
     <string name="logs_dialog_title">Logs</string>

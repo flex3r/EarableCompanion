@@ -146,6 +146,18 @@
                         app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_data_duration" />
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/sensor_data_detail_description_mic"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sensor_data_detail_description_mic_text"
+                        android:visibility="@{vm.hasMic ? View.VISIBLE : View.GONE}"
+                        app:icon="@drawable/ic_baseline_mic_24"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/sensor_data_detail_description_logs"
+                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_data_amount" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/sensor_data_detail_description_logs"
                         style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="wrap_content"

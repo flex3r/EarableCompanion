@@ -2,11 +2,11 @@ package edu.teco.earablecompanion.data
 
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGattCharacteristic
+import edu.teco.earablecompanion.bluetooth.earable.Config
 import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.LogEntry
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
-import edu.teco.earablecompanion.bluetooth.earable.Config
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.sink
+import java.io.File
 import java.io.OutputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -36,8 +37,12 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     suspend fun clearData() = sensorDataDao.deleteAll()
     suspend fun removeData(id: Long) = sensorDataDao.delete(id)
 
-    suspend fun startRecording(title: String, devices: List<BluetoothDevice>) {
-        val data = SensorData(title = title, createdAt = LocalDateTime.now(ZoneId.systemDefault()))
+    suspend fun startRecording(title: String, devices: List<BluetoothDevice>, micFile: File?) {
+        val data = SensorData(
+            title = title,
+            createdAt = LocalDateTime.now(ZoneId.systemDefault()),
+            micRecordingPath = micFile?.absolutePath
+        )
         val dataId = sensorDataDao.insert(data)
         data.dataId = dataId
 

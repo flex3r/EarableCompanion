@@ -70,7 +70,8 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     }
 
     val hasData = detailDescription.map { it.entryCount > 0 }
-    val hasLogs: LiveData<Boolean> = liveData(viewModelScope.coroutineContext) {
+    val hasMic = detailDescription.map { it.micEnabled }
+    val hasLogs = liveData(viewModelScope.coroutineContext) {
         emit(sensorDataRepository.hasLogs(dataId))
     }
 

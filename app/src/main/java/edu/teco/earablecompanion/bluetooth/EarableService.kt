@@ -231,13 +231,13 @@ class EarableService : Service() {
             setSensorNotificationEnabled(device, config, enable = true)
         }
 
-        if (recordMic) {
-            val file = startMicRecording(title)
-            Log.d(TAG, file.toString())
+        val micFile = when {
+            recordMic -> startMicRecording(title)
+            else -> null
         }
 
         scope.launch {
-            dataRepository.startRecording(title, devices)
+            dataRepository.startRecording(title, devices, micFile)
         }
     }
 

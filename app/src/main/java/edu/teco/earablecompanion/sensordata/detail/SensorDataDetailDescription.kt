@@ -11,6 +11,7 @@ data class SensorDataDetailDescription(
     val stoppedAt: LocalDateTime?,
     val duration: Duration?,
     val entryCount: Int,
+    val micEnabled: Boolean
 ) {
     companion object {
         fun SensorData.toDescriptionItem(entryCount: Int) = SensorDataDetailDescription(
@@ -19,7 +20,8 @@ data class SensorDataDetailDescription(
             createdAt = createdAt,
             stoppedAt = stoppedAt,
             duration = stoppedAt?.let { Duration.between(createdAt, stoppedAt) },
-            entryCount = entryCount
+            entryCount = entryCount,
+            micEnabled = micRecordingPath != null
         )
     }
 }

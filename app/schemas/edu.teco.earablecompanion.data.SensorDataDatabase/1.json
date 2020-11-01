@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d85ec0101ad860d2f643eeab3f85a7fc",
+    "identityHash": "290f3a4e93a2df4922fb7fad2b7c21bf",
     "entities": [
       {
         "tableName": "data_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_title` TEXT NOT NULL, `data_created` INTEGER NOT NULL, `data_stopped` INTEGER, `data_desc` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_title` TEXT NOT NULL, `data_created` INTEGER NOT NULL, `data_stopped` INTEGER, `data_desc` TEXT, `data_mic_recording` TEXT)",
         "fields": [
           {
             "fieldPath": "dataId",
@@ -35,6 +35,12 @@
           {
             "fieldPath": "description",
             "columnName": "data_desc",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "micRecordingPath",
+            "columnName": "data_mic_recording",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -230,7 +236,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd85ec0101ad860d2f643eeab3f85a7fc')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '290f3a4e93a2df4922fb7fad2b7c21bf')"
     ]
   }
 }
