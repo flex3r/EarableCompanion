@@ -6,6 +6,7 @@ import android.text.InputType
 import android.text.method.ScrollingMovementMethod
 import android.view.*
 import android.widget.LinearLayout
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -32,11 +33,20 @@ class SensorDataDetailFragment : Fragment() {
     private val args: SensorDataDetailFragmentArgs by navArgs()
     private lateinit var binding: SensorDataDetailFragmentBinding
 
-    private val createDocumentRegistration = registerForActivityResult(CreateCsvDocumentContract()) { result ->
+    private val createCsvRegistration = registerForActivityResult(CreateCsvDocumentContract()) { result ->
         when (result) {
             null -> showSnackbar(getString(R.string.export_file_creation_error))
             else -> requireContext().contentResolver.openOutputStream(result)?.let {
                 viewModel.exportData(it)
+            } ?: showSnackbar(getString(R.string.export_file_creation_error))
+        }
+    }
+
+    private val create3gpRegistration = registerForActivityResult(ActivityResultContracts.CreateDocument()) { result ->
+        when (result) {
+            null -> showSnackbar(getString(R.string.export_file_creation_error))
+            else -> requireContext().contentResolver.openOutputStream(result)?.let {
+                viewModel.exportMicRecording(it)
             } ?: showSnackbar(getString(R.string.export_file_creation_error))
         }
     }
@@ -54,7 +64,8 @@ class SensorDataDetailFragment : Fragment() {
             sensorDataDetailDescriptionText.movementMethod = ScrollingMovementMethod()
             sensorDataDetailDescriptionEdit.setOnClickListener { editData() }
             sensorDataDetailDescriptionLogs.setOnClickListener { showLogs() }
-            exportFab.setOnClickListener { createDocumentRegistration.launch("${args.dataTitle}.csv") }
+            sensorDataDetailDescriptionMic.setOnClickListener { create3gpRegistration.launch("${args.dataTitle}.3gp") }
+            exportFab.setOnClickListener { createCsvRegistration.launch("${args.dataTitle}.csv") }
         }
 
         setHasOptionsMenu(true)

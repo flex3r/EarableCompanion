@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.sink
+import okio.source
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.OutputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -88,6 +90,18 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
             sink.writeUtf8(SensorDataEntry.CSV_HEADER_ROW)
             entries.sortedBy { it.timestamp }.forEach {
                 sink.writeUtf8(it.asCsvEntry)
+            }
+        }
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    suspend fun exportMicRecording(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {
+        val data = sensorDataDao.getData(dataId)
+        val path = data.micRecordingPath ?: throw FileNotFoundException()
+
+        outputStream.sink().buffer().use { sink ->
+            File(path).source().buffer().use { source ->
+                source.readAll(sink)
             }
         }
     }

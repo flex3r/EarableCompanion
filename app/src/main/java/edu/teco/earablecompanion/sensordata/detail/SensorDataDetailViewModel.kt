@@ -84,12 +84,24 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     }
 
     fun exportData(outputStream: OutputStream) = viewModelScope.launch(exceptionHandler) {
-        _exportEventFlow.emit(SensorDataExportEvent.Started)
-        sensorDataRepository.exportData(dataId, outputStream)
-        _exportEventFlow.emit(SensorDataExportEvent.Finished)
+        withExportEvent {
+            sensorDataRepository.exportData(dataId, outputStream)
+        }
+    }
+
+    fun exportMicRecording(outputStream: OutputStream) = viewModelScope.launch(exceptionHandler) {
+        withExportEvent {
+            sensorDataRepository.exportMicRecording(dataId, outputStream)
+        }
     }
 
     suspend fun loadLogs() = sensorDataRepository.getLogEntries(dataId)
+
+    private suspend inline fun withExportEvent(block: () -> Unit) {
+        _exportEventFlow.emit(SensorDataExportEvent.Started)
+        block()
+        _exportEventFlow.emit(SensorDataExportEvent.Finished)
+    }
 
     companion object {
         private val TAG = SensorDataDetailViewModel::class.java.simpleName
