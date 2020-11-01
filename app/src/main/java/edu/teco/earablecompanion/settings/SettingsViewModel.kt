@@ -17,7 +17,7 @@ class SettingsViewModel @ViewModelInject constructor(private val sensorDataRepos
     }
 
     fun clearData() = viewModelScope.launch(coroutineExceptionHandler) {
-        sensorDataRepository.clearData()
+        sensorDataRepository.removeAll()
     }
 
     companion object {

@@ -15,6 +15,9 @@ interface SensorDataDao {
     @Query("SELECT * FROM data_table")
     fun getAllFlow(): Flow<List<SensorData>>
 
+    @Query("SELECT * FROM data_table")
+    fun getAll(): List<SensorData>
+
     @Query("SELECT * FROM data_table WHERE data_id = :id")
     suspend fun getData(id: Long): SensorData
 

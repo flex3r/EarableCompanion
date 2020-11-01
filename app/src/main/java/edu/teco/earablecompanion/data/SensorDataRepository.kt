@@ -36,8 +36,14 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     suspend fun getSensorDataEntries(dataId: Long): List<SensorDataEntry> = sensorDataDao.getEntries(dataId)
     suspend fun getLogEntries(dataId: Long): List<LogEntry> = sensorDataDao.getLogEntries(dataId)
 
-    suspend fun clearData() = sensorDataDao.deleteAll()
-    suspend fun removeData(id: Long) = sensorDataDao.delete(id)
+    suspend fun removeAll() {
+        sensorDataDao.getAll().forEach(SensorData::removeMicRecording)
+        sensorDataDao.deleteAll()
+    }
+    suspend fun removeData(id: Long) {
+        sensorDataDao.getData(id).removeMicRecording()
+        sensorDataDao.delete(id)
+    }
 
     suspend fun startRecording(title: String, devices: List<BluetoothDevice>, micFile: File?) {
         val data = SensorData(
