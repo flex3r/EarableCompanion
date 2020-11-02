@@ -13,13 +13,20 @@ sealed class OverviewItem {
     data class MicDisabled(val recordingActive: Boolean = false) : OverviewItem()
     data class MicEnabled(val socConnected: Boolean = false, val recordingActive: Boolean = false) : OverviewItem()
 
-    data class Device(val name: String?, val address: String, val bluetoothDevice: BluetoothDevice, val type: EarableType) : OverviewItem() {
+    data class Device(
+        val name: String?,
+        val address: String,
+        val bluetoothDevice: BluetoothDevice,
+        val type: EarableType,
+        val canCalibrate: Boolean = false
+    ) : OverviewItem() {
         companion object {
             private fun BluetoothDevice.toOverviewItem(config: Config?) = Device(
                 name = name,
                 address = address,
                 bluetoothDevice = this,
-                type = config?.earableType ?: EarableType.NOT_SUPPORTED
+                type = config?.earableType ?: EarableType.NOT_SUPPORTED,
+                canCalibrate = config?.hasAccelerometer ?: false
             )
 
             fun Collection<BluetoothDevice>.toOverviewItems(configs: Map<String, Config>): List<OverviewItem> = map { it.toOverviewItem(configs[it.address]) }

@@ -91,10 +91,17 @@ class ConnectionFragment : BottomSheetDialogFragment() {
 
     private fun handleConnectionEvent(event: ConnectionEvent) {
         when (event) {
-            is ConnectionEvent.Connected -> showSnackbarAndCancelDialog(formatDeviceName(R.string.connection_snackbar_text_connected, event.device.name), delay = 1_000L)
             is ConnectionEvent.Pairing -> binding.connectionHeaderText.text = formatDeviceName(R.string.connection_header_text_pairing, event.device.name)
             is ConnectionEvent.Connecting -> binding.connectionHeaderText.text = formatDeviceName(R.string.connection_header_text_connecting, event.device.name)
-            is ConnectionEvent.Failed -> showSnackbarAndCancelDialog(getString(R.string.connection_snackbar_text_failed))
+            is ConnectionEvent.Connected -> {
+                cancelDialog(delay = 1_000)
+                (parentFragment as? OverviewFragment)?.onConnected(event)
+
+            }
+            is ConnectionEvent.Failed -> {
+                cancelDialog()
+                (parentFragment as? OverviewFragment)?.onConnectionFailed()
+            }
             else -> binding.connectionHeaderText.text = getString(R.string.connection_header_text)
         }
     }
@@ -103,9 +110,8 @@ class ConnectionFragment : BottomSheetDialogFragment() {
         return getString(stringFormatRes, name ?: getString(R.string.unknown_device_name))
     }
 
-    private fun showSnackbarAndCancelDialog(text: String, delay: Long = 0L) = lifecycleScope.launch {
+    private fun cancelDialog(delay: Long = 0L) = lifecycleScope.launchWhenResumed {
         delay(delay)
-        (parentFragment as? OverviewFragment)?.showSnackbar(text)
         requireDialog().cancel()
         viewModel.clearConnectionEvent()
     }

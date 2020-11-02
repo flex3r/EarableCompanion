@@ -21,6 +21,8 @@ data class CosinussConfig(
             accSupported -> EarableType.COSINUSS_ACC
             else -> EarableType.COSINUSS
         }
+    override val hasAccelerometer: Boolean
+        get() = accSupported
 
     override val characteristicsToRead = listOf(ACC_SENSOR_UUID)
     override val configCharacteristic = ACC_SENSOR_UUID

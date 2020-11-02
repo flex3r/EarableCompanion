@@ -373,7 +373,7 @@ class EarableService : Service() {
             characteristics[gatt.device] = deviceCharacteristics
             readCharacteristics(gatt, deviceCharacteristics, defaultConfig)
 
-            connectionRepository.updateConnectionEvent(ConnectionEvent.Connected(gatt.device))
+            connectionRepository.updateConnectionEvent(ConnectionEvent.Connected(gatt.device, defaultConfig))
             connectionRepository.updateConnectedDevice(gatt.device)
         }
 

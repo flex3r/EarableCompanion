@@ -25,11 +25,13 @@
     <string name="enable">Enable</string>
     <string name="accept">Accept</string>
     <string name="close">Close</string>
+    <string name="calibrate">Calibrate</string>
     <string name="notification_title">EarableCompanion</string>
     <string name="notification_message">EarableCompanion running in the background</string>
     <string name="connection_device_icon_description">Device icon</string>
-    <string name="connection_handle_icon_description">Bottomsheet handle</string>
-    <string name="connection_close_icon_description">Bottomsheet close icon</string>
+    <string name="bottom_sheet_handle_icon_description">Bottomsheet handle</string>
+    <string name="bottom_sheet_close_icon_description">Bottomsheet close icon</string>
+    <string name="calibration_header_text">Calibration</string>
     <string name="connection_header_text">Searching for devices</string>
     <string name="connection_snackbar_text_connected">Connected to %s</string>
     <string name="connection_header_text_connecting">Connecting to %s</string>

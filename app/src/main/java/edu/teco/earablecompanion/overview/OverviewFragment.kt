@@ -19,6 +19,8 @@ import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.EarableType
 import edu.teco.earablecompanion.databinding.OverviewFragmentBinding
+import edu.teco.earablecompanion.overview.calibration.CalibrationFragment
+import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
 import edu.teco.earablecompanion.utils.extensions.showOrHide
 
@@ -37,7 +39,7 @@ class OverviewFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = OverviewAdapter(::disconnectDevice, ::setMicEnabled) { device ->
+        val adapter = OverviewAdapter(::disconnectDevice, ::calibrateDevice, ::setMicEnabled) { device ->
             val action = when (device.type) {
                 EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name ?: getString(R.string.unknown_esense_device_name), device.bluetoothDevice)
                 EarableType.COSINUSS, EarableType.COSINUSS_ACC -> OverviewFragmentDirections.actionOverviewFragmentToCosinussDeviceFragment(
@@ -75,7 +77,28 @@ class OverviewFragment : Fragment() {
         return binding.root
     }
 
-    fun showSnackbar(text: String) = Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT).show()
+    fun onConnected(event: ConnectionEvent.Connected) {
+        showSnackbar(getString(R.string.connection_snackbar_text_connected, event.device.name ?: getString(R.string.unknown_device_name))) {
+            if (event.config.hasAccelerometer) {
+                setAction(R.string.calibrate) { showCalibrationBottomSheet() }
+            }
+        }
+    }
+
+    fun onConnectionFailed() {
+        showSnackbar(getString(R.string.connection_snackbar_text_failed))
+    }
+
+    private fun showSnackbar(text: String, block: Snackbar.() -> Unit = {}) {
+        Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT)
+            .apply(block)
+            .show()
+    }
+
+    private fun calibrateDevice(item: OverviewItem.Device) {
+        // TODO
+        showCalibrationBottomSheet()
+    }
 
     private fun disconnectDevice(item: OverviewItem.Device) {
         MaterialAlertDialogBuilder(requireContext())
@@ -93,6 +116,11 @@ class OverviewFragment : Fragment() {
     private fun showConnectionBottomSheet() {
         val dialog = ConnectionFragment()
         dialog.show(childFragmentManager, ConnectionFragment::class.java.simpleName)
+    }
+
+    private fun showCalibrationBottomSheet() {
+        val dialog = CalibrationFragment()
+        dialog.show(childFragmentManager, CalibrationFragment::class.java.simpleName)
     }
 
     private fun requestPermissionIfNeeded() = when {

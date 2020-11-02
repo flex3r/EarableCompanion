@@ -11,6 +11,7 @@ import edu.teco.earablecompanion.databinding.*
 
 class OverviewAdapter(
     private val onDisconnect: (OverviewItem.Device) -> Unit,
+    private val onCalibrate: (OverviewItem.Device) -> Unit,
     private val onMicEnabledClick: (enabled: Boolean) -> Unit,
     private val onDeviceClick: (item: OverviewItem.Device) -> Unit,
 ) :
@@ -47,6 +48,7 @@ class OverviewAdapter(
                     device = entry
                     root.setOnClickListener { onDeviceClick(entry) }
                     overviewDeviceDisconnect.setOnClickListener { onDisconnect(entry) }
+                    overviewDeviceCalibrate.setOnClickListener { onCalibrate(entry) }
                 }
             }
             is RecordingViewHolder -> {

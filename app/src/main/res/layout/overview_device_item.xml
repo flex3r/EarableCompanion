@@ -9,6 +9,8 @@
             type="edu.teco.earablecompanion.overview.OverviewItem.Device" />
 
         <import type="edu.teco.earablecompanion.bluetooth.earable.EarableType" />
+
+        <import type="android.view.View" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -56,42 +58,44 @@
                 android:layout_marginBottom="4dp"
                 android:text="@{device.address}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:layout_constraintBottom_toTopOf="@id/overview_device_barrier"
+                app:layout_constraintBottom_toTopOf="@id/overview_device_description"
                 app:layout_constraintEnd_toEndOf="@id/overview_device_name"
                 app:layout_constraintStart_toStartOf="@id/overview_device_icon"
                 app:layout_constraintTop_toBottomOf="@id/overview_device_name" />
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/overview_device_barrier"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:barrierDirection="top"
-                app:constraint_referenced_ids="overview_device_description,overview_device_disconnect"/>
 
             <TextView
                 android:id="@+id/overview_device_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:description="@{device.type}"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/overview_device_disconnect"
                 app:layout_constraintEnd_toStartOf="@id/overview_device_disconnect"
                 app:layout_constraintStart_toStartOf="@id/overview_device_icon"
-                app:layout_constraintTop_toBottomOf="@id/overview_device_barrier"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@id/overview_device_address" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/overview_device_calibrate"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/calibrate"
+                android:visibility="@{device.canCalibrate ? View.VISIBLE : View.GONE}"
+                app:icon="@drawable/ic_baseline_360_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/overview_device_disconnect"
+                app:layout_constraintTop_toBottomOf="@id/overview_device_description" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/overview_device_disconnect"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:text="@string/overview_device_disconnect_text"
                 app:icon="@drawable/ic_baseline_delete_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/overview_device_description" />
+                app:layout_constraintTop_toBottomOf="@id/overview_device_description" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>
