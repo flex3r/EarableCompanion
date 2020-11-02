@@ -14,5 +14,5 @@ data class LogEntry(
     @ColumnInfo(name = "data_id", index = true)
     var dataId: Long = 0L,
     @ColumnInfo(name = "entry_timestamp") var timestamp: LocalDateTime,
-    @ColumnInfo(name = "entry_message") var message: String
+    @ColumnInfo(name = "entry_message") var message: String,
 )

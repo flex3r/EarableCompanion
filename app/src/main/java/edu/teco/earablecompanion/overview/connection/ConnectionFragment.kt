@@ -20,7 +20,6 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.ConnectionFragmentBinding
 import edu.teco.earablecompanion.overview.OverviewFragment
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ConnectionFragment : BottomSheetDialogFragment() {

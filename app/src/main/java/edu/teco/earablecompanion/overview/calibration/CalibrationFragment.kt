@@ -10,7 +10,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.databinding.CalibrationFragmentBinding
-import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 
 @AndroidEntryPoint
 class CalibrationFragment : BottomSheetDialogFragment() {

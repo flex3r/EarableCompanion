@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         if (!isBound) Intent(this, EarableService::class.java).also {
             try {
-                isBound =  true
+                isBound = true
                 startService(it)
                 bindService(it, serviceConnection, Context.BIND_AUTO_CREATE)
             } catch (t: Throwable) {

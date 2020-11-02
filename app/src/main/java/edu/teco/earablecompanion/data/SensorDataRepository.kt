@@ -40,6 +40,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         sensorDataDao.getAll().forEach(SensorData::removeMicRecording)
         sensorDataDao.deleteAll()
     }
+
     suspend fun removeData(id: Long) {
         sensorDataDao.getData(id).removeMicRecording()
         sensorDataDao.delete(id)

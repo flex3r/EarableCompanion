@@ -18,7 +18,7 @@ sealed class OverviewItem {
         val address: String,
         val bluetoothDevice: BluetoothDevice,
         val type: EarableType,
-        val canCalibrate: Boolean = false
+        val canCalibrate: Boolean = false,
     ) : OverviewItem() {
         companion object {
             private fun BluetoothDevice.toOverviewItem(config: Config?) = Device(

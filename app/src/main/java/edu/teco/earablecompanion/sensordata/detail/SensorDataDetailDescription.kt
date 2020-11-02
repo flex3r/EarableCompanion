@@ -11,7 +11,7 @@ data class SensorDataDetailDescription(
     val stoppedAt: LocalDateTime?,
     val duration: Duration?,
     val entryCount: Int,
-    val micEnabled: Boolean
+    val micEnabled: Boolean,
 ) {
     companion object {
         fun SensorData.toDescriptionItem(entryCount: Int) = SensorDataDetailDescription(
