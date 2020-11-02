@@ -15,6 +15,9 @@
     <string name="preference_record_logs_key" translatable="false">preference_record_logs_key</string>
     <string name="preference_record_logs_title">Enable logging</string>
     <string name="preference_record_logs_summary">Saves Bluetooth status and connection information during a recording</string>
+    <string name="preference_intercept_media_buttons_key" translatable="false">preference_intercept_media_buttons_key</string>
+    <string name="preference_intercept_media_buttons_title">Intercept media buttons</string>
+    <string name="preference_intercept_media_buttons_summary">Creates an active MediaSession to intercept and record media button events. This will break e.g. music control.</string>
 
     <string name="data_created_at">Created at %s</string>
     <string name="data_duration">Duration: %s</string>
