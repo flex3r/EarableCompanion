@@ -40,7 +40,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintBottom_toTopOf="@id/overview_recording_start_time"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/overview_recording_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView

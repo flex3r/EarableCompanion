@@ -42,7 +42,7 @@
                 app:dataTypeTitle="@{item.type}"
                 app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_device_name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/sensor_data_detail_chart_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
