@@ -155,6 +155,8 @@
                         app:icon="@drawable/ic_baseline_mic_24"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/sensor_data_detail_description_logs"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_data_amount" />
 
                     <com.google.android.material.button.MaterialButton
@@ -167,6 +169,7 @@
                         app:icon="@drawable/ic_baseline_notes_24"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/sensor_data_detail_description_edit"
+                        app:layout_constraintStart_toEndOf="@id/sensor_data_detail_description_mic"
                         app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_data_amount" />
 
                     <com.google.android.material.button.MaterialButton
@@ -178,6 +181,7 @@
                         app:icon="@drawable/ic_baseline_edit_24"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/sensor_data_detail_description_logs"
                         app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_data_amount" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
