@@ -7,13 +7,18 @@ import android.app.PendingIntent
 import android.app.Service
 import android.bluetooth.*
 import android.content.*
+import android.media.AudioFormat
 import android.media.AudioManager
+import android.media.AudioTrack
 import android.media.MediaRecorder
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.ParcelUuid
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
+import android.view.KeyEvent
 import androidx.core.app.NotificationCompat
 import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,6 +73,7 @@ class EarableService : Service() {
     private val bluetoothDeviceStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != BluetoothDevice.ACTION_BOND_STATE_CHANGED) return
+
             val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
             when (intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)) {
                 BluetoothDevice.BOND_BONDING -> connectionRepository.updateConnectionEvent(ConnectionEvent.Pairing(device))
@@ -80,6 +86,7 @@ class EarableService : Service() {
     private val bluetoothStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != BluetoothAdapter.ACTION_STATE_CHANGED) return
+
             when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
                 BluetoothAdapter.STATE_TURNING_OFF -> {
                     stopScan()
@@ -89,11 +96,34 @@ class EarableService : Service() {
         }
     }
 
+    private var mediaSession: MediaSessionCompat? = null
+    private val mediaButtonEventCallback = object : MediaSessionCompat.Callback() {
+        private fun Int.handleKeyAction() {
+            if (this == KeyEvent.ACTION_DOWN || this == KeyEvent.ACTION_UP) {
+                scope.launch { dataRepository.addMediaButtonEntry(pressed = this@handleKeyAction) }
+            }
+        }
+
+        override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
+            val keyEvent = mediaButtonEvent?.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT) ?: return false
+
+            when (keyEvent.keyCode) {
+                KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_MEDIA_PAUSE, KeyEvent.KEYCODE_HEADSETHOOK,
+                KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_MEDIA_NEXT, KeyEvent.KEYCODE_MEDIA_PREVIOUS,
+                -> keyEvent.action.handleKeyAction()
+                else -> return false
+            }
+
+            return true
+        }
+    }
+
     private var mediaRecorder: MediaRecorder? = null
     private val audioManager: AudioManager by lazy { getSystemService(AudioManager::class.java) }
     private val bluetoothScoStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED) return
+
             when (intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.ERROR)) {
                 AudioManager.SCO_AUDIO_STATE_CONNECTED -> connectionRepository.setScoActive(true)
                 AudioManager.SCO_AUDIO_STATE_DISCONNECTED -> connectionRepository.setScoActive(false)
@@ -147,6 +177,7 @@ class EarableService : Service() {
         unregisterReceiver(bluetoothStateReceiver)
         unregisterReceiver(bluetoothScoStateReceiver)
         disconnectSco()
+        stopMediaSession()
         closeConnections()
 
         stopForeground(true)
@@ -186,6 +217,7 @@ class EarableService : Service() {
 
     fun connectSco(): Boolean = with(audioManager) {
         if (!audioManager.isBluetoothScoAvailableOffCall) return false
+
         mode = AudioManager.MODE_NORMAL
         isBluetoothScoOn = true
         startBluetoothSco()
@@ -253,6 +285,8 @@ class EarableService : Service() {
         }
 
         stopMicRecording()
+        stopMediaSession()
+
         scope.launch {
             dataRepository.stopRecording()
         }
@@ -277,6 +311,43 @@ class EarableService : Service() {
     private fun stopMicRecording() {
         mediaRecorder = mediaRecorder?.run {
             stop()
+            release()
+            null
+        }
+    }
+
+    fun startMediaSession(): MediaSessionCompat {
+        val state = PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE
+                    or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+            .setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0f)
+            .build()
+        val session = MediaSessionCompat(this, TAG).apply {
+            setCallback(mediaButtonEventCallback)
+            setPlaybackState(state)
+            isActive = true
+            this@EarableService.mediaSession = this
+        }
+
+        playDummyAudio()
+        return session
+    }
+
+    private fun playDummyAudio() = scope.launch {
+        val sampleRate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC)
+        val size = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT)
+        AudioTrack.Builder().setBufferSizeInBytes(size).build().apply {
+            play()
+
+            delay(1_000)
+            stop()
+            release()
+        }
+    }
+
+    private fun stopMediaSession() {
+        mediaSession = mediaSession?.run {
+            isActive = false
             release()
             null
         }
@@ -455,7 +526,7 @@ class EarableService : Service() {
     }
 
     companion object {
-        private val TAG = EarableService::class.simpleName
+        private val TAG = EarableService::class.java.simpleName
 
         private const val CHANNEL_ID_LOW = "edu.teco.earablecompanion.low"
         private const val CHANNEL_ID_DEFAULT = "edu.teco.earablecompanion.default"

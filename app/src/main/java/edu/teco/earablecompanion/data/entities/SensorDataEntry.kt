@@ -19,9 +19,9 @@ data class SensorDataEntry(
     var dataEntryId: Long = 0L,
     @ColumnInfo(name = "data_id", index = true)
     var dataId: Long = 0L,
-    @ColumnInfo(name = "device_name") var deviceName: String?,
-    @ColumnInfo(name = "device_address") var deviceAddress: String,
     @ColumnInfo(name = "entry_timestamp") var timestamp: LocalDateTime,
+    @ColumnInfo(name = "device_name") var deviceName: String? = null,
+    @ColumnInfo(name = "device_address") var deviceAddress: String? = null,
     @ColumnInfo(name = "entry_acc_X") var accX: Double? = null,
     @ColumnInfo(name = "entry_acc_Y") var accY: Double? = null,
     @ColumnInfo(name = "entry_acc_Z") var accZ: Double? = null,

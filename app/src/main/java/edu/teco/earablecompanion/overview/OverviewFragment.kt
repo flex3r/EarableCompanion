@@ -1,5 +1,7 @@
 package edu.teco.earablecompanion.overview
 
+import android.content.SharedPreferences
+import android.media.session.MediaController
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
@@ -29,6 +32,7 @@ class OverviewFragment : Fragment() {
 
     private val viewModel: OverviewViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
+    private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
     private lateinit var binding: OverviewFragmentBinding
 
     private val requestPermissionRegistration = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
@@ -157,7 +161,16 @@ class OverviewFragment : Fragment() {
         val devices = viewModel.overviewItems.value?.filterIsInstance<OverviewItem.Device>()?.map { it.bluetoothDevice }
         val configs = viewModel.getCurrentConfigs()
         devices?.let {
-            (activity as? MainActivity)?.earableService?.startRecording(title, devices, configs, viewModel.micRecordingPossible)
+            (activity as? MainActivity)?.run {
+                with(earableService ?: return) {
+                    startRecording(title, devices, configs, viewModel.micRecordingPossible)
+
+                    if (sharedPreferences.getBoolean(getString(R.string.preference_intercept_media_buttons_key), false)) {
+                        val session = earableService?.startMediaSession() ?: return
+                        mediaController = session.controller.mediaController as MediaController
+                    }
+                }
+            }
         }
     }
 
@@ -166,6 +179,7 @@ class OverviewFragment : Fragment() {
         val configs = viewModel.getCurrentConfigs()
         devices?.let {
             (activity as? MainActivity)?.earableService?.stopRecording(devices, configs)
+            activity?.mediaController = null
         }
     }
 

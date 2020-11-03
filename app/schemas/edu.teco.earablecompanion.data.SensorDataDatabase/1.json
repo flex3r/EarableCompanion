@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "290f3a4e93a2df4922fb7fad2b7c21bf",
+    "identityHash": "1b0df352c8fb18c8be6676bd8d00164c",
     "entities": [
       {
         "tableName": "data_table",
@@ -56,7 +56,7 @@
       },
       {
         "tableName": "data_entry_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_id` INTEGER NOT NULL, `device_name` TEXT, `device_address` TEXT NOT NULL, `entry_timestamp` INTEGER NOT NULL, `entry_acc_X` REAL, `entry_acc_Y` REAL, `entry_acc_Z` REAL, `entry_gyro_X` REAL, `entry_gyro_Y` REAL, `entry_gyro_Z` REAL, `entry_button_pressed` INTEGER, `entry_heart_rate` INTEGER, `entry_body_temperature` REAL, FOREIGN KEY(`data_id`) REFERENCES `data_table`(`data_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_id` INTEGER NOT NULL, `entry_timestamp` INTEGER NOT NULL, `device_name` TEXT, `device_address` TEXT, `entry_acc_X` REAL, `entry_acc_Y` REAL, `entry_acc_Z` REAL, `entry_gyro_X` REAL, `entry_gyro_Y` REAL, `entry_gyro_Z` REAL, `entry_button_pressed` INTEGER, `entry_heart_rate` INTEGER, `entry_body_temperature` REAL, FOREIGN KEY(`data_id`) REFERENCES `data_table`(`data_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "dataEntryId",
@@ -71,6 +71,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "timestamp",
+            "columnName": "entry_timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "deviceName",
             "columnName": "device_name",
             "affinity": "TEXT",
@@ -80,13 +86,7 @@
             "fieldPath": "deviceAddress",
             "columnName": "device_address",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "timestamp",
-            "columnName": "entry_timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "accX",
@@ -236,7 +236,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '290f3a4e93a2df4922fb7fad2b7c21bf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1b0df352c8fb18c8be6676bd8d00164c')"
     ]
   }
 }

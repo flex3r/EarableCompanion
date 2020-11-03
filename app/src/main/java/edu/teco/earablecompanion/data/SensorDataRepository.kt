@@ -86,6 +86,17 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         sensorDataDao.insertLogEntry(entry)
     }
 
+    suspend fun addMediaButtonEntry(pressed: Int) {
+        val dataId = activeRecording.value?.data?.dataId ?: return
+        val entry = SensorDataEntry(
+            dataId = dataId,
+            timestamp = LocalDateTime.now(ZoneId.systemDefault()),
+            buttonPressed = pressed
+        )
+
+        sensorDataDao.insertEntry(entry)
+    }
+
     suspend fun hasLogs(dataId: Long): Boolean = sensorDataDao.getLogEntryCountByDataId(dataId) > 0
 
     suspend fun updateSensorData(dataId: Long, title: String, description: String?) = sensorDataDao.updateData(dataId, title, description)
