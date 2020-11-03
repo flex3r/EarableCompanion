@@ -166,4 +166,22 @@
     <string name="export_file_creation_error">Failed to create file</string>
     <string name="export_file_finished">Export complete</string>
     <string name="export_file_export_error">Failed to export data: %s</string>
+    <string name="log_connected">Connected</string>
+    <string name="log_disconnected">Disconnected</string>
+    <string name="log_connecting">Connecting</string>
+    <string name="log_bonding">Bonding</string>
+    <string name="log_bonded">Bonded</string>
+    <string name="log_characteristic_changed">Characteristic(%1$s) change: %2$s</string>
+    <string name="log_characteristic_read">Characteristic(%1$s) read: %2$s</string>
+    <string name="log_characteristic_write">Characteristic(%1$s) write: %2$s</string>
+    <string name="log_media_button_event">Received media button event: action=%1$d, keycode=%2$d</string>
+    <string name="log_sco_connected">Connected to SCO audio</string>
+    <string name="log_sco_disconnected">Disconnected from SCO audio</string>
+    <string name="log_bl_off">Bluetooth turning off…</string>
+    <string name="log_media_session_started">Started media session</string>
+    <string name="log_media_session_stopped">Stopped media session</string>
+    <string name="log_record_start">Started recording %1$s with devices: %2$s</string>
+    <string name="log_record_stop">Stopped recording</string>
+    <string name="log_mic_record_start">Started mic recording</string>
+    <string name="log_mic_record_stop">Stopped mic recording</string>
 </resources>

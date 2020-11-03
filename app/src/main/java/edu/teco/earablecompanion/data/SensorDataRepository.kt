@@ -75,12 +75,12 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         sensorDataDao.insertEntry(entry)
     }
 
-    suspend fun addLogEntry(device: BluetoothDevice, message: String) {
+    suspend fun addLogEntry(message: String) {
         val dataId = activeRecording.value?.data?.dataId ?: return
         val entry = LogEntry(
             dataId = dataId,
             timestamp = LocalDateTime.now(ZoneId.systemDefault()),
-            message = "${device.name}(${device.address}): $message"
+            message = message
         )
 
         sensorDataDao.insertLogEntry(entry)
