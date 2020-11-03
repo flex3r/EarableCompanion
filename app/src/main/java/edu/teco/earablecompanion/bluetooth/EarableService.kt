@@ -400,9 +400,9 @@ class EarableService : Service() {
         gatts.clear()
     }
 
-    private fun addLogEntryIfEnabled(device: BluetoothDevice, message: String) = scope.launch {
+    private fun addLogEntryIfEnabled(device: BluetoothDevice, message: String) {
         if (loggingEnabled) {
-            dataRepository.addLogEntry(device, message)
+            scope.launch { dataRepository.addLogEntry(device, message) }
         }
     }
 
