@@ -69,6 +69,7 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
         }
     }
 
+    val isNotActive = detailDescription.map { it.stoppedAt != null }
     val hasData = detailDescription.map { it.entryCount > 0 }
     val hasMic = detailDescription.map { it.micEnabled }
     val hasLogs = liveData(viewModelScope.coroutineContext) {

@@ -24,6 +24,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataDetailFragmentBinding
 import edu.teco.earablecompanion.utils.CreateCsvDocumentContract
 import edu.teco.earablecompanion.utils.extensions.observe
+import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 
 @AndroidEntryPoint
 class SensorDataDetailFragment : Fragment() {
@@ -56,6 +57,7 @@ class SensorDataDetailFragment : Fragment() {
 
         viewModel.detailData.observe(viewLifecycleOwner) { adapter.submitList(it) }
         viewModel.exportEventFlow.observe(viewLifecycleOwner, ::handleExportEvent)
+        viewModel.isNotActive.observe(viewLifecycleOwner) { activity?.invalidateOptionsMenu() }
 
         binding = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
@@ -72,7 +74,12 @@ class SensorDataDetailFragment : Fragment() {
         return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) = inflater.inflate(R.menu.data_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        if (viewModel.isNotActive.valueOrFalse) {
+            inflater.inflate(R.menu.data_menu, menu)
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.remove_data -> MaterialAlertDialogBuilder(requireContext())

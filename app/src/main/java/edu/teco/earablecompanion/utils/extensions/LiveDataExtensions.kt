@@ -10,5 +10,4 @@ inline fun <T> MutableLiveData<T>.update(action: T.() -> Unit) {
     }
 }
 
-inline val LiveData<Boolean>.valueOrFalse: Boolean
-    get() = value ?: false
+inline val LiveData<Boolean>.valueOrFalse: Boolean get() = value ?: false
