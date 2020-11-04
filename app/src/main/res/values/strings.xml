@@ -112,6 +112,9 @@
     <string name="earable_cosinuss_description">Supported sensors:\n- Heart rate\n- Body temperature</string>
     <string name="earable_cosinuss_acc_description">Supported sensors:\n- Heart rate\n- Body temperature\n- Accelerometer</string>
     <string name="earable_not_supported_description">Unsupported device</string>
+    <string name="earable_supported_sensors_header">Supported sensors:\n</string>
+    <string name="earable_supported_sensors_heart_rate">- Heart rate</string>
+    <string name="earable_supported_sensors_body_temperature">- Body temperature</string>
     <string name="config_saved_successful">Configuration has been sent to device</string>
     <string name="config_saved_failed">Failed to send configuration to device</string>
     <string name="device_save_fab_description">Send configuration to device</string>

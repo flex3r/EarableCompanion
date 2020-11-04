@@ -22,7 +22,7 @@ data class ESenseConfig(
     var accOffset: Triple<Double, Double, Double> = Triple(0.0, 0.0, 0.0),
 ) : Config() {
 
-    override val earableType: EarableType = EarableType.ESENSE
+    override val earableType: EarableType = EarableType.ESense
     override val hasAccelerometer: Boolean = true
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID

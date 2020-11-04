@@ -24,10 +24,7 @@ import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
-import edu.teco.earablecompanion.bluetooth.earable.Config
-import edu.teco.earablecompanion.bluetooth.earable.CosinussConfig
-import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
-import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.bluetooth.earable.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
@@ -462,16 +459,15 @@ class EarableService : Service() {
                 return
             }
 
-            val defaultConfig = when (gatt.device.earableType) {
-                EarableType.ESENSE -> ESenseConfig()
-                EarableType.COSINUSS -> CosinussConfig()
-                EarableType.COSINUSS_ACC -> CosinussConfig(accSupported = true, accEnabled = true)
-                else -> return // TODO Generic support with gatt profiles
-            }
-            connectionRepository.setConfig(gatt.device.address, defaultConfig)
-
             val deviceCharacteristics = gatt.collectCharacteristics()
             characteristics[gatt.device] = deviceCharacteristics
+
+            val defaultConfig = when (val type = gatt.device.earableType) {
+                is EarableType.ESense -> ESenseConfig()
+                is EarableType.Cosinuss -> CosinussConfig(accSupported = type.accSupported, accEnabled = true)
+                else -> GenericConfig.fromDiscoveredServices(deviceCharacteristics.values) ?: return
+            }
+            connectionRepository.setConfig(gatt.device.address, defaultConfig)
             readCharacteristics(gatt, deviceCharacteristics, defaultConfig)
 
             connectionRepository.updateConnectionEvent(ConnectionEvent.Connected(gatt.device, defaultConfig))

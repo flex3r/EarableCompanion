@@ -20,12 +20,16 @@ sealed class OverviewItem {
         val type: EarableType,
         val canCalibrate: Boolean = false,
     ) : OverviewItem() {
+
+        val isConfigurable: Boolean
+            get() = type !is EarableType.NotSupported
+
         companion object {
             private fun BluetoothDevice.toOverviewItem(config: Config?) = Device(
                 name = name,
                 address = address,
                 bluetoothDevice = this,
-                type = config?.earableType ?: EarableType.NOT_SUPPORTED,
+                type = config?.earableType ?: EarableType.NotSupported,
                 canCalibrate = config?.hasAccelerometer ?: false
             )
 

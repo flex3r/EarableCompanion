@@ -15,10 +15,8 @@ data class CosinussConfig(
 ) : GenericConfig(heartRateSupported = true, bodyTemperatureSupported = true) {
 
     override val earableType: EarableType
-        get() = when {
-            accSupported -> EarableType.COSINUSS_ACC
-            else -> EarableType.COSINUSS
-        }
+        get() = EarableType.Cosinuss(accSupported)
+
     override val hasAccelerometer: Boolean
         get() = accSupported
 

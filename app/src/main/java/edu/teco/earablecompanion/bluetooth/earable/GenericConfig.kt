@@ -15,7 +15,8 @@ open class GenericConfig(
     var bodyTemperatureEnabled: Boolean = true,
 ) : Config() {
 
-    override val earableType: EarableType = EarableType.GENERIC
+    override val earableType: EarableType
+        get() = EarableType.Generic(heartRateSupported, bodyTemperatureSupported)
 
     override val sensorCharacteristics: List<Pair<String, Boolean>>
         get() = buildList {
@@ -99,7 +100,24 @@ open class GenericConfig(
     companion object {
         private val TAG = GenericConfig::class.java.simpleName
 
-        protected const val HEART_RATE_SENSOR_UUID = "00002a37-0000-1000-8000-00805f9b34fb"
-        protected const val BODY_TEMPERATURE_SENSOR_UUID = "00002a1c-0000-1000-8000-00805f9b34fb"
+        private const val HEART_RATE_SENSOR_UUID = "00002a37-0000-1000-8000-00805f9b34fb"
+        private const val BODY_TEMPERATURE_SENSOR_UUID = "00002a1c-0000-1000-8000-00805f9b34fb"
+
+        fun fromDiscoveredServices(characteristics: Collection<BluetoothGattCharacteristic>): GenericConfig? {
+            var hasHeartRate = false
+            var hasBodyTemperature = false
+            characteristics.forEach {
+                when (it.formattedUuid) {
+                    HEART_RATE_SENSOR_UUID -> hasHeartRate = true
+                    BODY_TEMPERATURE_SENSOR_UUID -> hasBodyTemperature = true
+                }
+            }
+
+            if (!hasHeartRate && !hasBodyTemperature) {
+                return null
+            }
+
+            return GenericConfig(heartRateSupported = hasHeartRate, bodyTemperatureSupported = hasBodyTemperature)
+        }
     }
 }

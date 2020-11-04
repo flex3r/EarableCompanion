@@ -55,7 +55,7 @@ class OverviewViewModel @ViewModelInject constructor(
             }
     }
 
-    private val hasConnectedDevices = overviewItems.map { items -> items.any { it is OverviewItem.Device && it.type != EarableType.NOT_SUPPORTED } }
+    private val hasConnectedDevices = overviewItems.map { items -> items.any { it is OverviewItem.Device && it.type !is EarableType.NotSupported } }
     private val isRecording = overviewItems.map { items -> items.any { it is OverviewItem.Recording } }
     val connectedDevicesAndRecording = MediatorLiveData<Pair<Boolean, Boolean>>().apply {
         addSource(hasConnectedDevices) { value = Pair(it, isRecording.valueOrFalse) }

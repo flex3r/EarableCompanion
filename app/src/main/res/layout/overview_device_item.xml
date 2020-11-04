@@ -17,8 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:clickable="@{device.type == EarableType.NOT_SUPPORTED ? false : true}"
-        android:focusable="@{device.type == EarableType.NOT_SUPPORTED ? false : true}">
+        android:clickable="@{device.isConfigurable}"
+        android:focusable="@{device.isConfigurable}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

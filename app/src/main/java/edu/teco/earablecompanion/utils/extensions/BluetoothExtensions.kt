@@ -18,10 +18,10 @@ fun BluetoothDevice.connect(context: Context, callback: BluetoothGattCallback): 
 
 inline val BluetoothDevice.earableType: EarableType
     get() = when {
-        name.startsWith("eSense-") -> EarableType.ESENSE
-        name.startsWith("earconnect") -> EarableType.COSINUSS
-        name.startsWith("kit_acc") -> EarableType.COSINUSS_ACC
-        else -> EarableType.GENERIC
+        name.startsWith("eSense-") -> EarableType.ESense
+        name.startsWith("earconnect") -> EarableType.Cosinuss()
+        name.startsWith("kit_acc") -> EarableType.Cosinuss(accSupported = true)
+        else -> EarableType.Generic()
     }
 
 inline val BluetoothGattCharacteristic.formattedUuid: String

@@ -1,9 +1,9 @@
 package edu.teco.earablecompanion.bluetooth.earable
 
-enum class EarableType {
-    ESENSE,
-    COSINUSS,
-    COSINUSS_ACC,
-    GENERIC,
-    NOT_SUPPORTED,
+sealed class EarableType {
+    object ESense : EarableType()
+    object NotSupported : EarableType()
+
+    data class Cosinuss(val accSupported: Boolean = false) : EarableType()
+    data class Generic(val heartRateSupported: Boolean = false, val bodyTemperatureSupported: Boolean = false) : EarableType()
 }

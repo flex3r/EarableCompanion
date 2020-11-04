@@ -118,11 +118,20 @@ fun TextView.formatStoppedLocalDateTime(localDateTime: LocalDateTime?) {
 @BindingAdapter("description")
 fun TextView.setEarableDescription(type: EarableType) {
     text = when (type) {
-        EarableType.ESENSE -> context.getString(R.string.earable_esense_description)
-        EarableType.COSINUSS -> context.getString(R.string.earable_cosinuss_description)
-        EarableType.COSINUSS_ACC -> context.getString(R.string.earable_cosinuss_acc_description)
-        EarableType.GENERIC -> "" // TODO supported sensors
-        EarableType.NOT_SUPPORTED -> context.getString(R.string.earable_not_supported_description)
+        is EarableType.NotSupported -> context.getString(R.string.earable_not_supported_description)
+        is EarableType.ESense -> context.getString(R.string.earable_esense_description)
+        is EarableType.Cosinuss -> when {
+            type.accSupported -> context.getString(R.string.earable_cosinuss_acc_description)
+            else -> context.getString(R.string.earable_cosinuss_description)
+        }
+        is EarableType.Generic -> buildString {
+            append(context.getString(R.string.earable_supported_sensors_header))
+            val sensors = buildList {
+                if (type.heartRateSupported) add(context.getString(R.string.earable_supported_sensors_heart_rate))
+                if (type.bodyTemperatureSupported) add(context.getString(R.string.earable_supported_sensors_body_temperature))
+            }
+            append(sensors.joinToString("\n"))
+        }
     }
 }
 

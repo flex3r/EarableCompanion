@@ -45,12 +45,13 @@ class OverviewFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = OverviewAdapter(::disconnectDevice, ::calibrateDevice, ::setMicEnabled) { device ->
             val action = when (device.type) {
-                EarableType.ESENSE -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name ?: getString(R.string.unknown_esense_device_name), device.bluetoothDevice)
-                EarableType.COSINUSS, EarableType.COSINUSS_ACC -> OverviewFragmentDirections.actionOverviewFragmentToCosinussDeviceFragment(
+                is EarableType.ESense -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(device.name ?: getString(R.string.unknown_esense_device_name), device.bluetoothDevice)
+                is EarableType.Cosinuss -> OverviewFragmentDirections.actionOverviewFragmentToCosinussDeviceFragment(
                     name = device.name ?: getString(R.string.unknown_cosinuss_device_name),
                     device = device.bluetoothDevice
                 )
-                else -> null // TODO ui for generic config
+                is EarableType.Generic -> null // TODO ui for generic config
+                else -> null
             }
             action?.let { navController.navigate(it) }
         }

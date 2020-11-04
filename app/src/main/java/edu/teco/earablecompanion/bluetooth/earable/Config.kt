@@ -7,7 +7,7 @@ import java.util.*
 
 abstract class Config {
 
-    open val earableType: EarableType = EarableType.NOT_SUPPORTED
+    open val earableType: EarableType = EarableType.NotSupported
     open val hasAccelerometer: Boolean = false
 
     // Characteristic to change sensor configuration
