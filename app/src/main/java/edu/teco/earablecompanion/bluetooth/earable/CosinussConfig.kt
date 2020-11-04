@@ -10,11 +10,9 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 data class CosinussConfig(
-    var heartRateEnabled: Boolean = true,
-    var bodyTemperatureEnabled: Boolean = true,
     var accSupported: Boolean = false,
     var accEnabled: Boolean = false,
-) : Config() {
+) : GenericConfig(heartRateSupported = true, bodyTemperatureSupported = true) {
 
     override val earableType: EarableType
         get() = when {
@@ -31,13 +29,7 @@ data class CosinussConfig(
             else -> null
         }
     override val sensorCharacteristics: List<Pair<String, Boolean>>
-        get() = buildList {
-            if (heartRateEnabled) {
-                add(HEART_RATE_SENSOR_UUID to false)
-            }
-            if (bodyTemperatureEnabled) {
-                add(BODY_TEMPERATURE_SENSOR_UUID to true)
-            }
+        get() = super.sensorCharacteristics + buildList {
             if (accSupported && accEnabled) {
                 add(ACC_SENSOR_UUID to false)
             }
@@ -49,50 +41,9 @@ data class CosinussConfig(
     override val disableSensorCharacteristicData: ByteArray?
         get() = byteArrayOf(0x00)
 
-    override fun updateValues(uuid: String, bytes: ByteArray): Config? {
-//        if (uuid == ACC_SENSOR_UUID) {
-//            Log.d(TAG, bytes.asHexString)
-//            accSupported = true
-//        }
-        return this
-    }
-
     override fun parseSensorValues(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry? = when (characteristic.formattedUuid) {
-        HEART_RATE_SENSOR_UUID -> parseHeartRate(device, characteristic)
-        BODY_TEMPERATURE_SENSOR_UUID -> parseBodyTemperature(device, characteristic)
         ACC_SENSOR_UUID -> parseAccSensorData(device, characteristic.value)
-        else -> null
-    }
-
-    private fun parseHeartRate(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry? {
-        val format = when (characteristic.value[0] and 0x01) {
-            0x01 -> BluetoothGattCharacteristic.FORMAT_UINT16
-            else -> BluetoothGattCharacteristic.FORMAT_UINT8
-        }
-        val rate = characteristic.getIntValue(format, 1)
-        return SensorDataEntry(
-            deviceName = device.name,
-            deviceAddress = device.address,
-            timestamp = LocalDateTime.now(ZoneId.systemDefault()),
-            heartRate = rate
-        )
-    }
-
-    private fun parseBodyTemperature(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry? {
-        val temp = characteristic.getFloatValue(BluetoothGattCharacteristic.FORMAT_FLOAT, 1)
-        if (temp.isNaN()) return null
-
-        val isCelsius = characteristic.value[0] and 0x01 == 0
-        val tempInCelsius = when {
-            isCelsius -> temp.toDouble()
-            else -> temp.toCelsius
-        }
-        return SensorDataEntry(
-            deviceName = device.name,
-            deviceAddress = device.address,
-            timestamp = LocalDateTime.now(ZoneId.systemDefault()),
-            bodyTemperature = tempInCelsius
-        )
+        else -> super.parseSensorValues(device, characteristic)
     }
 
     private fun parseAccSensorData(device: BluetoothDevice, bytes: ByteArray): SensorDataEntry? {
@@ -123,14 +74,9 @@ data class CosinussConfig(
             else -> this / 8191.75
         }
 
-    private val Float.toCelsius: Double
-        get() = 5 / 9.0 * (this - 32)
-
     companion object {
         private val TAG = CosinussConfig::class.java.simpleName
 
-        private const val HEART_RATE_SENSOR_UUID = "00002a37-0000-1000-8000-00805f9b34fb"
-        private const val BODY_TEMPERATURE_SENSOR_UUID = "00002a1c-0000-1000-8000-00805f9b34fb"
         private const val ACC_SENSOR_UUID = "0000a001-1212-efde-1523-785feabcd123"
     }
 }
