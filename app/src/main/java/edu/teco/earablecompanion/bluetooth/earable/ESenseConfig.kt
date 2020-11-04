@@ -186,9 +186,9 @@ data class ESenseConfig(
     }
 
     private fun ByteArray.parseAccSensorData(): Triple<Double, Double, Double> {
-        val x = (((this[10] shl 8) or (this[11] and 0xff)) / accSensitivityFactor) + accOffset.first
-        val y = (((this[12] shl 8) or (this[13] and 0xff)) / accSensitivityFactor) + accOffset.second
-        val z = (((this[14] shl 8) or (this[15] and 0xff)) / accSensitivityFactor) + accOffset.third
+        val x = ((this[10] shl 8) or (this[11] and 0xff)) / accSensitivityFactor
+        val y = ((this[12] shl 8) or (this[13] and 0xff)) / accSensitivityFactor
+        val z = ((this[14] shl 8) or (this[15] and 0xff)) / accSensitivityFactor
 
         //Log.d(TAG, "acc data $x $y $z")
         return Triple(x, y, z)
