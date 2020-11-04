@@ -407,7 +407,7 @@ class EarableService : Service() {
             .setContentTitle(title)
             .setContentText(message)
             .setContentIntent(pendingStartActivityIntent)
-            .setSmallIcon(R.drawable.ic_baseline_bluetooth_24) // TODO replace with proper icon
+            .setSmallIcon(R.drawable.ic_baseline_bluetooth_24_white) // TODO replace with proper icon
             .build()
 
         startForeground(NOTIFICATION_ID, notification)
