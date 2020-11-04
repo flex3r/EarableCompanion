@@ -3,7 +3,6 @@ package edu.teco.earablecompanion.overview.device.esense
 import android.content.Context
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -16,9 +15,10 @@ import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
 import edu.teco.earablecompanion.databinding.EsenseDeviceFragmentBinding
+import edu.teco.earablecompanion.overview.device.DeviceFragment
 
 @AndroidEntryPoint
-class ESenseDeviceFragment : Fragment() {
+class ESenseDeviceFragment : DeviceFragment() {
 
     private val viewModel: ESenseDeviceViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
@@ -50,30 +50,7 @@ class ESenseDeviceFragment : Fragment() {
         return binding.root
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) = inflater.inflate(R.menu.device_menu, menu)
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.remove_device -> MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.remove_device_dialog_title))
-                .setPositiveButton(getString(R.string.remove)) { _, _ -> disconnectDevice() }
-                .setNegativeButton(getString(R.string.cancel)) { d, _ -> d.dismiss() }
-                .show()
-            else -> return false
-        }
-        return true
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (activity as? MainActivity)?.bottomNavigationVisible = false
-    }
-
-    override fun onDetach() {
-        (activity as? MainActivity)?.bottomNavigationVisible = true
-        super.onDetach()
-    }
-
-    private fun disconnectDevice() {
+    override fun disconnectDevice() {
         (activity as? MainActivity)?.earableService?.disconnect(args.device)
         navController.popBackStack()
     }

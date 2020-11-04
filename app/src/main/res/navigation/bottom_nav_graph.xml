@@ -38,6 +38,20 @@
                 android:name="device"
                 app:argType="android.bluetooth.BluetoothDevice" />
         </action>
+        <action
+            android:id="@+id/action_overviewFragment_to_genericDeviceFragment"
+            app:destination="@id/genericDeviceFragment"
+            app:enterAnim="@animator/nav_default_enter_anim"
+            app:exitAnim="@animator/nav_default_exit_anim"
+            app:popEnterAnim="@animator/nav_default_pop_enter_anim"
+            app:popExitAnim="@animator/nav_default_pop_exit_anim">
+            <argument
+                android:name="name"
+                app:argType="string" />
+            <argument
+                android:name="device"
+                app:argType="android.bluetooth.BluetoothDevice" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/eSenseDeviceFragment"
@@ -56,6 +70,18 @@
         android:name="edu.teco.earablecompanion.overview.device.cosinuss.CosinussDeviceFragment"
         android:label="{name}"
         tools:layout="@layout/cosinuss_device_fragment">
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="device"
+            app:argType="android.bluetooth.BluetoothDevice" />
+    </fragment>
+    <fragment
+        android:id="@+id/genericDeviceFragment"
+        android:name="edu.teco.earablecompanion.overview.device.generic.GenericDeviceFragment"
+        android:label="{name}"
+        tools:layout="@layout/generic_device_fragment">
         <argument
             android:name="name"
             app:argType="string" />

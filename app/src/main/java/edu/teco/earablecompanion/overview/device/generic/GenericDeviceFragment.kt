@@ -1,4 +1,4 @@
-package edu.teco.earablecompanion.overview.device.cosinuss
+package edu.teco.earablecompanion.overview.device.generic
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,24 +10,23 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
-import edu.teco.earablecompanion.databinding.CosinussDeviceFragmentBinding
+import edu.teco.earablecompanion.databinding.GenericDeviceFragmentBinding
 import edu.teco.earablecompanion.overview.device.DeviceFragment
 
 @AndroidEntryPoint
-class CosinussDeviceFragment : DeviceFragment() {
+class GenericDeviceFragment : DeviceFragment() {
 
-    private val viewModel: CosinussDeviceViewModel by viewModels()
+    private val viewModel: GenericDeviceViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
-    private val args: CosinussDeviceFragmentArgs by navArgs()
+    private val args: GenericDeviceFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = CosinussDeviceFragmentBinding.inflate(inflater, container, false).apply {
+        val binding = GenericDeviceFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
-            lifecycleOwner = this@CosinussDeviceFragment
+            lifecycleOwner = this@GenericDeviceFragment
 
-            cosinussHeartRateEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setHeartRateEnabled(isChecked) }
-            cosinussBodyTemperatureEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setBodyTemperatureEnabled(isChecked) }
-            cosinussAccEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerEnabled(isChecked) }
+            genericHeartRateEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setHeartRateEnabled(isChecked) }
+            genericBodyTemperatureEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setBodyTemperatureEnabled(isChecked) }
         }
 
         setHasOptionsMenu(true)

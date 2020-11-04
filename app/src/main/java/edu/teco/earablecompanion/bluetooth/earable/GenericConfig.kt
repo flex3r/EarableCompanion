@@ -9,9 +9,9 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 open class GenericConfig(
-    var heartRateSupported: Boolean = false,
+    val heartRateSupported: Boolean = false,
     var heartRateEnabled: Boolean = true,
-    var bodyTemperatureSupported: Boolean = false,
+    val bodyTemperatureSupported: Boolean = false,
     var bodyTemperatureEnabled: Boolean = true,
 ) : Config() {
 
