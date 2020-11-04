@@ -74,6 +74,10 @@ class ConnectionRepository {
         _micEnabled.value = enabled
     }
 
+    fun getDevicesWithConfigs(): Pair<List<BluetoothDevice>, Map<String, Config>>? = connectedDevices.replayCache.firstOrNull()?.let {
+        it.values.toList() to getCurrentConfigs()
+    }
+
     companion object {
         private val TAG = ConnectionRepository::class.java.simpleName
         private const val ELAPSED_TIMESTAMP_NANOS_LIMIT = 10_000_000_000L

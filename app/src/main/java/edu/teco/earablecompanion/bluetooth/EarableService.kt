@@ -184,16 +184,20 @@ class EarableService : Service() {
     }
 
     override fun onDestroy() {
-        scope.cancel()
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangedListener)
+        if (dataRepository.isRecording) {
+            connectionRepository.getDevicesWithConfigs()?.let { (devices, configs) -> stopRecording(devices, configs) }
+        }
 
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangedListener)
         unregisterReceiver(bluetoothDeviceStateReceiver)
         unregisterReceiver(bluetoothStateReceiver)
         unregisterReceiver(bluetoothScoStateReceiver)
+
         disconnectSco()
         stopMediaSession()
         closeConnections()
 
+        scope.cancel()
         stopForeground(true)
         stopSelf()
         super.onDestroy()
