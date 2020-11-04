@@ -461,7 +461,7 @@ class EarableService : Service() {
             val defaultConfig = when (gatt.device.earableType) {
                 EarableType.ESENSE -> ESenseConfig()
                 EarableType.COSINUSS -> CosinussConfig()
-                EarableType.COSINUSS_ACC -> CosinussConfig(accSupported = true)
+                EarableType.COSINUSS_ACC -> CosinussConfig(accSupported = true, accEnabled = true)
                 else -> return // TODO Generic support with gatt profiles
             }
             connectionRepository.setConfig(gatt.device.address, defaultConfig)

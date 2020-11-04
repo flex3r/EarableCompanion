@@ -105,13 +105,19 @@ data class CosinussConfig(
     }
 
     private fun ByteArray.parseAccSensorData(): Triple<Double, Double, Double> {
-        val x = ((this[14] shl 8) or (this[13] and 0xff)) / 1000.0
-        val y = ((this[16] shl 8) or (this[15] and 0xff)) / 1000.0
-        val z = ((this[18] shl 8) or (this[17] and 0xff)) / 1000.0
+        val x = ((this[14] shl 8) or (this[13] and 0xff)).convertToG
+        val y = ((this[16] shl 8) or (this[15] and 0xff)).convertToG
+        val z = ((this[18] shl 8) or (this[17] and 0xff)).convertToG
 
         //Log.d(TAG, "acc data $x $y $z")
         return Triple(x, y, z)
     }
+
+    private val Int.convertToG: Double
+        get() = when {
+            this < 0 -> this / 8192.0
+            else -> this / 8191.75
+        }
 
     private val Float.toCelsius: Double
         get() = 5 / 9.0 * (this - 32)
