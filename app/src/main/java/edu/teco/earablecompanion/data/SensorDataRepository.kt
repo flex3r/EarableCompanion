@@ -7,10 +7,12 @@ import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.LogEntry
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okio.buffer
 import okio.sink
@@ -22,7 +24,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
 
-class SensorDataRepository @Inject constructor(private val sensorDataDao: SensorDataDao) {
+class SensorDataRepository @Inject constructor(private val sensorDataDao: SensorDataDao, private val scope: CoroutineScope) {
 
     private val _activeRecording = MutableStateFlow<SensorDataRecording?>(null)
     val activeRecording = _activeRecording.asStateFlow()
@@ -46,7 +48,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         sensorDataDao.delete(id)
     }
 
-    suspend fun startRecording(title: String, devices: List<BluetoothDevice>, micFile: File?) {
+    fun startRecording(title: String, devices: List<BluetoothDevice>, micFile: File?) = scope.launch {
         val data = SensorData(
             title = title,
             createdAt = LocalDateTime.now(ZoneId.systemDefault()),
@@ -59,24 +61,24 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         _activeRecording.value = recording
     }
 
-    suspend fun stopRecording() {
-        val data = _activeRecording.value?.data ?: return
+    fun stopRecording() = scope.launch {
+        val data = _activeRecording.value?.data ?: return@launch
         data.stoppedAt = LocalDateTime.now(ZoneId.systemDefault())
 
         sensorDataDao.update(data)
         _activeRecording.value = null
     }
 
-    suspend fun addSensorDataEntryFromCharacteristic(device: BluetoothDevice, config: Config, characteristic: BluetoothGattCharacteristic) {
-        val dataId = activeRecording.value?.data?.dataId ?: return
-        val entry = config.parseSensorValues(device, characteristic) ?: return
+    fun addSensorDataEntryFromCharacteristic(device: BluetoothDevice, config: Config, characteristic: BluetoothGattCharacteristic) = scope.launch {
+        val dataId = activeRecording.value?.data?.dataId ?: return@launch
+        val entry = config.parseSensorValues(device, characteristic) ?: return@launch
         entry.dataId = dataId
 
         sensorDataDao.insertEntry(entry)
     }
 
-    suspend fun addLogEntry(message: String) {
-        val dataId = activeRecording.value?.data?.dataId ?: return
+    fun addLogEntry(message: String) = scope.launch {
+        val dataId = activeRecording.value?.data?.dataId ?: return@launch
         val entry = LogEntry(
             dataId = dataId,
             timestamp = LocalDateTime.now(ZoneId.systemDefault()),
@@ -86,8 +88,8 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         sensorDataDao.insertLogEntry(entry)
     }
 
-    suspend fun addMediaButtonEntry(pressed: Int) {
-        val dataId = activeRecording.value?.data?.dataId ?: return
+    fun addMediaButtonEntry(pressed: Int) = scope.launch {
+        val dataId = activeRecording.value?.data?.dataId ?: return@launch
         val entry = SensorDataEntry(
             dataId = dataId,
             timestamp = LocalDateTime.now(ZoneId.systemDefault()),

@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.data.dao.SensorDataDao
+import kotlinx.coroutines.CoroutineScope
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -15,7 +16,7 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideSensorDataRepository(sensorDataDao: SensorDataDao): SensorDataRepository = SensorDataRepository(sensorDataDao)
+    fun provideSensorDataRepository(sensorDataDao: SensorDataDao, @IOScope scope: CoroutineScope): SensorDataRepository = SensorDataRepository(sensorDataDao, scope)
 
     @Singleton
     @Provides

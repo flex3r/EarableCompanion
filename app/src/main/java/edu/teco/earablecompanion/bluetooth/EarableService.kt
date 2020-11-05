@@ -24,7 +24,10 @@ import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
-import edu.teco.earablecompanion.bluetooth.earable.*
+import edu.teco.earablecompanion.bluetooth.earable.Config
+import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
+import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.bluetooth.earable.GenericConfig
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
@@ -92,11 +95,11 @@ class EarableService : Service() {
             val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE) ?: return
             when (intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)) {
                 BluetoothDevice.BOND_BONDING -> {
-                    scope.launch { addLogEntryIfEnabled(device, getString(R.string.log_bonding)) }
+                    addLogEntryIfEnabled(device, getString(R.string.log_bonding))
                     connectionRepository.updateConnectionEvent(ConnectionEvent.Pairing(device))
                 }
                 BluetoothDevice.BOND_BONDED -> {
-                    scope.launch { addLogEntryIfEnabled(device, getString(R.string.log_bonded)) }
+                    addLogEntryIfEnabled(device, getString(R.string.log_bonded))
                     device.connect(this@EarableService, GattCallback())
                 }
                 else -> Unit
@@ -110,7 +113,7 @@ class EarableService : Service() {
 
             when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
                 BluetoothAdapter.STATE_TURNING_OFF -> {
-                    scope.launch { addLogEntryIfEnabled(null, getString(R.string.log_bl_off)) }
+                    addLogEntryIfEnabled(null, getString(R.string.log_bl_off))
                     stopScan()
                     connectionRepository.updateConnectionEvent(ConnectionEvent.Failed)
                 }
@@ -122,13 +125,13 @@ class EarableService : Service() {
     private val mediaButtonEventCallback = object : MediaSessionCompat.Callback() {
         private fun Int.handleKeyAction() {
             if (this == KeyEvent.ACTION_DOWN || this == KeyEvent.ACTION_UP) {
-                scope.launch { dataRepository.addMediaButtonEntry(pressed = this@handleKeyAction) }
+                dataRepository.addMediaButtonEntry(pressed = this@handleKeyAction)
             }
         }
 
         override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
             val keyEvent = mediaButtonEvent?.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT) ?: return false
-            scope.launch { addLogEntryIfEnabled(null, getString(R.string.log_media_button_event, keyEvent.action, keyEvent.keyCode)) }
+            addLogEntryIfEnabled(null, getString(R.string.log_media_button_event, keyEvent.action, keyEvent.keyCode))
 
             when (keyEvent.keyCode) {
                 KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_MEDIA_PAUSE, KeyEvent.KEYCODE_HEADSETHOOK,
@@ -149,11 +152,11 @@ class EarableService : Service() {
 
             when (intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.ERROR)) {
                 AudioManager.SCO_AUDIO_STATE_CONNECTED -> {
-                    scope.launch { addLogEntryIfEnabled(null, getString(R.string.log_sco_connected)) }
+                    addLogEntryIfEnabled(null, getString(R.string.log_sco_connected))
                     connectionRepository.setScoActive(true)
                 }
                 AudioManager.SCO_AUDIO_STATE_DISCONNECTED -> {
-                    scope.launch { addLogEntryIfEnabled(null, getString(R.string.log_sco_disconnected)) }
+                    addLogEntryIfEnabled(null, getString(R.string.log_sco_disconnected))
                     connectionRepository.setScoActive(false)
                 }
             }
@@ -241,7 +244,7 @@ class EarableService : Service() {
 
     fun connectOrBond(device: BluetoothDevice) {
         connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(device))
-        scope.launch { addLogEntryIfEnabled(device, getString(R.string.log_connecting)) }
+        addLogEntryIfEnabled(device, getString(R.string.log_connecting))
 
         val shouldBond = sharedPreferences.getBoolean(getString(R.string.preference_connection_bond_key), true)
         if (!shouldBond || !device.createBond()) {
@@ -302,10 +305,8 @@ class EarableService : Service() {
             else -> null
         }
 
-        scope.launch {
-            dataRepository.startRecording(title, devices, micFile)
-            addLogEntryIfEnabled(null, getString(R.string.log_record_start, title, devices.joinToString { it.address }))
-        }
+        addLogEntryIfEnabled(null, getString(R.string.log_record_start, title, devices.joinToString { it.address }))
+        dataRepository.startRecording(title, devices, micFile)
     }
 
     fun stopRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
@@ -322,10 +323,8 @@ class EarableService : Service() {
         stopMicRecording()
         stopMediaSession()
 
-        scope.launch {
-            addLogEntryIfEnabled(null, getString(R.string.log_record_stop))
-            dataRepository.stopRecording()
-        }
+        addLogEntryIfEnabled(null, getString(R.string.log_record_stop))
+        dataRepository.stopRecording()
     }
 
     private fun startMicRecording(title: String): File {
@@ -341,8 +340,7 @@ class EarableService : Service() {
             start()
         }
 
-        scope.launch { addLogEntryIfEnabled(null, getString(R.string.log_mic_record_start)) }
-
+        addLogEntryIfEnabled(null, getString(R.string.log_mic_record_start))
         return file
     }
 
@@ -350,7 +348,7 @@ class EarableService : Service() {
         mediaRecorder = mediaRecorder?.run {
             stop()
             release()
-            scope.launch { addLogEntryIfEnabled(null, getString(R.string.log_mic_record_stop)) }
+            addLogEntryIfEnabled(null, getString(R.string.log_mic_record_stop))
             null
         }
     }
@@ -367,7 +365,7 @@ class EarableService : Service() {
             isActive = true
             this@EarableService.mediaSession = this
         }
-        scope.launch { addLogEntryIfEnabled(null, getString(R.string.log_media_session_started)) }
+        addLogEntryIfEnabled(null, getString(R.string.log_media_session_started))
 
         playDummyAudio()
         return session
@@ -389,7 +387,7 @@ class EarableService : Service() {
         mediaSession = mediaSession?.run {
             isActive = false
             release()
-            scope.launch { addLogEntryIfEnabled(null, getString(R.string.log_media_session_stopped)) }
+            addLogEntryIfEnabled(null, getString(R.string.log_media_session_stopped))
             null
         }
     }
@@ -441,7 +439,7 @@ class EarableService : Service() {
         gatts.clear()
     }
 
-    private suspend fun addLogEntryIfEnabled(device: BluetoothDevice?, message: String) {
+    private fun addLogEntryIfEnabled(device: BluetoothDevice?, message: String) {
         val prefix = device?.let { "${it.name}(${it.address}): " } ?: ""
         val messageWithPrefix = prefix + message
         Log.v(TAG, messageWithPrefix)
@@ -498,16 +496,16 @@ class EarableService : Service() {
                 BluetoothProfile.STATE_CONNECTED -> {
                     gatt.discoverServices()
                     gatts[gatt.device] = gatt
-                    scope.launch { addLogEntryIfEnabled(gatt.device, getString(R.string.log_connected)) }
+                    addLogEntryIfEnabled(gatt.device, getString(R.string.log_connected))
                 }
                 BluetoothProfile.STATE_CONNECTING -> {
                     connectionRepository.updateConnectionEvent(ConnectionEvent.Connecting(gatt.device))
-                    scope.launch { addLogEntryIfEnabled(gatt.device, getString(R.string.log_connecting)) }
+                    addLogEntryIfEnabled(gatt.device, getString(R.string.log_connecting))
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
                     characteristics.remove(gatt.device)
                     gatts.remove(gatt.device)
-                    scope.launch { addLogEntryIfEnabled(gatt.device, getString(R.string.log_disconnected)) }
+                    addLogEntryIfEnabled(gatt.device, getString(R.string.log_disconnected))
 
                     if (dataRepository.isRecording) {
                         stopRecording(gatts.keys.toList(), connectionRepository.getCurrentConfigs())
@@ -534,11 +532,9 @@ class EarableService : Service() {
             }
 
 
-            scope.launch {
-                addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_changed, characteristic.formattedUuid, characteristic.value.asHexString))
-                connectionRepository.getConfigOrNull(gatt.device.address)?.let {
-                    dataRepository.addSensorDataEntryFromCharacteristic(gatt.device, it, characteristic)
-                }
+            addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_changed, characteristic.formattedUuid, characteristic.value.asHexString))
+            connectionRepository.getConfigOrNull(gatt.device.address)?.let {
+                dataRepository.addSensorDataEntryFromCharacteristic(gatt.device, it, characteristic)
             }
         }
 
@@ -548,7 +544,7 @@ class EarableService : Service() {
                 return
             }
 
-            scope.launch { addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_write, characteristic.formattedUuid, characteristic.value.asHexString)) }
+            addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_write, characteristic.formattedUuid, characteristic.value.asHexString))
             updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
         }
 
@@ -558,7 +554,7 @@ class EarableService : Service() {
                 return
             }
 
-            scope.launch { addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_read, characteristic.formattedUuid, characteristic.value.asHexString)) }
+            addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_read, characteristic.formattedUuid, characteristic.value.asHexString))
             updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
         }
 
