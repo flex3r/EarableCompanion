@@ -5,9 +5,11 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import edu.teco.earablecompanion.data.SensorDataRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SettingsViewModel @ViewModelInject constructor(private val sensorDataRepository: SensorDataRepository, @Assisted savedStateHandle: SavedStateHandle) : ViewModel() {
@@ -18,6 +20,12 @@ class SettingsViewModel @ViewModelInject constructor(private val sensorDataRepos
 
     fun clearData() = viewModelScope.launch(coroutineExceptionHandler) {
         sensorDataRepository.removeAll()
+    }
+
+    val recordingActive = liveData {
+        sensorDataRepository.activeRecording.collectLatest {
+            emit(it != null)
+        }
     }
 
     companion object {

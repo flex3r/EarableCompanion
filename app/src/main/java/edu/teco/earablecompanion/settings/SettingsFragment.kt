@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.BuildConfig
@@ -29,6 +30,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 .setNegativeButton(getString(R.string.clear_data_dialog_negative)) { d, _ -> d.dismiss() }
                 .show()
             true
+        }
+
+        viewModel.recordingActive.observe(viewLifecycleOwner) {
+            findPreference<SwitchPreferenceCompat>(getString(R.string.preference_record_microphone_key))?.isEnabled = !it
+            findPreference<SwitchPreferenceCompat>(getString(R.string.preference_intercept_media_buttons_key))?.isEnabled = !it
         }
     }
 
