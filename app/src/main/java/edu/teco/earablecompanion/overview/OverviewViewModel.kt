@@ -23,7 +23,7 @@ class OverviewViewModel @ViewModelInject constructor(
     @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private data class ItemState(val devices: Map<String, BluetoothDevice>, val recording: SensorDataRecording?, val configs: Map<String, Config>, val socActive: Boolean, val micEnabled: Boolean)
+    private data class ItemState(val devices: Map<String, BluetoothDevice>, val recording: SensorDataRecording?, val configs: Map<String, Config>, val socActive: Boolean?, val micEnabled: Boolean)
 
     val overviewItems: LiveData<List<OverviewItem>> = liveData(viewModelScope.coroutineContext) {
         combine(
@@ -44,7 +44,7 @@ class OverviewViewModel @ViewModelInject constructor(
                             true
                         } ?: false
 
-                        if (devices.values.hasBondedDevice) when {
+                        if (devices.values.hasBondedDevice && socActive != null) when {
                             micEnabled -> add(OverviewItem.MicEnabled(socActive, recordingActive))
                             else -> add(OverviewItem.MicDisabled(recordingActive))
                         }
@@ -63,7 +63,7 @@ class OverviewViewModel @ViewModelInject constructor(
     }
 
     val micRecordingPossible: Boolean
-        get() = connectionRepository.bluetoothScoActive.value && connectionRepository.micEnabled.value
+        get() = connectionRepository.bluetoothScoActive.value == true && connectionRepository.micEnabled.value
 
     fun getCurrentConfigs() = connectionRepository.getCurrentConfigs()
 

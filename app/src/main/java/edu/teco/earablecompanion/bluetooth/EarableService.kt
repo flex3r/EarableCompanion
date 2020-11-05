@@ -54,14 +54,32 @@ class EarableService : Service() {
     private val sharedPreferences: SharedPreferences by lazy {
         PreferenceManager.getDefaultSharedPreferences(this).also {
             loggingEnabled = it.getBoolean(getString(R.string.preference_record_logs_key), false)
+            micEnabled = it.getBoolean(getString(R.string.preference_record_microphone_key), false)
         }
     }
     private val preferenceChangedListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         when (key) {
             getString(R.string.preference_record_logs_key) -> loggingEnabled = sharedPreferences.getBoolean(key, false)
+            getString(R.string.preference_record_microphone_key) -> micEnabled = sharedPreferences.getBoolean(key, false).also {
+                when {
+                    it -> {
+                        val sticky = registerReceiver(bluetoothScoStateReceiver, IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED))
+                        when (sticky?.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.ERROR)) {
+                            AudioManager.SCO_AUDIO_STATE_CONNECTED -> connectionRepository.setScoActive(true)
+                            AudioManager.SCO_AUDIO_STATE_DISCONNECTED -> connectionRepository.setScoActive(false)
+                        }
+                        connectSco()
+                    }
+                    else -> {
+                        disconnectSco()
+                        connectionRepository.setScoActive(null)
+                    }
+                }
+            }
         }
     }
     private var loggingEnabled: Boolean = false
+    private var micEnabled: Boolean = false
     private var shouldIgnoreUnknownDevices = true
 
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
@@ -127,7 +145,7 @@ class EarableService : Service() {
     private val audioManager: AudioManager by lazy { getSystemService(AudioManager::class.java) }
     private val bluetoothScoStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action != AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED) return
+            if (intent?.action != AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED || !micEnabled) return
 
             when (intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.ERROR)) {
                 AudioManager.SCO_AUDIO_STATE_CONNECTED -> {

@@ -26,7 +26,7 @@ class ConnectionRepository {
     private val _deviceConfigs = MutableSharedFlow<ConcurrentHashMap<String, Config>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConcurrentHashMap()) }
     val deviceConfigs = _deviceConfigs.asSharedFlow()
 
-    private val _bluetoothScoActive = MutableStateFlow(false)
+    private val _bluetoothScoActive = MutableStateFlow<Boolean?>(null)
     val bluetoothScoActive = _bluetoothScoActive.asStateFlow()
 
     private val _micEnabled = MutableStateFlow(false)
@@ -66,7 +66,7 @@ class ConnectionRepository {
     fun getCurrentConfigs(): Map<String, Config> = _deviceConfigs.replayCache.first()
     fun getConfigOrNull(address: String) = _deviceConfigs.replayCache.first()[address]
 
-    fun setScoActive(active: Boolean) {
+    fun setScoActive(active: Boolean?) {
         _bluetoothScoActive.value = active
     }
 

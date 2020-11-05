@@ -24,6 +24,13 @@
 
     <SwitchPreferenceCompat
         android:defaultValue="false"
+        android:icon="@drawable/ic_baseline_mic_24"
+        android:key="@string/preference_record_microphone_key"
+        android:summary="@string/preference_record_microphone_summary"
+        android:title="@string/preference_record_microphone_title" />
+
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
         android:icon="@drawable/ic_baseline_developer_mode_24"
         android:key="@string/preference_record_logs_key"
         android:summary="@string/preference_record_logs_summary"
