@@ -1,9 +1,11 @@
 package edu.teco.earablecompanion.sensordata
 
 import android.util.Log
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.sensordata.SensorDataOverviewItem.Data.Companion.toOverviewItem
 import kotlinx.coroutines.CoroutineExceptionHandler

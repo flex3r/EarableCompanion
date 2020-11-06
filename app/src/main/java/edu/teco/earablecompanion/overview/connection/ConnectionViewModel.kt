@@ -1,6 +1,5 @@
 package edu.teco.earablecompanion.overview.connection
 
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
