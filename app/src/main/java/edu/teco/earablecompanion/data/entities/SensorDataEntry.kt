@@ -31,13 +31,16 @@ data class SensorDataEntry(
     @ColumnInfo(name = "entry_button_pressed") var buttonPressed: Int? = null,
     @ColumnInfo(name = "entry_heart_rate") var heartRate: Int? = null,
     @ColumnInfo(name = "entry_body_temperature") var bodyTemperature: Double? = null,
+    @ColumnInfo(name = "entry_oxygen_saturation") var oxygenSaturation: Double? = null,
+    @ColumnInfo(name = "entry_pulse_rate") var pulseRate: Double? = null,
 ) {
 
     val asCsvEntry: String
-        get() = "${deviceName ?: ""},${deviceAddress},${timestamp.zonedEpochMilli},${accX ?: ""},${accY ?: ""},${accZ ?: ""},${gyroX ?: ""},${gyroY ?: ""},${gyroZ ?: ""},${buttonPressed ?: ""},${heartRate ?: ""},${bodyTemperature ?: ""}\n"
+        get() = "${deviceName ?: ""},${deviceAddress},${timestamp.zonedEpochMilli},${accX ?: ""},${accY ?: ""},${accZ ?: ""},${gyroX ?: ""},${gyroY ?: ""},${gyroZ ?: ""}," +
+                "${buttonPressed ?: ""},${heartRate ?: ""},${bodyTemperature ?: ""},${oxygenSaturation ?: ""},${pulseRate ?: ""}\n"
 
     companion object {
-        const val CSV_HEADER_ROW = "device_name,device_address,timestamp,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,button,heart_rate,body_temp\n"
+        const val CSV_HEADER_ROW = "device_name,device_address,timestamp,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,button,heart_rate,body_temp,oxygen_saturation,pulse_rate\n"
 
         suspend fun List<SensorDataEntry>.mapToEntriesWithDevice() = withContext(Dispatchers.Default) {
             groupBy { it.deviceAddress }.values.map { entries ->
@@ -64,6 +67,8 @@ data class SensorDataEntry(
                 SensorDataType.BUTTON -> mapNotNull { it.buttonPressed }.mapToEntry()
                 SensorDataType.HEART_RATE -> mapNotNull { it.heartRate }.mapToEntry()
                 SensorDataType.BODY_TEMPERATURE -> mapNotNull { it.bodyTemperature }.mapToEntry()
+                SensorDataType.OXYGEN_SATURATION -> mapNotNull { it.oxygenSaturation }.mapToEntry()
+                SensorDataType.PULSE_RATE -> mapNotNull { it.pulseRate }.mapToEntry()
             }
 
             return Triple(name, address, entries)

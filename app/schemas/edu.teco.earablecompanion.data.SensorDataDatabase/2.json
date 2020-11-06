@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "f8d5f6252563373edc17599d9a06b918",
+    "identityHash": "c790258d123ac32731e404b9a23fc02b",
     "entities": [
       {
         "tableName": "data_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_title` TEXT NOT NULL, `data_created` INTEGER NOT NULL, `data_stopped` INTEGER, `data_desc` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_title` TEXT NOT NULL, `data_created` INTEGER NOT NULL, `data_stopped` INTEGER, `data_desc` TEXT, `data_mic_recording` TEXT)",
         "fields": [
           {
             "fieldPath": "dataId",
@@ -37,6 +37,12 @@
             "columnName": "data_desc",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "micRecordingPath",
+            "columnName": "data_mic_recording",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -50,7 +56,7 @@
       },
       {
         "tableName": "data_entry_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_id` INTEGER NOT NULL, `entry_timestamp` INTEGER NOT NULL, `entry_acc_X` REAL, `entry_acc_Y` REAL, `entry_acc_Z` REAL, `entry_gyro_X` REAL, `entry_gyro_Y` REAL, `entry_gyro_Z` REAL, `entry_button_pressed` INTEGER, `entry_heart_rate` INTEGER, `entry_body_temperature` REAL, FOREIGN KEY(`data_id`) REFERENCES `data_table`(`data_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_id` INTEGER NOT NULL, `entry_timestamp` INTEGER NOT NULL, `device_name` TEXT, `device_address` TEXT, `entry_acc_X` REAL, `entry_acc_Y` REAL, `entry_acc_Z` REAL, `entry_gyro_X` REAL, `entry_gyro_Y` REAL, `entry_gyro_Z` REAL, `entry_button_pressed` INTEGER, `entry_heart_rate` INTEGER, `entry_body_temperature` REAL, `entry_oxygen_saturation` REAL, `entry_pulse_rate` REAL, FOREIGN KEY(`data_id`) REFERENCES `data_table`(`data_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "dataEntryId",
@@ -69,6 +75,18 @@
             "columnName": "entry_timestamp",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "deviceName",
+            "columnName": "device_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "deviceAddress",
+            "columnName": "device_address",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "accX",
@@ -121,6 +139,18 @@
           {
             "fieldPath": "bodyTemperature",
             "columnName": "entry_body_temperature",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "oxygenSaturation",
+            "columnName": "entry_oxygen_saturation",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pulseRate",
+            "columnName": "entry_pulse_rate",
             "affinity": "REAL",
             "notNull": false
           }
@@ -218,7 +248,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f8d5f6252563373edc17599d9a06b918')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c790258d123ac32731e404b9a23fc02b')"
     ]
   }
 }

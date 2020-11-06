@@ -10,4 +10,6 @@ enum class SensorDataType {
     BUTTON,
     HEART_RATE,
     BODY_TEMPERATURE,
+    OXYGEN_SATURATION,
+    PULSE_RATE,
 }

@@ -118,6 +118,7 @@
     <string name="earable_supported_sensors_header">Supported sensors:\n</string>
     <string name="earable_supported_sensors_heart_rate">- Heart rate</string>
     <string name="earable_supported_sensors_body_temperature">- Body temperature</string>
+    <string name="earable_supported_sensors_oximeter">- Pulse oximeter</string>
     <string name="config_saved_successful">Configuration has been sent to device</string>
     <string name="config_saved_failed">Failed to send configuration to device</string>
     <string name="device_save_fab_description">Send configuration to device</string>
@@ -160,6 +161,8 @@
     <string name="sensor_data_type_button_title">Button presses</string>
     <string name="sensor_data_type_heart_rate_title">Heart rate</string>
     <string name="sensor_data_type_body_temperature_title">Body temperature</string>
+    <string name="sensor_data_type_oxygen_saturation_title">Oxygen saturation</string>
+    <string name="sensor_data_type_pulse_rate_title">Pulse rate</string>
     <string name="sensor_data_type_acc_unit">g</string>
     <string name="sensor_data_type_gyro_unit">deg/s</string>
     <string name="sensor_data_type_button_unit">pressed</string>

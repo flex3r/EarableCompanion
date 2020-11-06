@@ -129,6 +129,7 @@ fun TextView.setEarableDescription(type: EarableType) {
             val sensors = buildList {
                 if (type.heartRateSupported) add(context.getString(R.string.earable_supported_sensors_heart_rate))
                 if (type.bodyTemperatureSupported) add(context.getString(R.string.earable_supported_sensors_body_temperature))
+                if (type.oximeterSupported) add(context.getString(R.string.earable_supported_sensors_oximeter))
             }
             append(sensors.joinToString("\n"))
         }
@@ -145,14 +146,16 @@ private fun SensorDataType.getTitle(context: Context): String = when (this) {
     SensorDataType.BUTTON -> context.getString(R.string.sensor_data_type_button_title)
     SensorDataType.HEART_RATE -> context.getString(R.string.sensor_data_type_heart_rate_title)
     SensorDataType.BODY_TEMPERATURE -> context.getString(R.string.sensor_data_type_body_temperature_title)
+    SensorDataType.OXYGEN_SATURATION -> context.getString(R.string.sensor_data_type_oxygen_saturation_title)
+    SensorDataType.PULSE_RATE -> context.getString(R.string.sensor_data_type_pulse_rate_title)
 }
 
 private fun SensorDataType.getUnit(context: Context): String = when (this) {
     SensorDataType.ACC_X, SensorDataType.ACC_Y, SensorDataType.ACC_Z -> context.getString(R.string.sensor_data_type_acc_unit)
     SensorDataType.GYRO_X, SensorDataType.GYRO_Y, SensorDataType.GYRO_Z -> context.getString(R.string.sensor_data_type_gyro_unit)
-    SensorDataType.HEART_RATE -> context.getString(R.string.sensor_data_type_heart_rate_unit)
+    SensorDataType.HEART_RATE, SensorDataType.PULSE_RATE -> context.getString(R.string.sensor_data_type_heart_rate_unit)
     SensorDataType.BODY_TEMPERATURE -> context.getString(R.string.sensor_data_type_body_temperature_unit)
-    SensorDataType.BUTTON -> ""
+    SensorDataType.BUTTON, SensorDataType.OXYGEN_SATURATION -> ""
 }
 
 @BindingAdapter("dataTypeTitle")
