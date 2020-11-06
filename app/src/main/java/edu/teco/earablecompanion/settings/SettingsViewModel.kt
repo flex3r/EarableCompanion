@@ -1,9 +1,7 @@
 package edu.teco.earablecompanion.settings
 
 import android.util.Log
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
@@ -12,7 +10,9 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SettingsViewModel @ViewModelInject constructor(private val sensorDataRepository: SensorDataRepository, @Assisted savedStateHandle: SavedStateHandle) : ViewModel() {
+class SettingsViewModel @ViewModelInject constructor(
+    private val sensorDataRepository: SensorDataRepository,
+) : ViewModel() {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, Log.getStackTraceString(throwable))

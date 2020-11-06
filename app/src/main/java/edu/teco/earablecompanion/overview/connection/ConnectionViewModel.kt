@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 class ConnectionViewModel @ViewModelInject constructor(
     private val connectionRepository: ConnectionRepository,
-    @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     val devices: LiveData<List<ConnectionItem>> = liveData(viewModelScope.coroutineContext) {

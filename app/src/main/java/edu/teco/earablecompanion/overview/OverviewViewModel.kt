@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.combine
 class OverviewViewModel @ViewModelInject constructor(
     private val connectionRepository: ConnectionRepository,
     private val sensorDataRepository: SensorDataRepository,
-    @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private data class ItemState(val devices: Map<String, BluetoothDevice>, val recording: SensorDataRecording?, val configs: Map<String, Config>, val socActive: Boolean?, val micEnabled: Boolean)
