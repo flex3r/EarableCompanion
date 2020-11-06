@@ -8,7 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
-import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
+import edu.teco.earablecompanion.bluetooth.config.ESenseConfig
 import kotlinx.coroutines.flow.collectLatest
 
 class ESenseDeviceViewModel @ViewModelInject constructor(

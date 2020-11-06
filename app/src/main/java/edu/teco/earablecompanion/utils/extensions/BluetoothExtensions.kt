@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
-import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.bluetooth.EarableType
 import java.util.*
 
 fun BluetoothGatt.collectCharacteristics(): Map<String, BluetoothGattCharacteristic> = services.map { service ->

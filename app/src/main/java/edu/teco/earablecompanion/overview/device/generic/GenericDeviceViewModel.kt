@@ -5,7 +5,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
-import edu.teco.earablecompanion.bluetooth.earable.GenericConfig
+import edu.teco.earablecompanion.bluetooth.config.GenericConfig
 import kotlinx.coroutines.flow.collectLatest
 
 class GenericDeviceViewModel @ViewModelInject constructor(

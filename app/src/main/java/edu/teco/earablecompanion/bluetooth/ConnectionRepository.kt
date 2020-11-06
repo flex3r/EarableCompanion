@@ -1,7 +1,7 @@
 package edu.teco.earablecompanion.bluetooth
 
 import android.bluetooth.BluetoothDevice
-import edu.teco.earablecompanion.bluetooth.earable.Config
+import edu.teco.earablecompanion.bluetooth.config.Config
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.utils.extensions.updateValue
 import kotlinx.coroutines.channels.BufferOverflow

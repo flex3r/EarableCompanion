@@ -1,7 +1,8 @@
-package edu.teco.earablecompanion.bluetooth.earable
+package edu.teco.earablecompanion.bluetooth.config
 
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGattCharacteristic
+import edu.teco.earablecompanion.bluetooth.EarableType
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.utils.extensions.and
 import edu.teco.earablecompanion.utils.extensions.formattedUuid

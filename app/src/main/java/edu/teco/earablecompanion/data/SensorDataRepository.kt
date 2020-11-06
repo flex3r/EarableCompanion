@@ -2,7 +2,7 @@ package edu.teco.earablecompanion.data
 
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGattCharacteristic
-import edu.teco.earablecompanion.bluetooth.earable.Config
+import edu.teco.earablecompanion.bluetooth.config.Config
 import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.LogEntry
 import edu.teco.earablecompanion.data.entities.SensorData

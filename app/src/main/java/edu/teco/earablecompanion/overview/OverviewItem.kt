@@ -1,8 +1,8 @@
 package edu.teco.earablecompanion.overview
 
 import android.bluetooth.BluetoothDevice
-import edu.teco.earablecompanion.bluetooth.earable.Config
-import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.bluetooth.config.Config
+import edu.teco.earablecompanion.bluetooth.EarableType
 import edu.teco.earablecompanion.data.SensorDataRecording
 import java.time.LocalDateTime
 

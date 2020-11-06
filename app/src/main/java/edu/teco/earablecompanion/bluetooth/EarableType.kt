@@ -1,4 +1,4 @@
-package edu.teco.earablecompanion.bluetooth.earable
+package edu.teco.earablecompanion.bluetooth
 
 sealed class EarableType {
     object ESense : EarableType()

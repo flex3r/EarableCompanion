@@ -5,7 +5,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
-import edu.teco.earablecompanion.bluetooth.earable.CosinussConfig
+import edu.teco.earablecompanion.bluetooth.config.CosinussConfig
 import kotlinx.coroutines.flow.collectLatest
 
 class CosinussDeviceViewModel @ViewModelInject constructor(

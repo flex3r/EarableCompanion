@@ -1,7 +1,7 @@
 package edu.teco.earablecompanion.overview.connection
 
 import android.bluetooth.BluetoothDevice
-import edu.teco.earablecompanion.bluetooth.earable.Config
+import edu.teco.earablecompanion.bluetooth.config.Config
 
 sealed class ConnectionEvent {
     object Empty : ConnectionEvent()

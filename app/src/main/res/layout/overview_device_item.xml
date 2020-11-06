@@ -8,7 +8,7 @@
             name="device"
             type="edu.teco.earablecompanion.overview.OverviewItem.Device" />
 
-        <import type="edu.teco.earablecompanion.bluetooth.earable.EarableType" />
+        <import type="edu.teco.earablecompanion.bluetooth.EarableType" />
 
         <import type="android.view.View" />
     </data>

@@ -1,19 +1,17 @@
 package edu.teco.earablecompanion.overview.device.esense
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
-import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
+import edu.teco.earablecompanion.bluetooth.config.ESenseConfig
 import edu.teco.earablecompanion.databinding.EsenseDeviceFragmentBinding
 import edu.teco.earablecompanion.overview.device.DeviceFragment
 

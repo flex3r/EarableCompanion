@@ -24,10 +24,9 @@ import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
-import edu.teco.earablecompanion.bluetooth.earable.Config
-import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
-import edu.teco.earablecompanion.bluetooth.earable.EarableType
-import edu.teco.earablecompanion.bluetooth.earable.GenericConfig
+import edu.teco.earablecompanion.bluetooth.config.Config
+import edu.teco.earablecompanion.bluetooth.config.ESenseConfig
+import edu.teco.earablecompanion.bluetooth.config.GenericConfig
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent

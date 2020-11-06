@@ -6,8 +6,8 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
-import edu.teco.earablecompanion.bluetooth.earable.Config
-import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.bluetooth.config.Config
+import edu.teco.earablecompanion.bluetooth.EarableType
 import edu.teco.earablecompanion.data.SensorDataRecording
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOverviewItems

@@ -14,8 +14,8 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.progressindicator.ProgressIndicator
 import edu.teco.earablecompanion.R
-import edu.teco.earablecompanion.bluetooth.earable.ESenseConfig
-import edu.teco.earablecompanion.bluetooth.earable.EarableType
+import edu.teco.earablecompanion.bluetooth.config.ESenseConfig
+import edu.teco.earablecompanion.bluetooth.EarableType
 import edu.teco.earablecompanion.data.SensorDataType
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.utils.extensions.themeColor
