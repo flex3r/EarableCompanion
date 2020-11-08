@@ -22,7 +22,7 @@ class SettingsViewModel @ViewModelInject constructor(
         sensorDataRepository.removeAll()
     }
 
-    val recordingActive = liveData {
+    val recordingActive = liveData(viewModelScope.coroutineContext + coroutineExceptionHandler) {
         sensorDataRepository.activeRecording.collectLatest {
             emit(it != null)
         }

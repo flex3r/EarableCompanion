@@ -20,7 +20,7 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
         Log.e(TAG, Log.getStackTraceString(throwable))
     }
 
-    val sensorDataItems: LiveData<List<SensorDataOverviewItem>> = liveData(viewModelScope.coroutineContext) {
+    val sensorDataItems: LiveData<List<SensorDataOverviewItem>> = liveData(viewModelScope.coroutineContext + coroutineExceptionHandler) {
         sensorDataRepository.getSensorDataFlow().collectLatest { data ->
             when {
                 data.isEmpty() -> emit(listOf(SensorDataOverviewItem.NoData))
@@ -32,7 +32,7 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
         }
     }
 
-    fun removeData(data: SensorDataOverviewItem.Data) = viewModelScope.launch {
+    fun removeData(data: SensorDataOverviewItem.Data) = viewModelScope.launch(coroutineExceptionHandler) {
         sensorDataRepository.removeData(data.id)
     }
 

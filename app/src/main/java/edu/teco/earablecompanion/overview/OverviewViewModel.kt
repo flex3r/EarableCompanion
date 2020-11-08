@@ -13,6 +13,7 @@ import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOvervi
 import edu.teco.earablecompanion.overview.OverviewItem.Recording.Companion.toOverviewItem
 import edu.teco.earablecompanion.utils.extensions.hasBondedDevice
 import edu.teco.earablecompanion.utils.extensions.valueOrFalse
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 
@@ -21,9 +22,19 @@ class OverviewViewModel @ViewModelInject constructor(
     private val sensorDataRepository: SensorDataRepository,
 ) : ViewModel() {
 
-    private data class ItemState(val devices: Map<String, BluetoothDevice>, val recording: SensorDataRecording?, val configs: Map<String, Config>, val socActive: Boolean?, val micEnabled: Boolean)
+    private data class ItemState(
+        val devices: Map<String, BluetoothDevice>,
+        val recording: SensorDataRecording?,
+        val configs: Map<String, Config>,
+        val socActive: Boolean?,
+        val micEnabled: Boolean,
+    )
 
-    val overviewItems: LiveData<List<OverviewItem>> = liveData(viewModelScope.coroutineContext) {
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(TAG, Log.getStackTraceString(throwable))
+    }
+
+    val overviewItems: LiveData<List<OverviewItem>> = liveData(viewModelScope.coroutineContext + coroutineExceptionHandler) {
         combine(
             connectionRepository.connectedDevices,
             sensorDataRepository.activeRecording,
@@ -60,8 +71,7 @@ class OverviewViewModel @ViewModelInject constructor(
         addSource(isRecording) { value = Pair(hasConnectedDevices.valueOrFalse, it) }
     }
 
-    val micRecordingPossible: Boolean
-        get() = connectionRepository.bluetoothScoActive.value == true && connectionRepository.micEnabled.value
+    val micRecordingPossible: Boolean get() = connectionRepository.bluetoothScoActive.value == true && connectionRepository.micEnabled.value
 
     fun getCurrentConfigs() = connectionRepository.getCurrentConfigs()
 

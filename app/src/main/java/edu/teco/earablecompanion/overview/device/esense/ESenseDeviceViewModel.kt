@@ -1,14 +1,14 @@
 package edu.teco.earablecompanion.overview.device.esense
 
 import android.bluetooth.BluetoothDevice
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
 import edu.teco.earablecompanion.bluetooth.config.ESenseConfig
+import edu.teco.earablecompanion.overview.connection.ConnectionViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 
 class ESenseDeviceViewModel @ViewModelInject constructor(
@@ -16,8 +16,12 @@ class ESenseDeviceViewModel @ViewModelInject constructor(
     @Assisted savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(TAG, Log.getStackTraceString(throwable))
+    }
+
     private val bluetoothDevice = savedStateHandle.get<BluetoothDevice>("device")
-    val device: LiveData<ESenseDeviceItem> = liveData {
+    val device: LiveData<ESenseDeviceItem> = liveData(viewModelScope.coroutineContext + coroutineExceptionHandler) {
         connectionRepository.deviceConfigs.collectLatest {
             val config = it[bluetoothDevice?.address] as? ESenseConfig ?: ESenseConfig()
             emit(ESenseDeviceItem(bluetoothDevice?.name, config))
@@ -35,4 +39,8 @@ class ESenseDeviceViewModel @ViewModelInject constructor(
     fun setGyroSensorEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? ESenseConfig)?.gyroEnabled = enabled }
     fun setGyroSensorRange(range: ESenseConfig.GyroRange) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? ESenseConfig)?.gyroRange = range }
     fun setGyroSensorLPFBandwidth(bandwidth: ESenseConfig.GyroLPF) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? ESenseConfig)?.gyroLPF = bandwidth }
+
+    companion object {
+        private val TAG = ESenseDeviceViewModel::class.java.simpleName
+    }
 }

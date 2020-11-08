@@ -57,7 +57,6 @@ data class SensorDataEntry(
             val name = firstOrNull()?.deviceName
             val address = firstOrNull()?.deviceAddress
             val entries = when (dataType) {
-                // TODO handle timestamp in chart
                 SensorDataType.ACC_X -> mapNotNull { it.accX }.mapToEntry()
                 SensorDataType.ACC_Y -> mapNotNull { it.accY }.mapToEntry()
                 SensorDataType.ACC_Z -> mapNotNull { it.accZ }.mapToEntry()
