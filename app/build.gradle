@@ -75,7 +75,6 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "androidx.preference:preference-ktx:$preference_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-    implementation "androidx.viewpager2:viewpager2:$viewpager2_version"
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -84,14 +83,12 @@ dependencies {
 // Dependency injection
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
-    implementation 'androidx.hilt:hilt-common:1.0.0-alpha02'
-    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_androidx_version"
+    implementation "androidx.hilt:hilt-common:$hilt_androidx_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_androidx_version"
 
-// HTTP clients
-    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+// I/O
+    implementation "com.squareup.okio:okio:$okio_version"
 
 // BLE
     implementation "no.nordicsemi.android.support.v18:scanner:$blescannercompat_version"
