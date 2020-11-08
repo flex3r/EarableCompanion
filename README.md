@@ -1,1 +1,1 @@
-eSenseCompanion
+EarableCompanion
