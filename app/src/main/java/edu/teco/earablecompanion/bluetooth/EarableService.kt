@@ -32,10 +32,7 @@ import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.di.IOSupervisorScope
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.utils.extensions.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import no.nordicsemi.android.support.v18.scanner.BluetoothLeScannerCompat
 import no.nordicsemi.android.support.v18.scanner.ScanCallback
 import no.nordicsemi.android.support.v18.scanner.ScanResult
@@ -172,6 +169,9 @@ class EarableService : Service() {
     @Inject
     @IOSupervisorScope
     lateinit var scope: CoroutineScope
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(TAG, Log.getStackTraceString(throwable))
+    }
 
     override fun onBind(intent: Intent?): IBinder? = binder
     override fun onUnbind(intent: Intent?): Boolean {
@@ -371,7 +371,7 @@ class EarableService : Service() {
         return session
     }
 
-    private fun playDummyAudio() = scope.launch {
+    private fun playDummyAudio() = scope.launch(coroutineExceptionHandler) {
         val sampleRate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC)
         val size = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT)
         AudioTrack.Builder().setBufferSizeInBytes(size).build().apply {
@@ -392,7 +392,7 @@ class EarableService : Service() {
         }
     }
 
-    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) = scope.launch {
+    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) = scope.launch(coroutineExceptionHandler) {
         config.sensorCharacteristics.forEach { (uuid, isIndication) ->
             val characteristic = characteristics[device]?.get(uuid) ?: return@forEach
             val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
@@ -456,7 +456,7 @@ class EarableService : Service() {
             }
 
             when (callbackType) {
-                ScanSettings.CALLBACK_TYPE_ALL_MATCHES -> scope.launch {
+                ScanSettings.CALLBACK_TYPE_ALL_MATCHES -> scope.launch(coroutineExceptionHandler) {
                     connectionRepository.updateScanResult(result)
                 }
             }
@@ -562,7 +562,7 @@ class EarableService : Service() {
             connectionRepository.updateConfigFromBytes(gatt.device.address, uuid, bytes)
         }
 
-        private fun readCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>, config: Config) = scope.launch {
+        private fun readCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>, config: Config) = scope.launch(coroutineExceptionHandler) {
             config.characteristicsToRead?.forEach { uuid ->
                 characteristics[uuid]?.let { gatt.readCharacteristic(it) }
                 delay(BASE_BLE_DELAY)
