@@ -30,7 +30,7 @@ sealed class OverviewItem {
                 address = address,
                 bluetoothDevice = this,
                 type = config?.earableType ?: EarableType.NotSupported,
-                canCalibrate = config?.hasAccelerometer ?: false
+                canCalibrate = config?.canCalibrate ?: false
             )
 
             fun Collection<BluetoothDevice>.toOverviewItems(configs: Map<String, Config>): List<OverviewItem> = map { it.toOverviewItem(configs[it.address]) }

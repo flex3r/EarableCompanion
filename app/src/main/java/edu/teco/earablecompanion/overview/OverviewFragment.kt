@@ -90,7 +90,7 @@ class OverviewFragment : Fragment() {
 
     fun onConnected(event: ConnectionEvent.Connected) {
         showSnackbar(getString(R.string.connection_snackbar_text_connected, event.device.name ?: getString(R.string.unknown_device_name))) {
-            if (event.config.hasAccelerometer) {
+            if (event.config.canCalibrate) {
                 setAction(R.string.calibrate) { showCalibrationBottomSheet() }
             }
         }

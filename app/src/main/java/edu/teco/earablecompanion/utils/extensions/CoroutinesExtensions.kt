@@ -8,12 +8,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 
-inline fun <T> ConflatedBroadcastChannel<T>.updateValue(block: T.() -> Unit) {
-    val current = value
-    current.block()
-    offer(current)
-}
-
 inline fun <T> MutableStateFlow<T>.updateValue(block: T.() -> Unit) {
     val current = value
     current.block()

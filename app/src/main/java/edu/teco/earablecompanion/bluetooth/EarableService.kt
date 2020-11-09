@@ -81,6 +81,7 @@ class EarableService : Service() {
     private var loggingEnabled: Boolean = false
     private var micEnabled: Boolean = false
     private var shouldIgnoreUnknownDevices = true
+    private var calibrationActive: Boolean = false
 
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
     private val characteristics = mutableMapOf<BluetoothDevice, Map<String, BluetoothGattCharacteristic>>()
@@ -289,6 +290,21 @@ class EarableService : Service() {
         return gatt.writeCharacteristic(characteristic)
     }
 
+    fun startCalibration(device: BluetoothDevice) {
+        calibrationActive = true
+        connectionRepository.getConfigOrNull(device.address)?.apply {
+            clearCalibrationValues()
+            setSensorNotificationEnabled(device, this, enable = true, calibration = true)
+        }
+    }
+
+    fun stopCalibration(device: BluetoothDevice) {
+        calibrationActive = false
+        connectionRepository.getConfigOrNull(device.address)?.apply {
+            setSensorNotificationEnabled(device, this, enable = false, calibration = true)
+        }
+    }
+
     fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>, recordMic: Boolean) {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
@@ -305,8 +321,10 @@ class EarableService : Service() {
             else -> null
         }
 
+        val calibrations = configs.map { it.value.calibrationValues }.flatten()
+
         addLogEntryIfEnabled(null, getString(R.string.log_record_start, title, devices.joinToString { it.address }))
-        dataRepository.startRecording(title, devices, micFile)
+        dataRepository.startRecording(title, devices, micFile, calibrations)
     }
 
     fun stopRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
@@ -392,8 +410,12 @@ class EarableService : Service() {
         }
     }
 
-    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean) = scope.launch(coroutineExceptionHandler) {
-        config.sensorCharacteristics.forEach { (uuid, isIndication) ->
+    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean, calibration: Boolean = false) = scope.launch(coroutineExceptionHandler) {
+        val sensorCharacteristics = when {
+            calibration -> config.calibrationSensorCharacteristics
+            else -> config.sensorCharacteristics
+        }
+        sensorCharacteristics?.forEach { (uuid, isIndication) ->
             val characteristic = characteristics[device]?.get(uuid) ?: return@forEach
             val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
             if (success) {
@@ -534,7 +556,10 @@ class EarableService : Service() {
 
             addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_changed, characteristic.formattedUuid, characteristic.value.asHexString))
             connectionRepository.getConfigOrNull(gatt.device.address)?.let {
-                dataRepository.addSensorDataEntryFromCharacteristic(gatt.device, it, characteristic)
+                when {
+                    calibrationActive -> it.parseCalibrationValues(gatt.device, characteristic)
+                    else -> dataRepository.addSensorDataEntryFromCharacteristic(gatt.device, it, characteristic)
+                }
             }
         }
 

@@ -24,7 +24,7 @@ data class ESenseConfig(
 ) : Config() {
 
     override val earableType: EarableType = EarableType.ESense
-    override val hasAccelerometer: Boolean = true
+    override val canCalibrate: Boolean = true
 
     override val sensorConfigCharacteristic = SENSOR_CONFIG_UUID
     override val configCharacteristic = CONFIG_UUID
@@ -36,6 +36,7 @@ data class ESenseConfig(
             if (accEnabled || gyroEnabled)
                 add(SENSOR_UUID to false)
         }
+    override val calibrationSensorCharacteristics: List<Pair<String, Boolean>>? = listOf(SENSOR_UUID to false)
 
     override val sensorConfigCharacteristicData: ByteArray
         get() = byteArrayOf(0x59, 0x00, 0x04, 0x06, 0x08, 0x08, 0x06).apply {

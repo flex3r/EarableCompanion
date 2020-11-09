@@ -50,13 +50,14 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         sensorDataDao.delete(id)
     }
 
-    fun startRecording(title: String, devices: List<BluetoothDevice>, micFile: File?) = scope.launch(coroutineExceptionHandler) {
+    fun startRecording(title: String, devices: List<BluetoothDevice>, micFile: File?, calibrations: List<SensorDataEntry>) = scope.launch(coroutineExceptionHandler) {
         val data = SensorData(
             title = title,
             createdAt = LocalDateTime.now(ZoneId.systemDefault()),
             micRecordingPath = micFile?.absolutePath
         )
         val dataId = sensorDataDao.insert(data)
+        sensorDataDao.insertEntries(calibrations)
         data.dataId = dataId
 
         val recording = SensorDataRecording(data, devices)
@@ -107,12 +108,12 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun exportData(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {
-        val entries = sensorDataDao.getEntries(dataId)
+        val calibrationEntries = sensorDataDao.getCalibrationEntries(dataId).sortedBy { it.timestamp }
+        val entries = sensorDataDao.getEntries(dataId).sortedBy { it.timestamp }
         outputStream.sink().buffer().use { sink ->
             sink.writeUtf8(SensorDataEntry.CSV_HEADER_ROW)
-            entries.sortedBy { it.timestamp }.forEach {
-                sink.writeUtf8(it.asCsvEntry)
-            }
+            calibrationEntries.forEach { sink.writeUtf8(it.asCsvEntry) }
+            entries.forEach { sink.writeUtf8(it.asCsvEntry) }
         }
     }
 

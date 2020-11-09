@@ -33,14 +33,15 @@ data class SensorDataEntry(
     @ColumnInfo(name = "entry_body_temperature") var bodyTemperature: Double? = null,
     @ColumnInfo(name = "entry_oxygen_saturation") var oxygenSaturation: Double? = null,
     @ColumnInfo(name = "entry_pulse_rate") var pulseRate: Double? = null,
+    @ColumnInfo(name = "is_calibration") var isCalibration: Boolean = false,
 ) {
 
     val asCsvEntry: String
         get() = "${deviceName ?: ""},${deviceAddress},${timestamp.zonedEpochMilli},${accX ?: ""},${accY ?: ""},${accZ ?: ""},${gyroX ?: ""},${gyroY ?: ""},${gyroZ ?: ""}," +
-                "${buttonPressed ?: ""},${heartRate ?: ""},${bodyTemperature ?: ""},${oxygenSaturation ?: ""},${pulseRate ?: ""}\n"
+                "${buttonPressed ?: ""},${heartRate ?: ""},${bodyTemperature ?: ""},${oxygenSaturation ?: ""},${pulseRate ?: ""},$isCalibration\n"
 
     companion object {
-        const val CSV_HEADER_ROW = "device_name,device_address,timestamp,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,button,heart_rate,body_temp,oxygen_saturation,pulse_rate\n"
+        const val CSV_HEADER_ROW = "device_name,device_address,timestamp,acc_x,acc_y,acc_z,gyro_x,gyro_y,gyro_z,button,heart_rate,body_temp,oxygen_saturation,pulse_rate,is_calibration\n"
 
         suspend fun List<SensorDataEntry>.mapToEntriesWithDevice() = withContext(Dispatchers.Default) {
             groupBy { it.deviceAddress }.values.map { entries ->

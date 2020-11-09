@@ -18,7 +18,7 @@ data class CosinussConfig(
     override val earableType: EarableType
         get() = EarableType.Cosinuss(accSupported)
 
-    override val hasAccelerometer: Boolean
+    override val canCalibrate: Boolean
         get() = accSupported
 
     override val characteristicsToRead = listOf(ACC_SENSOR_UUID)
@@ -32,6 +32,11 @@ data class CosinussConfig(
             if (accSupported && accEnabled) {
                 add(ACC_SENSOR_UUID to false)
             }
+        }
+    override val calibrationSensorCharacteristics: List<Pair<String, Boolean>>?
+        get() = when {
+            accSupported -> listOf(ACC_SENSOR_UUID to false)
+            else -> null
         }
 
     override val enableSensorCharacteristicData: ByteArray?
