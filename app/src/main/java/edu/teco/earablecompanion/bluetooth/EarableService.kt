@@ -295,6 +295,11 @@ class EarableService : Service() {
         activeCalibration = device
         connectionRepository.getConfigOrNull(device.address)?.apply {
             clearCalibrationValues()
+
+            characteristics[device]?.get(configCharacteristic)?.let { characteristic ->
+                characteristic.value = enableSensorCharacteristicData
+                gatts[device]?.writeCharacteristic(characteristic)
+            }
             setSensorNotificationEnabled(device, this, enable = true, calibration = true)
         }
     }
@@ -302,6 +307,10 @@ class EarableService : Service() {
     fun stopCalibration() {
         activeCalibration?.let {
             connectionRepository.getConfigOrNull(it.address)?.apply {
+                characteristics[it]?.get(configCharacteristic)?.let { characteristic ->
+                    characteristic.value = disableSensorCharacteristicData
+                    gatts[it]?.writeCharacteristic(characteristic)
+                }
                 setSensorNotificationEnabled(it, this, enable = false, calibration = true)
             }
         }

@@ -1,5 +1,6 @@
 package edu.teco.earablecompanion.overview
 
+import android.bluetooth.BluetoothDevice
 import android.content.SharedPreferences
 import android.media.session.MediaController
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -26,6 +28,7 @@ import edu.teco.earablecompanion.overview.calibration.CalibrationFragment
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
 import edu.teco.earablecompanion.utils.extensions.showOrHide
+import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class OverviewFragment : Fragment() {
@@ -91,7 +94,7 @@ class OverviewFragment : Fragment() {
     fun onConnected(event: ConnectionEvent.Connected) {
         showSnackbar(getString(R.string.connection_snackbar_text_connected, event.device.name ?: getString(R.string.unknown_device_name))) {
             if (event.config.canCalibrate) {
-                setAction(R.string.calibrate) { showCalibrationBottomSheet() }
+                setAction(R.string.calibrate) { showCalibrationBottomSheet(event.device) }
             }
         }
     }
@@ -107,8 +110,7 @@ class OverviewFragment : Fragment() {
     }
 
     private fun calibrateDevice(item: OverviewItem.Device) {
-        // TODO
-        showCalibrationBottomSheet()
+        showCalibrationBottomSheet(item.bluetoothDevice)
     }
 
     private fun disconnectDevice(item: OverviewItem.Device) {
@@ -129,9 +131,13 @@ class OverviewFragment : Fragment() {
         dialog.show(childFragmentManager, ConnectionFragment::class.java.simpleName)
     }
 
-    private fun showCalibrationBottomSheet() {
-        val dialog = CalibrationFragment()
+    private fun showCalibrationBottomSheet(device: BluetoothDevice) {
+        val dialog = CalibrationFragment.newInstance(device)
         dialog.show(childFragmentManager, CalibrationFragment::class.java.simpleName)
+        lifecycleScope.launchWhenResumed {
+            delay(11_000)
+            dialog.dismiss()
+        }
     }
 
     private fun requestPermissionIfNeeded() = when {

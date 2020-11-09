@@ -48,7 +48,7 @@ interface SensorDataDao {
     @Query("SELECT * FROM data_entry_table WHERE data_id = :dataId AND is_calibration = 0")
     suspend fun getEntries(dataId: Long): List<SensorDataEntry>
 
-    @Query("SELECT * FROM data_entry_table WHERE data_id = :dataId AND is_calibration = 0")
+    @Query("SELECT * FROM data_entry_table WHERE data_id = :dataId AND is_calibration = 1")
     suspend fun getCalibrationEntries(dataId: Long): List<SensorDataEntry>
 
     @Query("SELECT COUNT(data_entry_id) FROM data_entry_table WHERE data_id = :id AND is_calibration = 0")

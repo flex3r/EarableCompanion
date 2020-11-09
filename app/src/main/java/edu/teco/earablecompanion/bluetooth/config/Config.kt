@@ -2,6 +2,7 @@ package edu.teco.earablecompanion.bluetooth.config
 
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGattCharacteristic
+import android.util.Log
 import edu.teco.earablecompanion.bluetooth.EarableType
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import java.util.*
@@ -38,13 +39,17 @@ abstract class Config {
 
     open fun clearCalibrationValues() = _calibrationValues.clear()
     open fun parseCalibrationValues(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic) {
-        parseSensorValues(device, characteristic)?.let { _calibrationValues.add(it) }
+        parseSensorValues(device, characteristic)?.let {
+            it.isCalibration = true
+            _calibrationValues.add(it)
+        }
     }
 
     private val _calibrationValues = mutableListOf<SensorDataEntry>()
     val calibrationValues: List<SensorDataEntry> = _calibrationValues
 
     companion object {
+        private val TAG = Config::class.java.simpleName
         private const val NOTIFICATION_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805f9b34fb"
     }
 }

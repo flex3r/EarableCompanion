@@ -57,7 +57,8 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
             micRecordingPath = micFile?.absolutePath
         )
         val dataId = sensorDataDao.insert(data)
-        sensorDataDao.insertEntries(calibrations)
+        val mappedCalibrations = calibrations.onEach { it.dataId = dataId }
+        sensorDataDao.insertEntries(mappedCalibrations)
         data.dataId = dataId
 
         val recording = SensorDataRecording(data, devices)

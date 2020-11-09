@@ -66,5 +66,30 @@
             app:layout_constraintStart_toEndOf="@id/calibration_header_text"
             app:layout_constraintTop_toTopOf="@id/calibration_header_text"
             app:srcCompat="@drawable/ic_baseline_clear_24" />
+
+        <TextView
+            android:id="@+id/calibration_time_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:gravity="center_horizontal"
+            android:text="@{vm.calibrationState.timeLeft}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline1"
+            app:layout_constraintBottom_toTopOf="@id/calibration_description_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/calibration_header_text" />
+
+        <TextView
+            android:id="@+id/calibration_description_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/calibration_description_text"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/calibration_time_text" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

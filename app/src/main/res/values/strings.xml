@@ -38,6 +38,7 @@
     <string name="bottom_sheet_handle_icon_description">Bottomsheet handle</string>
     <string name="bottom_sheet_close_icon_description">Bottomsheet close icon</string>
     <string name="calibration_header_text">Calibration</string>
+    <string name="calibration_description_text">Saving calibration values, please try to hold still during this process.</string>
     <string name="connection_header_text">Searching for devices</string>
     <string name="connection_snackbar_text_connected">Connected to %s</string>
     <string name="connection_header_text_connecting">Connecting to %s</string>
