@@ -81,7 +81,7 @@ class EarableService : Service() {
     private var loggingEnabled: Boolean = false
     private var micEnabled: Boolean = false
     private var shouldIgnoreUnknownDevices = true
-    private var calibrationActive: Boolean = false
+    private var activeCalibration: BluetoothDevice? = null
 
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
     private val characteristics = mutableMapOf<BluetoothDevice, Map<String, BluetoothGattCharacteristic>>()
@@ -215,6 +215,7 @@ class EarableService : Service() {
         disconnectSco()
         stopMediaSession()
         closeConnections()
+        activeCalibration = null
 
         scope.cancel()
         stopForeground(true)
@@ -291,18 +292,21 @@ class EarableService : Service() {
     }
 
     fun startCalibration(device: BluetoothDevice) {
-        calibrationActive = true
+        activeCalibration = device
         connectionRepository.getConfigOrNull(device.address)?.apply {
             clearCalibrationValues()
             setSensorNotificationEnabled(device, this, enable = true, calibration = true)
         }
     }
 
-    fun stopCalibration(device: BluetoothDevice) {
-        calibrationActive = false
-        connectionRepository.getConfigOrNull(device.address)?.apply {
-            setSensorNotificationEnabled(device, this, enable = false, calibration = true)
+    fun stopCalibration() {
+        activeCalibration?.let {
+            connectionRepository.getConfigOrNull(it.address)?.apply {
+                setSensorNotificationEnabled(it, this, enable = false, calibration = true)
+            }
         }
+
+        activeCalibration = null
     }
 
     fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>, recordMic: Boolean) {
@@ -533,6 +537,10 @@ class EarableService : Service() {
                         stopRecording(gatts.keys.toList(), connectionRepository.getCurrentConfigs())
                     }
 
+                    if (activeCalibration != null) {
+                        stopCalibration()
+                    }
+
                     with(connectionRepository) {
                         updateConnectionEvent(ConnectionEvent.Empty)
                         removeConnectedDevice(gatt.device)
@@ -556,8 +564,8 @@ class EarableService : Service() {
 
             addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_changed, characteristic.formattedUuid, characteristic.value.asHexString))
             connectionRepository.getConfigOrNull(gatt.device.address)?.let {
-                when {
-                    calibrationActive -> it.parseCalibrationValues(gatt.device, characteristic)
+                when (activeCalibration?.address) {
+                    gatt.device.address -> it.parseCalibrationValues(gatt.device, characteristic)
                     else -> dataRepository.addSensorDataEntryFromCharacteristic(gatt.device, it, characteristic)
                 }
             }
