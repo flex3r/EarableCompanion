@@ -25,15 +25,15 @@ sealed class OverviewItem {
             get() = type !is EarableType.NotSupported
 
         companion object {
-            private fun BluetoothDevice.toOverviewItem(config: Config?) = Device(
+            private fun BluetoothDevice.toOverviewItem(config: Config?, recordingActive: Boolean) = Device(
                 name = name,
                 address = address,
                 bluetoothDevice = this,
                 type = config?.earableType ?: EarableType.NotSupported,
-                canCalibrate = config?.canCalibrate ?: false
+                canCalibrate = (config?.canCalibrate ?: false) && !recordingActive,
             )
 
-            fun Collection<BluetoothDevice>.toOverviewItems(configs: Map<String, Config>): List<OverviewItem> = map { it.toOverviewItem(configs[it.address]) }
+            fun Collection<BluetoothDevice>.toOverviewItems(configs: Map<String, Config>, recordingActive: Boolean): List<OverviewItem> = map { it.toOverviewItem(configs[it.address], recordingActive) }
         }
     }
 

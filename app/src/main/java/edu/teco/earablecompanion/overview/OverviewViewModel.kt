@@ -44,9 +44,8 @@ class OverviewViewModel @ViewModelInject constructor(
         ) { devices, activeRecording, configs, socActive, micEnabled -> ItemState(devices, activeRecording, configs, socActive, micEnabled) }
             .collectLatest { (devices, activeRecording, configs, socActive, micEnabled) ->
                 Log.i(TAG, "Connected devices: $devices")
-                val items = devices.values.toOverviewItems(configs)
                 when {
-                    items.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
+                    devices.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
                     else -> emit(buildList {
                         val recordingActive = activeRecording?.let {
                             add(it.toOverviewItem())
@@ -58,6 +57,7 @@ class OverviewViewModel @ViewModelInject constructor(
                             else -> add(OverviewItem.MicDisabled(recordingActive))
                         }
 
+                        val items = devices.values.toOverviewItems(configs, recordingActive)
                         addAll(items)
                     })
                 }
