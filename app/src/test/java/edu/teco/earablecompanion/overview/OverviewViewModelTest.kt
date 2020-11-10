@@ -12,7 +12,7 @@ import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.utils.MainCoroutineScopeRule
 import edu.teco.earablecompanion.utils.MockData.mockConfig
 import edu.teco.earablecompanion.utils.MockData.mockDevice
-import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
@@ -44,11 +44,11 @@ class OverviewViewModelTest {
         connectionRepository = mockk(relaxed = true)
         sensorDataRepository = mockk(relaxed = true)
 
-        coEvery { connectionRepository.connectedDevices } returns connectedDevicesFlow
-        coEvery { connectionRepository.deviceConfigs } returns deviceConfigsFlow
-        coEvery { connectionRepository.bluetoothScoActive } returns bluetoothScoActiveFlow
-        coEvery { connectionRepository.micEnabled } returns micEnabledFlow
-        coEvery { sensorDataRepository.activeRecording } returns activeRecordingFlow
+        every { connectionRepository.connectedDevices } returns connectedDevicesFlow
+        every { connectionRepository.deviceConfigs } returns deviceConfigsFlow
+        every { connectionRepository.bluetoothScoActive } returns bluetoothScoActiveFlow
+        every { connectionRepository.micEnabled } returns micEnabledFlow
+        every { sensorDataRepository.activeRecording } returns activeRecordingFlow
 
         viewModel = OverviewViewModel(connectionRepository, sensorDataRepository)
     }
@@ -67,6 +67,23 @@ class OverviewViewModelTest {
 
         val expected = listOf(
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false)
+        )
+        viewModel.overviewItems.test().assertValue(expected)
+    }
+
+    @Test
+    fun testMultipleDevices() {
+        val address1 = "address1"
+        val address2 = "address2"
+        val name1 = "name1"
+        val name2 = "name2"
+        val device1 = mockDevice(address1, name1)
+        val device2 = mockDevice(address2, name2)
+        connectedDevicesFlow.value = mutableMapOf(address1 to device1, address2 to device2)
+
+        val expected = listOf(
+            OverviewItem.Device(name1, address1, device1, EarableType.NotSupported, false),
+            OverviewItem.Device(name2, address2, device2, EarableType.NotSupported, false)
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
