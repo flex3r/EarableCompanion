@@ -11,7 +11,6 @@ import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
@@ -28,7 +27,6 @@ import edu.teco.earablecompanion.overview.calibration.CalibrationFragment
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
 import edu.teco.earablecompanion.utils.extensions.showOrHide
-import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class OverviewFragment : Fragment() {
@@ -134,10 +132,6 @@ class OverviewFragment : Fragment() {
     private fun showCalibrationBottomSheet(device: BluetoothDevice) {
         val dialog = CalibrationFragment.newInstance(device)
         dialog.show(childFragmentManager, CalibrationFragment::class.java.simpleName)
-        lifecycleScope.launchWhenResumed {
-            delay(11_000)
-            dialog.dismiss()
-        }
     }
 
     private fun requestPermissionIfNeeded() = when {

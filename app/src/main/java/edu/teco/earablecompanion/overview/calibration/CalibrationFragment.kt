@@ -2,6 +2,7 @@ package edu.teco.earablecompanion.overview.calibration
 
 import android.bluetooth.BluetoothDevice
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.databinding.CalibrationFragmentBinding
+import edu.teco.earablecompanion.utils.extensions.isLandscape
 
 @AndroidEntryPoint
 class CalibrationFragment : BottomSheetDialogFragment() {
@@ -26,27 +28,38 @@ class CalibrationFragment : BottomSheetDialogFragment() {
             lifecycleOwner = this@CalibrationFragment
             calibrationCloseIcon.setOnClickListener { requireDialog().cancel() }
         }
-        (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        viewModel.calibrationActive.observe(viewLifecycleOwner) { active ->
+            if (!active) {
+                requireDialog().cancel()
+            }
+        }
+
+        if (savedInstanceState == null) {
+            arguments?.getParcelable<BluetoothDevice>(DEVICE_ARG)?.let {
+                (activity as? MainActivity)?.earableService?.startCalibration(it)
+            }
+        }
 
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.getParcelable<BluetoothDevice>(DEVICE_ARG)?.let {
-            (activity as? MainActivity)?.earableService?.startCalibration(it)
-        }
-    }
-
     override fun onStop() {
-        (activity as? MainActivity)?.earableService?.stopCalibration()
-        dialog?.cancel()
+        if (activity?.isChangingConfigurations == false) {
+            (activity as? MainActivity)?.earableService?.stopCalibration()
+            dialog?.cancel()
+        }
+
         super.onStop()
     }
 
     override fun onStart() {
         super.onStart()
-        val sheetContainer = requireView().parent as? ViewGroup ?: return
-        sheetContainer.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+        (view?.parent as? ViewGroup)?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+        (dialog as? BottomSheetDialog)?.behavior?.state = when {
+            isLandscape -> BottomSheetBehavior.STATE_EXPANDED
+            else -> BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
 
     companion object {
