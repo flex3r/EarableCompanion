@@ -33,7 +33,9 @@ sealed class OverviewItem {
                 canCalibrate = (config?.canCalibrate ?: false) && !recordingActive,
             )
 
-            fun Collection<BluetoothDevice>.toOverviewItems(configs: Map<String, Config>, recordingActive: Boolean): List<OverviewItem> = map { it.toOverviewItem(configs[it.address], recordingActive) }
+            fun Collection<BluetoothDevice>.toOverviewItems(configs: Map<String, Config>, recordingActive: Boolean): List<OverviewItem> {
+                return map { it.toOverviewItem(configs[it.address], recordingActive) }
+            }
         }
     }
 
