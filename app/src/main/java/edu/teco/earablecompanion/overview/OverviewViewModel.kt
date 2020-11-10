@@ -42,8 +42,7 @@ class OverviewViewModel @ViewModelInject constructor(
             connectionRepository.bluetoothScoActive,
             connectionRepository.micEnabled
         ) { devices, activeRecording, configs, socActive, micEnabled -> ItemState(devices, activeRecording, configs, socActive, micEnabled) }
-            .collectLatest { (devices, activeRecording, configs, socActive, micEnabled) ->
-                Log.i(TAG, "Connected devices: $devices")
+            .collectLatest { (devices, activeRecording, configs, scoActive, micEnabled) ->
                 when {
                     devices.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
                     else -> emit(buildList {
@@ -52,8 +51,8 @@ class OverviewViewModel @ViewModelInject constructor(
                             true
                         } ?: false
 
-                        if (devices.values.hasBondedDevice && socActive != null) when {
-                            micEnabled -> add(OverviewItem.MicEnabled(socActive, recordingActive))
+                        if (devices.values.hasBondedDevice && scoActive != null) when {
+                            micEnabled -> add(OverviewItem.MicEnabled(scoActive, recordingActive))
                             else -> add(OverviewItem.MicDisabled(recordingActive))
                         }
 

@@ -11,6 +11,7 @@ import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import okio.buffer
 import okio.sink
@@ -29,7 +30,8 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     }
 
     private val _activeRecording = MutableStateFlow<SensorDataRecording?>(null)
-    val activeRecording = _activeRecording.asStateFlow()
+    val activeRecording: StateFlow<SensorDataRecording?> = _activeRecording.asStateFlow()
+
     val isRecording: Boolean
         get() = activeRecording.value != null
 

@@ -5,32 +5,29 @@ import edu.teco.earablecompanion.bluetooth.config.Config
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.utils.extensions.updateValue
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import no.nordicsemi.android.support.v18.scanner.ScanResult
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.absoluteValue
 
 class ConnectionRepository {
     private val _scanResult = MutableSharedFlow<ConcurrentHashMap<String, ScanResult>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConcurrentHashMap()) }
-    val scanResult = _scanResult.asSharedFlow()
+    val scanResult: SharedFlow<Map<String, ScanResult>> = _scanResult.asSharedFlow()
 
     private val _connectionEvent = MutableSharedFlow<ConnectionEvent>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConnectionEvent.Empty) }
-    val connectionEvent = _connectionEvent.asSharedFlow()
+    val connectionEvent: SharedFlow<ConnectionEvent> = _connectionEvent.asSharedFlow()
 
     private val _connectedDevices = MutableSharedFlow<ConcurrentHashMap<String, BluetoothDevice>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConcurrentHashMap()) }
-    val connectedDevices = _connectedDevices.asSharedFlow()
+    val connectedDevices: SharedFlow<Map<String, BluetoothDevice>> = _connectedDevices.asSharedFlow()
 
     private val _deviceConfigs = MutableSharedFlow<ConcurrentHashMap<String, Config>>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(ConcurrentHashMap()) }
-    val deviceConfigs = _deviceConfigs.asSharedFlow()
+    val deviceConfigs: SharedFlow<Map<String, Config>> = _deviceConfigs.asSharedFlow()
 
     private val _bluetoothScoActive = MutableStateFlow<Boolean?>(null)
-    val bluetoothScoActive = _bluetoothScoActive.asStateFlow()
+    val bluetoothScoActive: StateFlow<Boolean?> = _bluetoothScoActive.asStateFlow()
 
     private val _micEnabled = MutableStateFlow(false)
-    val micEnabled = _micEnabled.asStateFlow()
+    val micEnabled: StateFlow<Boolean> = _micEnabled.asStateFlow()
 
     val hasConnectedDevicesOrIsConnecting: Boolean
         get() = _connectedDevices.replayCache.first().isNotEmpty() || _connectionEvent.replayCache.first().connectedOrConnecting
