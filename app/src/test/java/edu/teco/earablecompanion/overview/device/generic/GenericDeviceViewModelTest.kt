@@ -79,4 +79,14 @@ class GenericDeviceViewModelTest {
         deviceConfigsFlow.value = mutableMapOf(device.address to config)
         observer.assertValue(true)
     }
+
+    @Test
+    fun testOximeterSupported() {
+        val observer = viewModel.oximeterSupported.test()
+        observer.assertValue(false)
+
+        val config = GenericConfig(oximeterSupported = true)
+        deviceConfigsFlow.value = mutableMapOf(device.address to config)
+        observer.assertValue(true)
+    }
 }

@@ -172,6 +172,7 @@
     <string name="overview_device_disconnect_text">Disconnect</string>
     <string name="generic_heart_rate_enabled_text">Heart rate enabled</string>
     <string name="generic_body_temperature_enabled_text">Body temperature enabled</string>
+    <string name="generic_oximeter_enabled_text">Oximeter enabled</string>
     <string name="cosinuss_acc_enabled_text">Accelerometer enabled</string>
     <string name="export_file_creation_error">Failed to create file</string>
     <string name="export_file_finished">Export complete</string>

@@ -29,9 +29,11 @@ class GenericDeviceViewModel @ViewModelInject constructor(
 
     val heartRateSupported = device.map { it.config.heartRateSupported }
     val bodyTemperatureSupported = device.map { it.config.bodyTemperatureSupported }
+    val oximeterSupported = device.map { it.config.oximeterSupported }
 
     fun setHeartRateEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? GenericConfig)?.heartRateEnabled = enabled }
     fun setBodyTemperatureEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? GenericConfig)?.bodyTemperatureEnabled = enabled }
+    fun setOximeterEnabled(enabled: Boolean) = connectionRepository.updateConfig(bluetoothDevice?.address) { (this as? GenericConfig)?.oximeterEnabled = enabled }
 
     companion object {
         private val TAG = GenericDeviceViewModel::class.java.simpleName

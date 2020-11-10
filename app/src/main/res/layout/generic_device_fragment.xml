@@ -69,6 +69,29 @@
                 android:enabled="@{vm.bodyTemperatureSupported}"
                 app:layout_constraintStart_toEndOf="@id/generic_body_temperature_enabled_text"
                 app:layout_constraintTop_toBottomOf="@id/generic_heart_rate_enabled_switch" />
+
+            <TextView
+                android:id="@+id/generic_oximeter_enabled_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:enabled="@{vm.oximeterSupported}"
+                android:text="@string/generic_oximeter_enabled_text"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintBottom_toBottomOf="@id/generic_oximeter_enabled_switch"
+                app:layout_constraintEnd_toEndOf="@id/guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/generic_oximeter_enabled_switch" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/generic_oximeter_enabled_switch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:checked="@{vm.device.config.oximeterEnabled}"
+                android:enabled="@{vm.oximeterSupported}"
+                app:layout_constraintStart_toEndOf="@id/generic_oximeter_enabled_text"
+                app:layout_constraintTop_toBottomOf="@id/generic_body_temperature_enabled_switch" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
