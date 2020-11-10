@@ -57,7 +57,7 @@ open class GenericConfig(
         )
     }
 
-    private val Float.toCelsius: Double get() = 5 / 9.0 * (this - 32)
+    private inline val Float.toCelsius: Double get() = 5 / 9.0 * (this - 32)
     private fun parseBodyTemperature(device: BluetoothDevice, characteristic: BluetoothGattCharacteristic): SensorDataEntry? {
         val temp = characteristic.parseFloat(1) ?: return null
 
