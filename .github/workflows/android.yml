@@ -20,8 +20,8 @@ jobs:
       - name: Unit tests
         run: bash ./gradlew testDebugUnitTest
       - name: Android Test Report
-          uses: asadmansr/android-test-report-action@v1.2.0
-          if: ${{ always() }}
+        uses: asadmansr/android-test-report-action@v1.2.0
+        if: ${{ always() }}
 
   build:
     name: Generate APK
