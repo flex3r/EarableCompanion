@@ -19,6 +19,7 @@ import org.junit.Test
 import java.io.OutputStream
 import java.time.Duration
 import java.time.LocalDateTime
+import kotlin.test.assertEquals
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -102,9 +103,9 @@ class SensorDataDetailViewModelTest {
         coEvery { sensorDataRepository.getSensorDataEntries(dataId) } returns data
 
         val observer = viewModel.detailData.test()
-        observer.assertValue(listOf(SensorDataDetailItem.Loading))
         observer.awaitNextValue()
         observer.assertValue { compareItems(expected, it) }
+        assertEquals(listOf(SensorDataDetailItem.Loading), observer.valueHistory().first())
     }
 
     @Test
