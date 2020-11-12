@@ -12,6 +12,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataOverviewFragmentBinding
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class SensorDataOverviewFragment : Fragment() {
@@ -21,7 +22,8 @@ class SensorDataOverviewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = SensorDataOverviewAdapter(::onRemove) {
-            val action = SensorDataOverviewFragmentDirections.actionSensorDataOverviewFragmentToSensorDataDetailFragment(it.title, it.id)
+            val date = it.createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            val action = SensorDataOverviewFragmentDirections.actionSensorDataOverviewFragmentToSensorDataDetailFragment(it.title, it.id, date)
             navController.navigate(action)
         }
         viewModel.sensorDataItems.observe(viewLifecycleOwner) { adapter.submitList(it) }

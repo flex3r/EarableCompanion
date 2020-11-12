@@ -109,6 +109,10 @@
                 android:name="dataId"
                 android:defaultValue="0L"
                 app:argType="long" />
+            <argument
+                android:name="dataDate"
+                android:defaultValue=""
+                app:argType="string" />
         </action>
     </fragment>
     <fragment
@@ -122,6 +126,10 @@
         <argument
             android:name="dataId"
             app:argType="long" />
+        <argument
+            android:name="dataDate"
+            android:defaultValue=""
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"

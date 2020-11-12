@@ -66,8 +66,8 @@ class SensorDataDetailFragment : Fragment() {
             sensorDataDetailDescriptionText.movementMethod = ScrollingMovementMethod()
             sensorDataDetailDescriptionEdit.setOnClickListener { editData() }
             sensorDataDetailDescriptionLogs.setOnClickListener { showLogs() }
-            sensorDataDetailDescriptionMic.setOnClickListener { create3gpRegistration.launch("${args.dataTitle}.3gp") }
-            exportFab.setOnClickListener { createCsvRegistration.launch("${args.dataTitle}.csv") }
+            sensorDataDetailDescriptionMic.setOnClickListener { create3gpRegistration.launch("${args.dataTitle}-${args.dataDate}.3gp") }
+            exportFab.setOnClickListener { createCsvRegistration.launch("${args.dataTitle}-${args.dataDate}.csv") }
         }
 
         setHasOptionsMenu(true)
