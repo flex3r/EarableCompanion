@@ -1,18 +1,13 @@
 package edu.teco.earablecompanion.settings
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.SavedStateHandle
 import com.jraska.livedata.test
-import edu.teco.earablecompanion.bluetooth.ConnectionRepository
 import edu.teco.earablecompanion.data.SensorDataRecording
 import edu.teco.earablecompanion.data.SensorDataRepository
-import edu.teco.earablecompanion.data.entities.SensorData
-import edu.teco.earablecompanion.overview.device.cosinuss.CosinussDeviceViewModel
 import edu.teco.earablecompanion.utils.MainCoroutineScopeRule
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before

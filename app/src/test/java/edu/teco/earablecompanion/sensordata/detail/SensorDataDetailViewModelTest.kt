@@ -2,7 +2,6 @@ package edu.teco.earablecompanion.sensordata.detail
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.asLiveData
 import com.github.mikephil.charting.data.Entry
 import com.jraska.livedata.test
 import edu.teco.earablecompanion.data.SensorDataRepository
@@ -10,19 +9,19 @@ import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.utils.MainCoroutineScopeRule
 import edu.teco.earablecompanion.utils.MockData.sensorDataEntriesAndItems
 import edu.teco.earablecompanion.utils.mockkLog
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.io.OutputStream
 import java.time.Duration
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 @Suppress("BlockingMethodInNonBlockingContext")
 class SensorDataDetailViewModelTest {
     @get:Rule

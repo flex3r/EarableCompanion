@@ -6,11 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.jraska.livedata.test
 import edu.teco.earablecompanion.bluetooth.ConnectionRepository
 import edu.teco.earablecompanion.bluetooth.config.Config
-import edu.teco.earablecompanion.bluetooth.config.CosinussConfig
-import edu.teco.earablecompanion.bluetooth.config.ESenseConfig
 import edu.teco.earablecompanion.bluetooth.config.GenericConfig
-import edu.teco.earablecompanion.overview.device.esense.ESenseDeviceItem
-import edu.teco.earablecompanion.overview.device.esense.ESenseDeviceViewModel
 import edu.teco.earablecompanion.utils.MainCoroutineScopeRule
 import edu.teco.earablecompanion.utils.MockData
 import io.mockk.every

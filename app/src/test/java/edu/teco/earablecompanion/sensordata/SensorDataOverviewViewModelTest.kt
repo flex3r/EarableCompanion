@@ -5,7 +5,10 @@ import com.jraska.livedata.test
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.utils.MainCoroutineScopeRule
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
