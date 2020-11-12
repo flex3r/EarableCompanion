@@ -117,6 +117,9 @@
     <string name="earable_cosinuss_acc_description">Supported sensors:\n- Heart rate\n- Body temperature\n- Accelerometer</string>
     <string name="earable_not_supported_description">Unsupported device</string>
     <string name="earable_supported_sensors_header">Supported sensors:\n</string>
+    <string name="earable_supported_sensors_accelerometer">- Acceleromter</string>
+    <string name="earable_supported_sensors_gyrosensor">- Gyrosensor</string>
+    <string name="earable_supported_sensors_button">- Button presses</string>
     <string name="earable_supported_sensors_heart_rate">- Heart rate</string>
     <string name="earable_supported_sensors_body_temperature">- Body temperature</string>
     <string name="earable_supported_sensors_oximeter">- Pulse oximeter</string>

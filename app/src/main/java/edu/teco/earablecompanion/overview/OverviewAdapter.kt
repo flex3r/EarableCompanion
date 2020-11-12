@@ -71,7 +71,9 @@ class OverviewAdapter(
 
     private class DetectDiff : DiffUtil.ItemCallback<OverviewItem>() {
         override fun areItemsTheSame(oldItem: OverviewItem, newItem: OverviewItem): Boolean = oldItem == newItem
-        override fun areContentsTheSame(oldItem: OverviewItem, newItem: OverviewItem): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: OverviewItem, newItem: OverviewItem): Boolean {
+            return if (newItem is OverviewItem.Recording) false else oldItem == newItem
+        }
     }
 
     companion object {

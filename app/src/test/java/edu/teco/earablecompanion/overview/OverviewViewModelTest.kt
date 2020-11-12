@@ -119,7 +119,7 @@ class OverviewViewModelTest {
         activeRecordingFlow.value = recording
 
         val expected = listOf(
-            OverviewItem.Recording(dateTime, listOf(mockDevice)),
+            OverviewItem.Recording(dateTime, listOf(mockDevice), mapOf()),
             OverviewItem.Device(name, address, mockDevice, EarableType.Generic(), false)
         )
         viewModel.overviewItems.test().assertValue(expected)
@@ -186,7 +186,7 @@ class OverviewViewModelTest {
         activeRecordingFlow.value = recording
 
         val expected = listOf(
-            OverviewItem.Recording(dateTime, listOf(mockDevice)),
+            OverviewItem.Recording(dateTime, listOf(mockDevice), mapOf()),
             OverviewItem.MicEnabled(scoConnected = true, recordingActive = true),
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
         )
@@ -222,7 +222,7 @@ class OverviewViewModelTest {
         activeRecordingFlow.value = recording
 
         val expected = listOf(
-            OverviewItem.Recording(dateTime, listOf(mockDevice)),
+            OverviewItem.Recording(dateTime, listOf(mockDevice), mapOf()),
             OverviewItem.MicDisabled(true),
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
         )

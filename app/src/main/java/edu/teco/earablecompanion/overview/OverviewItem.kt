@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import edu.teco.earablecompanion.bluetooth.EarableType
 import edu.teco.earablecompanion.bluetooth.config.Config
 import edu.teco.earablecompanion.data.SensorDataRecording
+import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import java.time.LocalDateTime
 
 sealed class OverviewItem {
@@ -39,11 +40,12 @@ sealed class OverviewItem {
         }
     }
 
-    data class Recording(val startedAt: LocalDateTime, val devices: List<BluetoothDevice>) : OverviewItem() {
+    data class Recording(val startedAt: LocalDateTime, val devices: List<BluetoothDevice>, val latestValues: Map<String, SensorDataEntry>) : OverviewItem() {
         companion object {
             fun SensorDataRecording.toOverviewItem() = Recording(
                 startedAt = data.createdAt,
-                devices = devices
+                devices = devices,
+                latestValues = latestValues
             )
         }
     }

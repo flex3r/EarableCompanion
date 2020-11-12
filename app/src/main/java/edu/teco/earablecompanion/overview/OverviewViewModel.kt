@@ -43,7 +43,6 @@ class OverviewViewModel @ViewModelInject constructor(
             connectionRepository.micEnabled
         ) { devices, activeRecording, configs, socActive, micEnabled -> ItemState(devices, activeRecording, configs, socActive, micEnabled) }
             .collectLatest { (devices, activeRecording, configs, scoActive, micEnabled) ->
-                Log.i(TAG, "Connected devices: $devices")
                 when {
                     devices.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
                     else -> emit(buildList {

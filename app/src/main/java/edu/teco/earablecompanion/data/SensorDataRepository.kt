@@ -8,11 +8,10 @@ import edu.teco.earablecompanion.data.dao.SensorDataDao
 import edu.teco.earablecompanion.data.entities.LogEntry
 import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
+import edu.teco.earablecompanion.utils.extensions.updateValue
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.*
 import okio.buffer
 import okio.sink
 import okio.source
@@ -29,11 +28,11 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         Log.e(TAG, Log.getStackTraceString(throwable))
     }
 
-    private val _activeRecording = MutableStateFlow<SensorDataRecording?>(null)
-    val activeRecording: StateFlow<SensorDataRecording?> = _activeRecording.asStateFlow()
+    private val _activeRecording = MutableSharedFlow<SensorDataRecording?>(1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply { tryEmit(null) }
+    val activeRecording: SharedFlow<SensorDataRecording?> = _activeRecording.asSharedFlow()
 
     val isRecording: Boolean
-        get() = activeRecording.value != null
+        get() = activeRecording.replayCache.firstOrNull() != null
 
     fun getSensorDataByIdFlow(id: Long): Flow<SensorData?> = sensorDataDao.getDataFlow(id)
     fun getSensorDataFlow(): Flow<List<SensorData>> = sensorDataDao.getAllFlow()
@@ -64,27 +63,31 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         data.dataId = dataId
 
         val recording = SensorDataRecording(data, devices)
-        _activeRecording.value = recording
+        _activeRecording.tryEmit(recording)
     }
 
     fun stopRecording() = scope.launch(coroutineExceptionHandler) {
-        val data = _activeRecording.value?.data ?: return@launch
+        val data = _activeRecording.replayCache.firstOrNull()?.data ?: return@launch
         data.stoppedAt = LocalDateTime.now(ZoneId.systemDefault())
 
         sensorDataDao.update(data)
-        _activeRecording.value = null
+        _activeRecording.tryEmit(null)
     }
 
     fun addSensorDataEntryFromCharacteristic(device: BluetoothDevice, config: Config, characteristic: BluetoothGattCharacteristic) = scope.launch(coroutineExceptionHandler) {
-        val dataId = activeRecording.value?.data?.dataId ?: return@launch
+        val dataId = activeRecording.replayCache.firstOrNull()?.data?.dataId ?: return@launch
         val entry = config.parseSensorValues(device, characteristic) ?: return@launch
         entry.dataId = dataId
 
+        _activeRecording.updateValue {
+            val existing = this?.latestValues?.get(device.address)
+            this?.latestValues?.set(device.address, existing?.replaceValues(entry) ?: entry)
+        }
         sensorDataDao.insertEntry(entry)
     }
 
     fun addLogEntry(message: String) = scope.launch(coroutineExceptionHandler) {
-        val dataId = activeRecording.value?.data?.dataId ?: return@launch
+        val dataId = activeRecording.replayCache.firstOrNull()?.data?.dataId ?: return@launch
         val entry = LogEntry(
             dataId = dataId,
             timestamp = LocalDateTime.now(ZoneId.systemDefault()),
@@ -95,7 +98,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     }
 
     fun addMediaButtonEntry(pressed: Int) = scope.launch(coroutineExceptionHandler) {
-        val dataId = activeRecording.value?.data?.dataId ?: return@launch
+        val dataId = activeRecording.replayCache.firstOrNull()?.data?.dataId ?: return@launch
         val entry = SensorDataEntry(
             dataId = dataId,
             timestamp = LocalDateTime.now(ZoneId.systemDefault()),
@@ -131,6 +134,20 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
             }
         }
     }
+
+    private fun SensorDataEntry.replaceValues(other: SensorDataEntry) = copy(
+        accX = other.accX ?: this.accX,
+        accY = other.accY ?: this.accY,
+        accZ = other.accZ ?: this.accZ,
+        gyroX = other.gyroX ?: this.gyroX,
+        gyroY = other.gyroY ?: this.gyroY,
+        gyroZ = other.gyroZ ?: this.gyroZ,
+        buttonPressed = other.buttonPressed ?: this.buttonPressed,
+        heartRate = other.heartRate ?: this.heartRate,
+        bodyTemperature = other.bodyTemperature ?: this.bodyTemperature,
+        oxygenSaturation = other.oxygenSaturation ?: this.oxygenSaturation,
+        pulseRate = other.pulseRate ?: this.pulseRate
+    )
 
     companion object {
         private val TAG = SensorDataRecording::class.java.simpleName

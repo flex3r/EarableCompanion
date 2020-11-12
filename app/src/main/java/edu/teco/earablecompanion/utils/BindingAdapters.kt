@@ -17,6 +17,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.EarableType
 import edu.teco.earablecompanion.bluetooth.config.ESenseConfig
 import edu.teco.earablecompanion.data.SensorDataType
+import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.utils.extensions.themeColor
 import java.time.Duration
@@ -199,6 +200,54 @@ fun ProgressIndicator.setByConnectionEvent(event: ConnectionEvent) {
             isVisible = false
             isIndeterminate = true
             isVisible = true
+        }
+    }
+}
+
+@BindingAdapter("sensorValues")
+fun TextView.setLatestSensorValues(map: Map<String, SensorDataEntry>) {
+    val unknownDeviceName = context.getString(R.string.unknown_device_name)
+    text = buildString {
+        map.values.forEachIndexed { idx, it ->
+            append("${it.deviceName ?: unknownDeviceName} ${it.deviceAddress}\n")
+            if (it.accX != null && it.accY != null && it.accZ != null) {
+                val unit = context.getString(R.string.sensor_data_type_acc_unit)
+                append(context.getString(R.string.earable_supported_sensors_accelerometer))
+                append(" ${String.format("%.3f", it.accX)} $unit")
+                append(" ${String.format("%.3f", it.accY)} $unit")
+                append(" ${String.format("%.3f", it.accZ)} $unit\n")
+            }
+            if (it.gyroX != null && it.gyroY != null && it.gyroZ != null) {
+                val unit = context.getString(R.string.sensor_data_type_gyro_unit)
+                append(context.getString(R.string.earable_supported_sensors_gyrosensor))
+                append(" ${String.format("%.3f", it.gyroX)} $unit")
+                append(" ${String.format("%.3f", it.gyroY)} $unit")
+                append(" ${String.format("%.3f", it.gyroZ)} $unit\n")
+            }
+            it.buttonPressed?.let { pressed ->
+                append(context.getString(R.string.earable_supported_sensors_button))
+                append(" ${pressed == 1}\n")
+            }
+            it.heartRate?.let { rate ->
+                val unit = context.getString(R.string.sensor_data_type_heart_rate_unit)
+                append(context.getString(R.string.earable_supported_sensors_heart_rate))
+                append(" ${rate.toInt()} $unit\n")
+            }
+            it.bodyTemperature?.let { temp ->
+                val unit = context.getString(R.string.sensor_data_type_body_temperature_unit)
+                append(context.getString(R.string.earable_supported_sensors_body_temperature))
+                append(" ${String.format("%.3f", temp)} $unit\n")
+            }
+            if (it.oxygenSaturation != null && it.pulseRate != null) {
+                val unit = context.getString(R.string.sensor_data_type_heart_rate_unit)
+                append(context.getString(R.string.earable_supported_sensors_oximeter))
+                append(" ${String.format("%.2f", it.oxygenSaturation)}")
+                append(" ${String.format("%.3f", it.pulseRate)} $unit\n")
+            }
+
+            if (idx != map.size - 1) {
+                append("\n")
+            }
         }
     }
 }
