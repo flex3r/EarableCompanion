@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import android.content.SharedPreferences
 import android.media.session.MediaController
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -144,13 +145,14 @@ class OverviewFragment : Fragment() {
         val default = getString(R.string.preference_recording_labels_default)
         val labelString = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString(labelKey, default) ?: default
         val labels = labelString.split(",").toTypedArray()
-
+        var index = 0
         MaterialAlertDialogBuilder(requireContext())
-            .setItems(labels) { _, index ->
+            .setSingleChoiceItems(labels, index) { _, idx -> index = idx }
+            .setTitle(R.string.start_recording_dialog_title)
+            .setPositiveButton(R.string.start_recording_dialog_positive) {  _, _ ->
                 val title = labels.getOrNull(index) ?: getString(R.string.start_recording_dialog_title_default)
                 startRecording(title)
             }
-            .setTitle(R.string.start_recording_dialog_title)
             .setNegativeButton(R.string.start_recording_dialog_negative) { d, _ -> d.dismiss() }
             .show()
     }
