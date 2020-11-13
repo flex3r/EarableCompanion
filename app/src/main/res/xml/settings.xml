@@ -1,52 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Preference
-        android:defaultValue="@string/preference_recording_labels_default"
-        android:icon="@drawable/ic_baseline_label_24"
-        android:key="@string/preference_recording_labels_key"
-        android:title="@string/preference_recording_labels_title" />
+    <PreferenceCategory android:title="@string/preference_recording_header">
+        <Preference
+            android:defaultValue="@string/preference_recording_labels_default"
+            android:icon="@drawable/ic_baseline_label_24"
+            android:key="@string/preference_recording_labels_key"
+            android:title="@string/preference_recording_labels_title" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:icon="@drawable/ic_baseline_filter_list_24"
-        android:key="@string/preference_ignore_unknown_devices_key"
-        android:summary="@string/preference_ignore_unknown_devices_summary"
-        android:title="@string/preference_ignore_unknown_devices_title" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:icon="@drawable/ic_baseline_touch_app_24"
+            android:key="@string/preference_intercept_media_buttons_key"
+            android:summary="@string/preference_intercept_media_buttons_summary"
+            android:title="@string/preference_intercept_media_buttons_title" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:icon="@drawable/ic_baseline_bluetooth_connected_24"
-        android:key="@string/preference_connection_bond_key"
-        android:summary="@string/preference_connection_bond_summary"
-        android:title="@string/preference_connection_bond_title" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:icon="@drawable/ic_baseline_mic_24"
+            android:key="@string/preference_record_microphone_key"
+            android:summary="@string/preference_record_microphone_summary"
+            android:title="@string/preference_record_microphone_title" />
+    </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:icon="@drawable/ic_baseline_touch_app_24"
-        android:key="@string/preference_intercept_media_buttons_key"
-        android:summary="@string/preference_intercept_media_buttons_summary"
-        android:title="@string/preference_intercept_media_buttons_title" />
+    <PreferenceCategory android:title="@string/preference_bluetooth_header">
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:icon="@drawable/ic_baseline_filter_list_24"
+            android:key="@string/preference_ignore_unknown_devices_key"
+            android:summary="@string/preference_ignore_unknown_devices_summary"
+            android:title="@string/preference_ignore_unknown_devices_title" />
 
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:icon="@drawable/ic_baseline_mic_24"
-        android:key="@string/preference_record_microphone_key"
-        android:summary="@string/preference_record_microphone_summary"
-        android:title="@string/preference_record_microphone_title" />
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:icon="@drawable/ic_baseline_bluetooth_connected_24"
+            android:key="@string/preference_connection_bond_key"
+            android:summary="@string/preference_connection_bond_summary"
+            android:title="@string/preference_connection_bond_title" />
+    </PreferenceCategory>
 
-    <SwitchPreferenceCompat
-        android:defaultValue="false"
-        android:icon="@drawable/ic_baseline_developer_mode_24"
-        android:key="@string/preference_record_logs_key"
-        android:summary="@string/preference_record_logs_summary"
-        android:title="@string/preference_record_logs_title" />
+    <PreferenceCategory android:title="@string/preference_data_header">
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:icon="@drawable/ic_baseline_developer_mode_24"
+            android:key="@string/preference_record_logs_key"
+            android:summary="@string/preference_record_logs_summary"
+            android:title="@string/preference_record_logs_title" />
 
-    <Preference
-        android:icon="@drawable/ic_baseline_delete_24"
-        android:key="@string/preference_clear_data_key"
-        android:title="@string/preference_clear_data_header" />
-
+        <Preference
+            android:icon="@drawable/ic_baseline_delete_24"
+            android:key="@string/preference_clear_data_key"
+            android:title="@string/preference_clear_data_header" />
+    </PreferenceCategory>
+    
     <PreferenceCategory android:title="@string/preference_about_header">
         <Preference android:key="@string/preference_about_key" />
     </PreferenceCategory>
