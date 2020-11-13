@@ -52,7 +52,7 @@
             android:key="@string/preference_clear_data_key"
             android:title="@string/preference_clear_data_header" />
     </PreferenceCategory>
-    
+
     <PreferenceCategory android:title="@string/preference_about_header">
         <Preference android:key="@string/preference_about_key" />
     </PreferenceCategory>

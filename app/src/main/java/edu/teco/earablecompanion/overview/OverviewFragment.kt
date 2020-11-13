@@ -4,11 +4,9 @@ import android.bluetooth.BluetoothDevice
 import android.content.SharedPreferences
 import android.media.session.MediaController
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,8 +15,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
@@ -149,7 +145,7 @@ class OverviewFragment : Fragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setSingleChoiceItems(labels, index) { _, idx -> index = idx }
             .setTitle(R.string.start_recording_dialog_title)
-            .setPositiveButton(R.string.start_recording_dialog_positive) {  _, _ ->
+            .setPositiveButton(R.string.start_recording_dialog_positive) { _, _ ->
                 val title = labels.getOrNull(index) ?: getString(R.string.start_recording_dialog_title_default)
                 startRecording(title)
             }
