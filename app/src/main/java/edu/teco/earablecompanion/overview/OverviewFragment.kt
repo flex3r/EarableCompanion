@@ -140,26 +140,17 @@ class OverviewFragment : Fragment() {
     }
 
     private fun displayStartRecordingDialog() {
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        val layout = LayoutInflater.from(builder.context).inflate(R.layout.dialog_input_layout, null) as LinearLayout
-        layout.findViewById<TextInputLayout>(R.id.dialog_input_layout).apply {
-            hint = getString(R.string.start_recording_dialog_hint)
-        }
-        val editText = layout.findViewById<TextInputEditText>(R.id.dialog_input_text).apply {
-            isSingleLine = true
-        }
+        val labelKey = getString(R.string.preference_recording_labels_key)
+        val default = getString(R.string.preference_recording_labels_default)
+        val labelString = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString(labelKey, default) ?: default
+        val labels = labelString.split(",").toTypedArray()
 
-        builder
-            .setTitle(R.string.start_recording_dialog_title)
-            .setView(layout)
-            .setPositiveButton(R.string.start_recording_dialog_positive) { _, _ ->
-                val input = editText.text?.toString()
-                val title = when {
-                    input.isNullOrBlank() -> getString(R.string.start_recording_dialog_title_default)
-                    else -> input
-                }
+        MaterialAlertDialogBuilder(requireContext())
+            .setItems(labels) { _, index ->
+                val title = labels.getOrNull(index) ?: getString(R.string.start_recording_dialog_title_default)
                 startRecording(title)
             }
+            .setTitle(R.string.start_recording_dialog_title)
             .setNegativeButton(R.string.start_recording_dialog_negative) { d, _ -> d.dismiss() }
             .show()
     }

@@ -21,6 +21,9 @@
     <string name="preference_record_microphone_key" translatable="false">preference_record_microphone_key</string>
     <string name="preference_record_microphone_title">Enable microphone support</string>
     <string name="preference_record_microphone_summary">Enables audio recording support if a compatible paired device is found.</string>
+    <string name="preference_recording_labels_key" translatable="false">preference_recording_labels_key</string>
+    <string name="preference_recording_labels_title">Edit available recording labels</string>
+    <string name="preference_recording_labels_default">Standing,Sitting,Walking,Running</string>
 
     <string name="data_created_at">Created at %s</string>
     <string name="data_duration">Duration: %s</string>

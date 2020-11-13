@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <Preference
+        android:defaultValue="@string/preference_recording_labels_default"
+        android:icon="@drawable/ic_baseline_label_24"
+        android:key="@string/preference_recording_labels_key"
+        android:title="@string/preference_recording_labels_title" />
+
     <SwitchPreferenceCompat
         android:defaultValue="true"
         android:icon="@drawable/ic_baseline_filter_list_24"
