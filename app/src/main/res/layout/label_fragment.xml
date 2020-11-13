@@ -3,35 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="vm"
-            type="edu.teco.earablecompanion.overview.connection.ConnectionViewModel" />
-
-        <import type="android.view.View" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/connection_layout"
+        android:id="@+id/label_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.progressindicator.ProgressIndicator
-            android:id="@+id/connection_header_progress"
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:max="100"
-            app:connectionEvent="@{vm.connectionEvent}"
-            app:indicatorSize="3dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageView
-            android:id="@+id/connection_handle_icon"
+            android:id="@+id/label_handle_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -42,7 +20,7 @@
             app:srcCompat="@drawable/ic_baseline_maximize_24" />
 
         <TextView
-            android:id="@+id/connection_header_text"
+            android:id="@+id/label_header_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -50,15 +28,14 @@
             android:ellipsize="marquee"
             android:gravity="center_horizontal"
             android:singleLine="true"
-            android:text="@string/connection_header_text"
+            android:text="@string/label_header_text"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            app:layout_constraintBottom_toTopOf="@id/connection_devices_recyclerview"
-            app:layout_constraintEnd_toStartOf="@id/connection_close_icon"
+            app:layout_constraintEnd_toStartOf="@id/label_close_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/connection_close_icon"
+            android:id="@+id/label_close_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -66,21 +43,22 @@
             android:contentDescription="@string/bottom_sheet_close_icon_description"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackground"
-            app:layout_constraintBottom_toBottomOf="@id/connection_header_text"
+            app:layout_constraintBottom_toBottomOf="@id/label_header_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/connection_header_text"
-            app:layout_constraintTop_toTopOf="@id/connection_header_text"
+            app:layout_constraintStart_toEndOf="@id/label_header_text"
+            app:layout_constraintTop_toTopOf="@id/label_header_text"
             app:srcCompat="@drawable/ic_baseline_clear_24" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/connection_devices_recyclerview"
+            android:id="@+id/label_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginVertical="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/connection_header_text"
+            app:layout_constraintTop_toBottomOf="@id/label_header_text"
             tools:listitem="@layout/connection_device_item" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

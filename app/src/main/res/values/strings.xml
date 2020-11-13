@@ -202,4 +202,8 @@
     <string name="log_record_stop">Stopped recording</string>
     <string name="log_mic_record_start">Started mic recording</string>
     <string name="log_mic_record_stop">Stopped mic recording</string>
+    <string name="label_input_hint">Label</string>
+    <string name="label_delete_description">Delete label</string>
+    <string name="label_add_description">Add label</string>
+    <string name="label_header_text">Edit recording labels</string>
 </resources>

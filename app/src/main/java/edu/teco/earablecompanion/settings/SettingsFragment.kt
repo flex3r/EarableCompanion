@@ -12,11 +12,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.BuildConfig
 import edu.teco.earablecompanion.R
+import edu.teco.earablecompanion.settings.label.LabelFragment
 
 @AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
 
-    private val navController: NavController by lazy { findNavController() }
+    //private val navController: NavController by lazy { findNavController() }
     private val viewModel: SettingsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,6 +30,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 .setPositiveButton(getString(R.string.clear_data_dialog_positive)) { _, _ -> viewModel.clearData() }
                 .setNegativeButton(getString(R.string.clear_data_dialog_negative)) { d, _ -> d.dismiss() }
                 .show()
+            true
+        }
+        findPreference<Preference>(getString(R.string.preference_recording_labels_key))?.setOnPreferenceClickListener {
+            LabelFragment().show(childFragmentManager, LabelFragment::class.java.simpleName)
             true
         }
 
