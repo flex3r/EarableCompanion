@@ -40,6 +40,7 @@ import no.nordicsemi.android.support.v18.scanner.ScanSettings
 import java.io.File
 import java.time.Instant
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 @SuppressLint("MissingPermission")
@@ -86,6 +87,9 @@ class EarableService : Service() {
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
     private val characteristics = mutableMapOf<BluetoothDevice, Map<String, BluetoothGattCharacteristic>>()
     private val scanner: BluetoothLeScannerCompat by lazy { BluetoothLeScannerCompat.getScanner() }
+    private val writeQueue = ConcurrentHashMap<String, ArrayDeque<() -> Boolean>>()
+    private val readQueue = ConcurrentHashMap<String, ArrayDeque<() -> Boolean>>()
+
     private val bluetoothDeviceStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action != BluetoothDevice.ACTION_BOND_STATE_CHANGED) return
@@ -323,7 +327,7 @@ class EarableService : Service() {
             val config = configs[device.address] ?: return@forEach
             characteristics[device]?.get(config.configCharacteristic)?.let { characteristic ->
                 characteristic.value = config.enableSensorCharacteristicData
-                gatts[device]?.writeCharacteristic(characteristic)
+                gatts[device]?.let { gatt -> writeQueue.addQueueActionsAndInvoke(gatt.device.address, listOf { gatt.writeCharacteristic(characteristic) }) }
             }
 
             setSensorNotificationEnabled(device, config, enable = true)
@@ -345,7 +349,7 @@ class EarableService : Service() {
             val config = configs[device.address] ?: return@forEach
             characteristics[device]?.get(config.configCharacteristic)?.let { characteristic ->
                 characteristic.value = config.disableSensorCharacteristicData
-                gatts[device]?.writeCharacteristic(characteristic)
+                gatts[device]?.let { gatt -> writeQueue.addQueueActionsAndInvoke(gatt.device.address, listOf { gatt.writeCharacteristic(characteristic) }) }
             }
 
             setSensorNotificationEnabled(device, config, enable = false)
@@ -423,25 +427,28 @@ class EarableService : Service() {
         }
     }
 
-    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean, calibration: Boolean = false) = scope.launch(coroutineExceptionHandler) {
+    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean, calibration: Boolean = false) {
         val sensorCharacteristics = when {
             calibration -> config.calibrationSensorCharacteristics
             else -> config.sensorCharacteristics
-        }
-        sensorCharacteristics?.forEach { (uuid, isIndication) ->
-            val characteristic = characteristics[device]?.get(uuid) ?: return@forEach
+        } ?: return
+        val queued = sensorCharacteristics.mapNotNull { (uuid, isIndication) ->
+            val characteristic = characteristics[device]?.get(uuid) ?: return@mapNotNull null
             val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
+
             if (success) {
                 val descriptor = characteristic.getDescriptor(config.notificationDescriptor)
                 descriptor.value = when {
                     enable -> if (isIndication) BluetoothGattDescriptor.ENABLE_INDICATION_VALUE else BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
                     else -> BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE
                 }
-                gatts[device]?.writeDescriptor(descriptor)
-            }
 
-            delay(BASE_BLE_DELAY)
+                gatts[device]?.let { return@mapNotNull { it.writeDescriptor(descriptor) } }
+            }
+            null
         }
+
+        writeQueue.addQueueActionsAndInvoke(device.address, queued)
     }
 
     private fun startForeground() {
@@ -580,35 +587,57 @@ class EarableService : Service() {
             }
         }
 
+        override fun onDescriptorWrite(gatt: BluetoothGatt?, descriptor: BluetoothGattDescriptor?, status: Int) {
+            //Log.i(TAG, "onDescriptorWrite ${gatt?.device?.address} ${descriptor?.uuid} ${descriptor?.value?.contentToString()} $status")
+            if (status != BluetoothGatt.GATT_SUCCESS || descriptor == null || gatt == null) {
+                return
+            }
+
+            addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_write, descriptor.formattedUuid, descriptor.value.asHexString))
+            writeQueue[gatt.device.address]?.removeFirstOrNull()?.invoke()
+        }
+
         override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            //Log.i(TAG, "onCharacteristicWrite ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
+            //Log.i(TAG, "onCharacteristicWrite ${gatt?.device?.address} ${characteristic?.uuid} ${characteristic?.value?.contentToString()} $status")
             if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
                 return
             }
 
             addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_write, characteristic.formattedUuid, characteristic.value.asHexString))
             updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
+            writeQueue[gatt.device.address]?.removeFirstOrNull()?.invoke()
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            //Log.i(TAG, "onCharacteristicRead ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
+            //Log.i(TAG, "onCharacteristicRead ${gatt?.device?.address} ${characteristic?.uuid} ${characteristic?.value?.contentToString()}")
             if (status != BluetoothGatt.GATT_SUCCESS || characteristic == null || gatt == null) {
                 return
             }
 
             addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_read, characteristic.formattedUuid, characteristic.value.asHexString))
             updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
+
+            readQueue[gatt.device.address]?.removeFirstOrNull()?.invoke()
         }
 
         private fun updateConfig(gatt: BluetoothGatt, uuid: String, bytes: ByteArray) {
             connectionRepository.updateConfigFromBytes(gatt.device.address, uuid, bytes)
         }
 
-        private fun readCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>, config: Config) = scope.launch(coroutineExceptionHandler) {
-            config.characteristicsToRead?.forEach { uuid ->
-                characteristics[uuid]?.let { gatt.readCharacteristic(it) }
-                delay(BASE_BLE_DELAY)
+        private fun readCharacteristics(gatt: BluetoothGatt, characteristics: Map<String, BluetoothGattCharacteristic>, config: Config) {
+            val queued = config.characteristicsToRead?.mapNotNull { uuid ->
+                characteristics[uuid]?.let { { gatt.readCharacteristic(it) } }
             }
+            readQueue.addQueueActionsAndInvoke(gatt.device.address, queued)
+        }
+    }
+
+    private fun ConcurrentHashMap<String, ArrayDeque<() -> Boolean>>.addQueueActionsAndInvoke(address: String, actions: List<() -> Boolean>?) {
+        actions ?: return
+        with(this[address] ?: ArrayDeque(actions.size)) {
+            addAll(actions)
+            removeFirstOrNull()?.invoke()
+            set(address, this)
         }
     }
 

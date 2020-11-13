@@ -1,9 +1,6 @@
 package edu.teco.earablecompanion.utils.extensions
 
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCallback
-import android.bluetooth.BluetoothGattCharacteristic
+import android.bluetooth.*
 import android.content.Context
 import edu.teco.earablecompanion.bluetooth.EarableType
 import java.util.*
@@ -25,6 +22,9 @@ inline val BluetoothDevice.earableType: EarableType
     }
 
 inline val BluetoothGattCharacteristic.formattedUuid: String
+    get() = uuid.toString().toLowerCase(Locale.ROOT)
+
+inline val BluetoothGattDescriptor.formattedUuid: String
     get() = uuid.toString().toLowerCase(Locale.ROOT)
 
 inline val BluetoothDevice.isBonded: Boolean get() = this.bondState == BluetoothDevice.BOND_BONDED

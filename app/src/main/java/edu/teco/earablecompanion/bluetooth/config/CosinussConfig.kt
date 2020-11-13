@@ -24,7 +24,7 @@ data class CosinussConfig(
     override val characteristicsToRead = listOf(ACC_SENSOR_UUID)
     override val configCharacteristic: String?
         get() = when {
-            accSupported -> ACC_SENSOR_UUID
+            accSupported && accEnabled -> ACC_SENSOR_UUID
             else -> null
         }
     override val sensorCharacteristics: List<Pair<String, Boolean>>
