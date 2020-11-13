@@ -19,16 +19,6 @@
             android:layout_height="match_parent"
             android:padding="8dp">
 
-            <ImageView
-                android:id="@+id/overview_recording_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/overview_recording_icon_description"
-                app:layout_constraintBottom_toBottomOf="@id/overview_recording_title"
-                app:layout_constraintStart_toStartOf="@id/overview_recording_title"
-                app:layout_constraintTop_toTopOf="@id/overview_recording_title"
-                app:tint="?attr/colorSecondary" />
-
             <TextView
                 android:id="@+id/overview_recording_title"
                 android:layout_width="0dp"
@@ -40,7 +30,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintBottom_toTopOf="@id/overview_recording_start_time"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/overview_recording_icon"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView

@@ -53,10 +53,6 @@ class OverviewAdapter(
             }
             is RecordingViewHolder -> {
                 holder.binding.recording = getItem(position) as OverviewItem.Recording
-                holder.binding.overviewRecordingIcon.apply {
-                    setBackgroundResource(R.drawable.recording)
-                    post { (background as AnimationDrawable).start() }
-                }
             }
             is MicDisabledViewHolder -> {
                 holder.binding.item = getItem(position) as OverviewItem.MicDisabled
