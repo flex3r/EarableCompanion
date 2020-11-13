@@ -19,6 +19,7 @@ import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.ConnectionFragmentBinding
 import edu.teco.earablecompanion.overview.OverviewFragment
+import edu.teco.earablecompanion.utils.extensions.isLandscape
 import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
@@ -34,10 +35,8 @@ class ConnectionFragment : BottomSheetDialogFragment() {
             lifecycleOwner = this@ConnectionFragment
             connectionCloseIcon.setOnClickListener { requireDialog().cancel() }
         }
-        (dialog as? BottomSheetDialog)?.behavior?.state = BottomSheetBehavior.STATE_COLLAPSED
 
         viewModel.apply {
-            clearConnectionEvent()
             devices.observe(viewLifecycleOwner) { connectionAdapter.submitList(it) }
             connectionEvent.observe(viewLifecycleOwner, ::handleConnectionEvent)
             isConnecting.observe(viewLifecycleOwner) {
@@ -70,8 +69,11 @@ class ConnectionFragment : BottomSheetDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val sheetContainer = requireView().parent as? ViewGroup ?: return
-        sheetContainer.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+        (view?.parent as? ViewGroup)?.layoutParams?.height = ViewGroup.LayoutParams.MATCH_PARENT
+        (dialog as? BottomSheetDialog)?.behavior?.state = when {
+            isLandscape -> BottomSheetBehavior.STATE_EXPANDED
+            else -> BottomSheetBehavior.STATE_COLLAPSED
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -81,6 +83,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
 
     override fun onCancel(dialog: DialogInterface) {
         (activity as? MainActivity)?.earableService?.stopScan()
+        viewModel.clearConnectionEvent()
     }
 
     private fun startConnect(item: ConnectionItem) {
