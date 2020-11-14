@@ -20,6 +20,8 @@ import org.junit.Rule
 import org.junit.Test
 import java.time.Duration
 import java.time.LocalDateTime
+import java.util.Calendar.SECOND
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -100,7 +102,11 @@ class SensorDataDetailViewModelTest {
         coEvery { sensorDataRepository.getSensorDataEntries(dataId) } returns data
 
         val observer = viewModel.detailData.test()
-        observer.awaitNextValue()
+        observer.awaitValue()
+        if (!compareItems(expected, observer.value())) {
+            observer.awaitNextValue(10L, TimeUnit.SECONDS)
+        }
+
         observer.assertValue { compareItems(expected, it) }
         assertEquals(listOf(SensorDataDetailItem.Loading), observer.valueHistory().first())
     }
