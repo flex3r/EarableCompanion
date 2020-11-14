@@ -21,6 +21,8 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
     }
 
     val sensorDataItems: LiveData<List<SensorDataOverviewItem>> = liveData(viewModelScope.coroutineContext + coroutineExceptionHandler) {
+        emit(listOf(SensorDataOverviewItem.Loading))
+
         sensorDataRepository.getSensorDataFlow().collectLatest { data ->
             when {
                 data.isEmpty() -> emit(listOf(SensorDataOverviewItem.NoData))

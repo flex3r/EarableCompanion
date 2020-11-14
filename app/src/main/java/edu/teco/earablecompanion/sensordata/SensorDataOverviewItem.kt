@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 sealed class SensorDataOverviewItem {
     object NoData : SensorDataOverviewItem()
+    object Loading : SensorDataOverviewItem()
 
     data class Data(val id: Long, val title: String, val createdAt: LocalDateTime, val stoppedAt: LocalDateTime?, val duration: Duration?, val entryCount: Int) :
         SensorDataOverviewItem() {
