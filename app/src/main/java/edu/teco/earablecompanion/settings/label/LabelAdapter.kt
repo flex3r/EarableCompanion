@@ -3,7 +3,7 @@ package edu.teco.earablecompanion.settings.label
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import edu.teco.earablecompanion.databinding.AddLabelItemBinding
+import edu.teco.earablecompanion.databinding.LabelAddItemBinding
 import edu.teco.earablecompanion.databinding.LabelItemBinding
 
 class LabelAdapter(val entries: MutableList<LabelItem>, private val defaults: List<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -17,7 +17,7 @@ class LabelAdapter(val entries: MutableList<LabelItem>, private val defaults: Li
         }
     }
 
-    inner class AddViewHolder(binding: AddLabelItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class AddViewHolder(binding: LabelAddItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.labelAdd.setOnClickListener {
                 val item = LabelItem.Label(name = "")
@@ -32,7 +32,7 @@ class LabelAdapter(val entries: MutableList<LabelItem>, private val defaults: Li
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ITEM_VIEW_TYPE_LABEL -> LabelViewHolder(LabelItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            ITEM_VIEW_TYPE_ADD -> AddViewHolder(AddLabelItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ITEM_VIEW_TYPE_ADD -> AddViewHolder(LabelAddItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
