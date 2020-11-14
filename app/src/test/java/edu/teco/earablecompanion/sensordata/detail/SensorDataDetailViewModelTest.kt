@@ -53,34 +53,32 @@ class SensorDataDetailViewModelTest {
     @Test
     fun testDetailDescription() {
         val title = "title"
-        val description = "description"
         val created = LocalDateTime.now()
         val stopped = LocalDateTime.now()
         val duration = Duration.between(created, stopped)
         val entryCount = 33
-        val data = SensorData(dataId, title, created, stopped, description)
+        val data = SensorData(dataId, title, created, stopped)
 
         coEvery { sensorDataRepository.getDataEntryCount(dataId) } returns entryCount
         sensorDataFlow.value = data
 
-        val expected = SensorDataDetailDescription(title, description, created, stopped, duration, entryCount, false)
+        val expected = SensorDataDetailDescription(title, created, stopped, duration, entryCount, false)
         viewModel.detailDescription.test().assertValue(expected)
     }
 
     @Test
     fun testDetailDescriptionWithMic() {
         val title = "title"
-        val description = "description"
         val created = LocalDateTime.now()
         val stopped = LocalDateTime.now()
         val duration = Duration.between(created, stopped)
         val entryCount = 33
-        val data = SensorData(dataId, title, created, stopped, description, "/path/to/recording")
+        val data = SensorData(dataId, title, created, stopped, "/path/to/recording")
 
         coEvery { sensorDataRepository.getDataEntryCount(dataId) } returns entryCount
         sensorDataFlow.value = data
 
-        val expected = SensorDataDetailDescription(title, description, created, stopped, duration, entryCount, true)
+        val expected = SensorDataDetailDescription(title, created, stopped, duration, entryCount, true)
         viewModel.detailDescription.test().assertValue(expected)
     }
 
@@ -110,37 +108,37 @@ class SensorDataDetailViewModelTest {
     @Test
     fun testIsNotActive() {
         coEvery { sensorDataRepository.getDataEntryCount(dataId) } returns 33
-        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), null, "description", "/path/to/recording")
+        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), null, "/path/to/recording")
 
         val observer = viewModel.isNotActive.test()
         observer.assertValue(false)
 
-        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), LocalDateTime.now(), "description", "/path/to/recording")
+        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), LocalDateTime.now(), "/path/to/recording")
         observer.assertValue(true)
     }
 
     @Test
     fun testHasData() {
         coEvery { sensorDataRepository.getDataEntryCount(dataId) } returns 0
-        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), null, "description", "/path/to/recording")
+        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), null, "/path/to/recording")
 
         val observer = viewModel.hasData.test()
         observer.assertValue(false)
 
         coEvery { sensorDataRepository.getDataEntryCount(dataId) } returns 1
-        sensorDataFlow.value = SensorData(dataId, "asd", LocalDateTime.now(), LocalDateTime.now(), "description", "/path/to/recording")
+        sensorDataFlow.value = SensorData(dataId, "asd", LocalDateTime.now(), LocalDateTime.now(), "/path/to/recording")
         observer.assertValue(true)
     }
 
     @Test
     fun testHasMic() {
         coEvery { sensorDataRepository.getDataEntryCount(dataId) } returns 1
-        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), null, "description", null)
+        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), null, null)
 
         val observer = viewModel.hasMic.test()
         observer.assertValue(false)
 
-        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), LocalDateTime.now(), "description", "/path/to/recording")
+        sensorDataFlow.value = SensorData(dataId, "title", LocalDateTime.now(), LocalDateTime.now(), "/path/to/recording")
         observer.assertValue(true)
     }
 
@@ -166,17 +164,8 @@ class SensorDataDetailViewModelTest {
     @Test
     fun testEditData() = coroutineScope.runBlockingTest {
         val title = "title"
-        val description = "description"
-        viewModel.editData(title, description)
-        coVerify { sensorDataRepository.updateSensorData(dataId, title, description) }
-    }
-
-    @Test
-    fun testEditDataBlankDescription() = coroutineScope.runBlockingTest {
-        val title = "title"
-        val description = ""
-        viewModel.editData(title, description)
-        coVerify { sensorDataRepository.updateSensorData(dataId, title, null) }
+        viewModel.editData(title)
+        coVerify { sensorDataRepository.updateSensorData(dataId, title) }
     }
 
     @Test

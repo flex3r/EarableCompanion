@@ -21,7 +21,7 @@ object SensorDataModule {
     @Provides
     fun provideDatabase(@ApplicationContext context: Context): SensorDataDatabase = Room
         .databaseBuilder(context, SensorDataDatabase::class.java, "sensor-data.db")
-        .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
         .build()
 
     @Singleton
@@ -38,6 +38,18 @@ object SensorDataModule {
     private val MIGRATION_2_3 = object : Migration(2, 3) {
         override fun migrate(database: SupportSQLiteDatabase) {
             database.execSQL("ALTER TABLE `data_entry_table` ADD COLUMN `is_calibration` INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
+    private val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL("CREATE TEMPORARY TABLE `data_table_backup`(`data_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_title` TEXT NOT NULL, `data_created` INTEGER NOT NULL, `data_stopped` INTEGER, `data_mic_recording` TEXT)")
+            database.execSQL("INSERT INTO `data_table_backup` SELECT `data_id`, `data_title`, `data_created`, `data_stopped`, `data_mic_recording` FROM `data_table`")
+            database.execSQL("DROP TABLE `data_table`")
+
+            database.execSQL("CREATE TABLE `data_table`(`data_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_title` TEXT NOT NULL, `data_created` INTEGER NOT NULL, `data_stopped` INTEGER, `data_mic_recording` TEXT)")
+            database.execSQL("INSERT INTO `data_table` SELECT `data_id`, `data_title`, `data_created`, `data_stopped`, `data_mic_recording` FROM `data_table_backup`")
+            database.execSQL("DROP TABLE `data_table_backup`")
         }
     }
 }

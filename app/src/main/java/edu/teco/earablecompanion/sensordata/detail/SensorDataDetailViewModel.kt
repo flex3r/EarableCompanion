@@ -81,12 +81,11 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
         emit(sensorDataRepository.hasLogs(dataId))
     }
 
-    val description: String? get() = detailDescription.value?.description
     val title: String? get() = detailDescription.value?.title
 
     fun removeData() = viewModelScope.launch(coroutineExceptionHandler) { sensorDataRepository.removeData(dataId) }
-    fun editData(title: String, description: String?) = viewModelScope.launch(coroutineExceptionHandler) {
-        sensorDataRepository.updateSensorData(dataId, title, description.notBlankOrNull())
+    fun editData(title: String) = viewModelScope.launch(coroutineExceptionHandler) {
+        sensorDataRepository.updateSensorData(dataId, title)
     }
 
     fun exportData(outputStream: OutputStream) = viewModelScope.launch(coroutineExceptionHandler) {

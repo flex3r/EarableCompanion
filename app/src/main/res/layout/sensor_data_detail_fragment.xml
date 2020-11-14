@@ -75,26 +75,10 @@
                         android:gravity="center_horizontal"
                         android:text="@{vm.detailDescription.title}"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                        app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_description_text"
+                        app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_created_date"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/sensor_data_detail_description_icon"
                         app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/sensor_data_detail_description_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:maxLines="3"
-                        android:requiresFadingEdge="vertical"
-                        android:scrollbars="vertical"
-                        android:text="@{vm.detailDescription.description}"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                        android:visibility="@{vm.detailDescription.description == null ? View.GONE : View.VISIBLE}"
-                        app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_created_date"
-                        app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_description_title"
-                        app:layout_constraintStart_toStartOf="@id/sensor_data_detail_description_icon"
-                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_description_title" />
 
                     <TextView
                         android:id="@+id/sensor_data_detail_created_date"
@@ -105,7 +89,7 @@
                         app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_stopped_date"
                         app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_description_title"
                         app:layout_constraintStart_toStartOf="@id/sensor_data_detail_description_icon"
-                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_description_text"
+                        app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_description_title"
                         app:startedLocalDateTime="@{vm.detailDescription.createdAt}" />
 
                     <TextView

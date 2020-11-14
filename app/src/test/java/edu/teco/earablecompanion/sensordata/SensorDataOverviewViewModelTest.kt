@@ -47,18 +47,17 @@ class SensorDataOverviewViewModelTest {
     fun testSensorData() = coroutineScope.runBlockingTest {
         val dataId = 42L
         val title = "title"
-        val description = "description"
         val created = LocalDateTime.now()
         val stopped = LocalDateTime.now()
         val duration = Duration.between(created, stopped)
         val entryCount = 33
-        val data = SensorData(dataId, title, created, stopped, description)
+        val data = SensorData(dataId, title, created, stopped)
 
         coEvery { sensorDataRepository.getDataEntryCount(dataId) } returns entryCount
         sensorDataFlow.value = listOf(data)
 
         val expected = listOf(
-            SensorDataOverviewItem.Data(dataId, title, description, created, stopped, duration, entryCount)
+            SensorDataOverviewItem.Data(dataId, title, created, stopped, duration, entryCount)
         )
         viewModel.sensorDataItems.test().assertValue(expected)
     }
@@ -66,7 +65,7 @@ class SensorDataOverviewViewModelTest {
     @Test
     fun testRemoveData() = coroutineScope.runBlockingTest {
         val dataId = 42L
-        val data = SensorDataOverviewItem.Data(dataId, "", "", LocalDateTime.now(), LocalDateTime.now(), Duration.ZERO, 1)
+        val data = SensorDataOverviewItem.Data(dataId, "", LocalDateTime.now(), LocalDateTime.now(), Duration.ZERO, 1)
 
         viewModel.removeData(data)
         coVerify { sensorDataRepository.removeData(dataId) }

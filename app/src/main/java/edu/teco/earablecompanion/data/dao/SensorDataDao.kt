@@ -30,8 +30,8 @@ interface SensorDataDao {
     @Update
     suspend fun update(data: SensorData)
 
-    @Query("UPDATE data_table SET data_title = :title, data_desc = :description WHERE data_id = :id")
-    suspend fun updateData(id: Long, title: String, description: String?)
+    @Query("UPDATE data_table SET data_title = :title WHERE data_id = :id")
+    suspend fun updateData(id: Long, title: String)
 
     @Query("DELETE FROM data_table WHERE data_id = :id")
     suspend fun delete(id: Long)

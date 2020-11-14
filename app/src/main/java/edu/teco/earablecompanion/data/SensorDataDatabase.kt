@@ -9,7 +9,7 @@ import edu.teco.earablecompanion.data.entities.SensorData
 import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import edu.teco.earablecompanion.utils.SensorDataTypeConverters
 
-@Database(entities = [SensorData::class, SensorDataEntry::class, LogEntry::class], version = 3, exportSchema = true)
+@Database(entities = [SensorData::class, SensorDataEntry::class, LogEntry::class], version = 4, exportSchema = true)
 @TypeConverters(SensorDataTypeConverters::class)
 abstract class SensorDataDatabase : RoomDatabase() {
     abstract fun sensorDataDao(): SensorDataDao

@@ -113,7 +113,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
 
     suspend fun hasLogs(dataId: Long): Boolean = sensorDataDao.getLogEntryCountByDataId(dataId) > 0
 
-    suspend fun updateSensorData(dataId: Long, title: String, description: String?) = sensorDataDao.updateData(dataId, title, description)
+    suspend fun updateSensorData(dataId: Long, title: String) = sensorDataDao.updateData(dataId, title)
 
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun exportData(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {

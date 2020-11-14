@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 
 data class SensorDataDetailDescription(
     val title: String,
-    val description: String?,
     val createdAt: LocalDateTime,
     val stoppedAt: LocalDateTime?,
     val duration: Duration?,
@@ -16,7 +15,6 @@ data class SensorDataDetailDescription(
     companion object {
         fun SensorData.toDescriptionItem(entryCount: Int) = SensorDataDetailDescription(
             title = title,
-            description = description,
             createdAt = createdAt,
             stoppedAt = stoppedAt,
             duration = stoppedAt?.let { Duration.between(createdAt, stoppedAt) },

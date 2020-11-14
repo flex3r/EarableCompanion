@@ -63,7 +63,6 @@ class SensorDataDetailFragment : Fragment() {
             vm = viewModel
             lifecycleOwner = this@SensorDataDetailFragment
             sensorDataDetailRecyclerview.adapter = adapter
-            sensorDataDetailDescriptionText.movementMethod = ScrollingMovementMethod()
             sensorDataDetailDescriptionEdit.setOnClickListener { editData() }
             sensorDataDetailDescriptionLogs.setOnClickListener { showLogs() }
             sensorDataDetailDescriptionMic.setOnClickListener { create3gpRegistration.launch("${args.dataTitle}-${args.dataDate}.3gp") }
@@ -109,15 +108,10 @@ class SensorDataDetailFragment : Fragment() {
 
     private fun editData() {
         val builder = MaterialAlertDialogBuilder(requireContext())
-        val layout = LayoutInflater.from(builder.context).inflate(R.layout.dialog_multi_input_layout, null) as LinearLayout
-        layout.findViewById<TextInputLayout>(R.id.dialog_title_input_layout).hint = getString(R.string.edit_title_input_hint)
-        layout.findViewById<TextInputLayout>(R.id.dialog_body_input_layout).hint = getString(R.string.edit_description_input_hint)
+        val layout = LayoutInflater.from(builder.context).inflate(R.layout.dialog_input_layout, null) as LinearLayout
+        layout.findViewById<TextInputLayout>(R.id.dialog_input_layout).hint = getString(R.string.edit_title_input_hint)
 
-        val descriptionEditText = layout.findViewById<TextInputEditText>(R.id.dialog_body_input_text).apply {
-            inputType = inputType or InputType.TYPE_TEXT_FLAG_MULTI_LINE
-            setText(viewModel.description)
-        }
-        val titleEditText = layout.findViewById<TextInputEditText>(R.id.dialog_title_input_text).apply {
+        val titleEditText = layout.findViewById<TextInputEditText>(R.id.dialog_input_text).apply {
             setText(viewModel.title)
         }
 
@@ -125,9 +119,8 @@ class SensorDataDetailFragment : Fragment() {
             .setTitle(R.string.edit_dialog_title)
             .setView(layout)
             .setPositiveButton(R.string.save) { _, _ ->
-                val description = descriptionEditText.text?.toString()
                 val title = titleEditText.text?.toString() ?: getString(R.string.start_recording_dialog_title_default)
-                viewModel.editData(title, description)
+                viewModel.editData(title)
                 navController.currentDestination?.label = title
                 (requireActivity() as AppCompatActivity).supportActionBar?.title = title
             }

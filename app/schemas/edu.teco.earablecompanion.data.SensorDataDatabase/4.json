@@ -1,0 +1,254 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 4,
+    "identityHash": "6d61fb4d943598e81d0ce11acd652d67",
+    "entities": [
+      {
+        "tableName": "data_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_title` TEXT NOT NULL, `data_created` INTEGER NOT NULL, `data_stopped` INTEGER, `data_mic_recording` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "dataId",
+            "columnName": "data_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "data_title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "data_created",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stoppedAt",
+            "columnName": "data_stopped",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "micRecordingPath",
+            "columnName": "data_mic_recording",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "data_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "data_entry_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`data_entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_id` INTEGER NOT NULL, `entry_timestamp` INTEGER NOT NULL, `device_name` TEXT, `device_address` TEXT, `entry_acc_X` REAL, `entry_acc_Y` REAL, `entry_acc_Z` REAL, `entry_gyro_X` REAL, `entry_gyro_Y` REAL, `entry_gyro_Z` REAL, `entry_button_pressed` INTEGER, `entry_heart_rate` INTEGER, `entry_body_temperature` REAL, `entry_oxygen_saturation` REAL, `entry_pulse_rate` REAL, `is_calibration` INTEGER NOT NULL, FOREIGN KEY(`data_id`) REFERENCES `data_table`(`data_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "dataEntryId",
+            "columnName": "data_entry_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataId",
+            "columnName": "data_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "entry_timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceName",
+            "columnName": "device_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "deviceAddress",
+            "columnName": "device_address",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "accX",
+            "columnName": "entry_acc_X",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "accY",
+            "columnName": "entry_acc_Y",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "accZ",
+            "columnName": "entry_acc_Z",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gyroX",
+            "columnName": "entry_gyro_X",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gyroY",
+            "columnName": "entry_gyro_Y",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gyroZ",
+            "columnName": "entry_gyro_Z",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "buttonPressed",
+            "columnName": "entry_button_pressed",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "heartRate",
+            "columnName": "entry_heart_rate",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bodyTemperature",
+            "columnName": "entry_body_temperature",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "oxygenSaturation",
+            "columnName": "entry_oxygen_saturation",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pulseRate",
+            "columnName": "entry_pulse_rate",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isCalibration",
+            "columnName": "is_calibration",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "data_entry_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_data_entry_table_data_id",
+            "unique": false,
+            "columnNames": [
+              "data_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_data_entry_table_data_id` ON `${TABLE_NAME}` (`data_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "data_table",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "data_id"
+            ],
+            "referencedColumns": [
+              "data_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "log_entry_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`log_entry_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `data_id` INTEGER NOT NULL, `entry_timestamp` INTEGER NOT NULL, `entry_message` TEXT NOT NULL, FOREIGN KEY(`data_id`) REFERENCES `data_table`(`data_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "logEntryId",
+            "columnName": "log_entry_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataId",
+            "columnName": "data_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "entry_timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "entry_message",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "log_entry_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_log_entry_table_data_id",
+            "unique": false,
+            "columnNames": [
+              "data_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_log_entry_table_data_id` ON `${TABLE_NAME}` (`data_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "data_table",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "data_id"
+            ],
+            "referencedColumns": [
+              "data_id"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6d61fb4d943598e81d0ce11acd652d67')"
+    ]
+  }
+}
