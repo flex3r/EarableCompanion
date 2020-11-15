@@ -41,3 +41,24 @@ jobs:
         with:
           name: App
           path: ${{ github.workspace }}/app/build/outputs/apk/debug/*.apk
+
+      - name: Remove previous debug release
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+        uses: author/action-rollback@stable
+        with:
+          tag: 'debug'
+          always_delete_tag: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create debug release
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
+        uses: underwindfall/create-release-with-debugapk@v2.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: debug
+          release_name: Debug APK
+          asset_path: ${{ github.workspace }}/app/build/outputs/apk/debug/app-debug.apk
+          asset_name: EarableCompanion-debug.apk
+          asset_content_type: application/zip
