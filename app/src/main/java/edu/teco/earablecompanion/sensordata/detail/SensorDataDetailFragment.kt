@@ -2,8 +2,6 @@ package edu.teco.earablecompanion.sensordata.detail
 
 import android.content.Context
 import android.os.Bundle
-import android.text.InputType
-import android.text.method.ScrollingMovementMethod
 import android.view.*
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts

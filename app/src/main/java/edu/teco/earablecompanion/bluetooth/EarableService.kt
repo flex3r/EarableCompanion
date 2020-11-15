@@ -520,7 +520,7 @@ class EarableService : Service() {
             val deviceCharacteristics = gatt.collectCharacteristics()
             characteristics[gatt.device] = deviceCharacteristics
 
-            val defaultConfig = when (val type = gatt.device.earableType) {
+            val defaultConfig = when (val type = gatt.device.earableTypeByDeviceName) {
                 is EarableType.ESense -> ESenseConfig()
                 is EarableType.Cosinuss -> CosinussConfig(accSupported = type.accSupported, accEnabled = type.accSupported) // enable by default if supported
                 else -> GenericConfig.fromDiscoveredServices(deviceCharacteristics.values) ?: return

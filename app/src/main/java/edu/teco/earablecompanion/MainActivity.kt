@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: MainActivityBinding
 
     private inline val Fragment?.childFragment get() = this?.childFragmentManager?.fragments?.first()
-    private val currentFragment get() = supportFragmentManager.primaryNavigationFragment?.childFragment
-    private val bottomSheetDialogFragment get() = currentFragment?.childFragment as? BottomSheetDialogFragment
+    private inline val currentFragment get() = supportFragmentManager.primaryNavigationFragment?.childFragment
+    private inline val bottomSheetDialogFragment get() = currentFragment?.childFragment as? BottomSheetDialogFragment
 
     private val enableBluetoothRegistration = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         when (result.resultCode) {

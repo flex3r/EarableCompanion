@@ -7,7 +7,6 @@ import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.data.entities.SensorDataEntry.Companion.mapToEntriesWithDevice
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailDescription.Companion.toDescriptionItem
-import edu.teco.earablecompanion.utils.extensions.notBlankOrNull
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
