@@ -43,6 +43,8 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
+typealias QueueAction = () -> Boolean
+
 @SuppressLint("MissingPermission")
 @AndroidEntryPoint
 class EarableService : Service() {
@@ -87,8 +89,9 @@ class EarableService : Service() {
     private val gatts = mutableMapOf<BluetoothDevice, BluetoothGatt>()
     private val characteristics = mutableMapOf<BluetoothDevice, Map<String, BluetoothGattCharacteristic>>()
     private val scanner: BluetoothLeScannerCompat by lazy { BluetoothLeScannerCompat.getScanner() }
-    private val writeQueue = ConcurrentHashMap<String, ArrayDeque<() -> Boolean>>()
-    private val readQueue = ConcurrentHashMap<String, ArrayDeque<() -> Boolean>>()
+
+    private val writeQueue = ConcurrentHashMap<String, ArrayDeque<QueueAction>>()
+    private val readQueue = ConcurrentHashMap<String, ArrayDeque<QueueAction>>()
 
     private val bluetoothDeviceStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -300,22 +303,28 @@ class EarableService : Service() {
         connectionRepository.getConfigOrNull(device.address)?.apply {
             clearCalibrationValues()
 
+            val actions = mutableListOf<QueueAction>()
             characteristics[device]?.get(configCharacteristic)?.let { characteristic ->
                 characteristic.value = enableSensorCharacteristicData
-                gatts[device]?.writeCharacteristic(characteristic)
+                gatts[device]?.let { gatt -> actions.add { gatt.writeCharacteristic(characteristic) } }
             }
-            setSensorNotificationEnabled(device, this, enable = true, calibration = true)
+
+            setSensorNotificationEnabled(device, this, enable = true, calibration = true)?.let { actions.addAll(it) }
+            writeQueue.addQueueActionsAndInvoke(device.address, actions)
         }
     }
 
     fun stopCalibration() {
-        activeCalibration?.let {
-            connectionRepository.getConfigOrNull(it.address)?.apply {
-                characteristics[it]?.get(configCharacteristic)?.let { characteristic ->
+        activeCalibration?.let { device ->
+            connectionRepository.getConfigOrNull(device.address)?.apply {
+                val actions = mutableListOf<QueueAction>()
+                characteristics[device]?.get(configCharacteristic)?.let { characteristic ->
                     characteristic.value = disableSensorCharacteristicData
-                    gatts[it]?.writeCharacteristic(characteristic)
+                    gatts[device]?.let { gatt -> actions.add { gatt.writeCharacteristic(characteristic) } }
                 }
-                setSensorNotificationEnabled(it, this, enable = false, calibration = true)
+
+                setSensorNotificationEnabled(device, this, enable = false, calibration = true)?.let { actions.addAll(it) }
+                writeQueue.addQueueActionsAndInvoke(device.address, actions)
             }
         }
 
@@ -325,12 +334,15 @@ class EarableService : Service() {
     fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>, recordMic: Boolean) {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
+            val actions = mutableListOf<QueueAction>()
+
             characteristics[device]?.get(config.configCharacteristic)?.let { characteristic ->
                 characteristic.value = config.enableSensorCharacteristicData
-                gatts[device]?.let { gatt -> writeQueue.addQueueActionsAndInvoke(gatt.device.address, listOf { gatt.writeCharacteristic(characteristic) }) }
+                gatts[device]?.let { gatt -> actions.add { gatt.writeCharacteristic(characteristic) } }
             }
 
-            setSensorNotificationEnabled(device, config, enable = true)
+            setSensorNotificationEnabled(device, config, enable = true)?.let { actions.addAll(it) }
+            writeQueue.addQueueActionsAndInvoke(device.address, actions)
         }
 
         val micFile = when {
@@ -347,12 +359,15 @@ class EarableService : Service() {
     fun stopRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
+            val actions = mutableListOf<QueueAction>()
+
             characteristics[device]?.get(config.configCharacteristic)?.let { characteristic ->
                 characteristic.value = config.disableSensorCharacteristicData
-                gatts[device]?.let { gatt -> writeQueue.addQueueActionsAndInvoke(gatt.device.address, listOf { gatt.writeCharacteristic(characteristic) }) }
+                gatts[device]?.let { gatt -> actions.add { gatt.writeCharacteristic(characteristic) } }
             }
 
-            setSensorNotificationEnabled(device, config, enable = false)
+            setSensorNotificationEnabled(device, config, enable = false)?.let { actions.addAll(it) }
+            writeQueue.addQueueActionsAndInvoke(device.address, actions)
         }
 
         stopMicRecording()
@@ -427,12 +442,12 @@ class EarableService : Service() {
         }
     }
 
-    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean, calibration: Boolean = false) {
+    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean, calibration: Boolean = false): List<QueueAction>? {
         val sensorCharacteristics = when {
             calibration -> config.calibrationSensorCharacteristics
             else -> config.sensorCharacteristics
-        } ?: return
-        val queued = sensorCharacteristics.mapNotNull { (uuid, isIndication) ->
+        } ?: return null
+        return sensorCharacteristics.mapNotNull { (uuid, isIndication) ->
             val characteristic = characteristics[device]?.get(uuid) ?: return@mapNotNull null
             val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
 
@@ -447,8 +462,6 @@ class EarableService : Service() {
             }
             null
         }
-
-        writeQueue.addQueueActionsAndInvoke(device.address, queued)
     }
 
     private fun startForeground() {
@@ -632,7 +645,7 @@ class EarableService : Service() {
         }
     }
 
-    private fun ConcurrentHashMap<String, ArrayDeque<() -> Boolean>>.addQueueActionsAndInvoke(address: String, actions: List<() -> Boolean>?) {
+    private fun ConcurrentHashMap<String, ArrayDeque<QueueAction>>.addQueueActionsAndInvoke(address: String, actions: List<QueueAction>?) {
         actions ?: return
         with(this[address] ?: ArrayDeque(actions.size)) {
             addAll(actions)
