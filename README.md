@@ -2,7 +2,7 @@
 ## Usage
 
 ### Connecting
-- Initially, the FloatingActionButton labeled "Connect" can be used to start the scanning process.
+- Initially, as the name suggests, the FloatingActionButton labeled "Connect" can be used to start the scanning process.
 - When there is already an active connection to a device, the smaller FloatinActionButton with the Bluetooth icon can be used to start an additional scan.
 
 ### Configuration
