@@ -24,6 +24,7 @@ import edu.teco.earablecompanion.overview.calibration.CalibrationFragment
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
 import edu.teco.earablecompanion.utils.extensions.showOrHide
+import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 
 @AndroidEntryPoint
 class OverviewFragment : Fragment() {
@@ -42,6 +43,8 @@ class OverviewFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = OverviewAdapter(::disconnectDevice, ::calibrateDevice, ::setMicEnabled) { device ->
+            if (viewModel.isRecording.valueOrFalse) return@OverviewAdapter
+
             val action = when (device.type) {
                 is EarableType.ESense -> OverviewFragmentDirections.actionOverviewFragmentToESenseDeviceFragment(
                     name = device.name ?: getString(R.string.unknown_esense_device_name),
