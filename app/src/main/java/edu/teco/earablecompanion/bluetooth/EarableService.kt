@@ -603,7 +603,12 @@ class EarableService : Service() {
             }
 
             addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_write, descriptor.formattedUuid, descriptor.value.asHexString))
-            writeQueue[gatt.device.address]?.removeFirstOrNull()?.invoke()
+            writeQueue[gatt.device.address]?.apply {
+                removeFirstOrNull()?.invoke()
+                if (isEmpty()) {
+                    writeQueue.remove(gatt.device.address)
+                }
+            }
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
@@ -614,7 +619,12 @@ class EarableService : Service() {
 
             addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_write, characteristic.formattedUuid, characteristic.value.asHexString))
             updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
-            writeQueue[gatt.device.address]?.removeFirstOrNull()?.invoke()
+            writeQueue[gatt.device.address]?.apply {
+                removeFirstOrNull()?.invoke()
+                if (isEmpty()) {
+                    writeQueue.remove(gatt.device.address)
+                }
+            }
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
@@ -626,7 +636,12 @@ class EarableService : Service() {
             addLogEntryIfEnabled(gatt.device, getString(R.string.log_characteristic_read, characteristic.formattedUuid, characteristic.value.asHexString))
             updateConfig(gatt, characteristic.formattedUuid, characteristic.value)
 
-            readQueue[gatt.device.address]?.removeFirstOrNull()?.invoke()
+            readQueue[gatt.device.address]?.apply {
+                removeFirstOrNull()?.invoke()
+                if (isEmpty()) {
+                    readQueue.remove(gatt.device.address)
+                }
+            }
         }
 
         private fun updateConfig(gatt: BluetoothGatt, uuid: String, bytes: ByteArray) {
