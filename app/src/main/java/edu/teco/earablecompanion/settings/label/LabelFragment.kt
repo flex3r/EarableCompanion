@@ -63,7 +63,7 @@ class LabelFragment : BottomSheetDialogFragment() {
             .filterIsInstance<LabelItem.Label>()
             .filter { it.name.isNotBlank() }
             .distinct()
-            .joinToString { it.name }
+            .joinToString { it.name.replace(",", "") }
 
         sharedPreferences.edit { putString(key, labelString) }
 
