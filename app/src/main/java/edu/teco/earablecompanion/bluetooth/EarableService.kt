@@ -182,10 +182,6 @@ class EarableService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? = binder
-    override fun onUnbind(intent: Intent?): Boolean {
-        closeConnections()
-        return super.onUnbind(intent)
-    }
 
     override fun onCreate() {
         super.onCreate()
