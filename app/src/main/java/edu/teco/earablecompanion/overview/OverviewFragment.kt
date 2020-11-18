@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,6 +16,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
@@ -142,14 +145,45 @@ class OverviewFragment : Fragment() {
     private fun displayStartRecordingDialog() {
         val labelKey = getString(R.string.preference_recording_labels_key)
         val default = getString(R.string.preference_recording_labels_default)
+        val other = getString(R.string.label_other)
         val labelString = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString(labelKey, default) ?: default
-        val labels = labelString.split(",").toTypedArray()
+        val labels = labelString.split(",").plus(other).toTypedArray()
         var index = 0
         MaterialAlertDialogBuilder(requireContext())
             .setSingleChoiceItems(labels, index) { _, idx -> index = idx }
             .setTitle(R.string.start_recording_dialog_title)
             .setPositiveButton(R.string.start_recording_dialog_positive) { _, _ ->
-                val title = labels.getOrNull(index) ?: getString(R.string.start_recording_dialog_title_default)
+                when (index) {
+                    labels.lastIndex -> showCustomTitleDialog()
+                    else -> {
+                        val title = labels.getOrNull(index) ?: getString(R.string.start_recording_dialog_title_default)
+                        startRecording(title)
+                    }
+                }
+            }
+            .setNegativeButton(R.string.start_recording_dialog_negative) { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun showCustomTitleDialog() {
+        val builder = MaterialAlertDialogBuilder(requireContext())
+        val layout = LayoutInflater.from(builder.context).inflate(R.layout.dialog_input_layout, null) as LinearLayout
+        layout.findViewById<TextInputLayout>(R.id.dialog_input_layout).apply {
+            hint = getString(R.string.start_recording_dialog_hint)
+        }
+        val editText = layout.findViewById<TextInputEditText>(R.id.dialog_input_text).apply {
+            isSingleLine = true
+        }
+
+        builder
+            .setTitle(R.string.start_recording_dialog_title)
+            .setView(layout)
+            .setPositiveButton(R.string.start_recording_dialog_positive) { _, _ ->
+                val input = editText.text?.toString()
+                val title = when {
+                    input.isNullOrBlank() -> getString(R.string.start_recording_dialog_title_default)
+                    else -> input
+                }
                 startRecording(title)
             }
             .setNegativeButton(R.string.start_recording_dialog_negative) { d, _ -> d.dismiss() }

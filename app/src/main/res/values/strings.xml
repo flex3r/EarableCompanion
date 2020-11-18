@@ -210,4 +210,5 @@
     <string name="label_delete_description">Delete label</string>
     <string name="label_add_description">Add label</string>
     <string name="label_header_text">Edit recording labels</string>
+    <string name="label_other">Other</string>
 </resources>
