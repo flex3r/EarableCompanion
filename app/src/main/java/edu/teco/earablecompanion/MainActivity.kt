@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity() {
     }
     private val requestPermissionsRegistration = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { map ->
         when {
-            // all permissions granted, start/bind service
-            map.all { it.value } -> enableBluetoothIfDisabled()
+            // all permissions granted, try to start scan
+            map.all { it.value } -> startScanOrEnableBluetooth()
             else -> {
                 bottomSheetDialogFragment?.requireDialog()?.cancel()
 
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun enableBluetoothIfDisabled() {
+    private fun startScanOrEnableBluetooth() {
         when {
             bluetoothAdapter.isEnabled -> earableService?.startScan()
             else -> enableBluetoothRegistration.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))

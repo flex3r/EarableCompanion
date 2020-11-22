@@ -20,6 +20,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.ConnectionFragmentBinding
 import edu.teco.earablecompanion.overview.OverviewFragment
 import edu.teco.earablecompanion.utils.extensions.isLandscape
+import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
@@ -40,8 +41,10 @@ class ConnectionFragment : BottomSheetDialogFragment() {
             devices.observe(viewLifecycleOwner) { connectionAdapter.submitList(it) }
             connectionEvent.observe(viewLifecycleOwner, ::handleConnectionEvent)
             isConnecting.observe(viewLifecycleOwner) {
-                connectionAdapter.clickEnabled = !it
-                binding.connectionDevicesRecyclerview.swapAdapter(connectionAdapter, false)
+                binding.root.post {
+                    connectionAdapter.clickEnabled = !it
+                    binding.connectionDevicesRecyclerview.swapAdapter(connectionAdapter, false)
+                }
             }
         }
 
@@ -50,8 +53,9 @@ class ConnectionFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        connectionAdapter = ConnectionAdapter(::startConnect)
         val linearLayoutManager = LinearLayoutManager(view.context)
+        connectionAdapter = ConnectionAdapter(::startConnect)
+
         binding.connectionDevicesRecyclerview.apply {
             layoutManager = linearLayoutManager
             adapter = connectionAdapter.apply {
@@ -59,6 +63,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
                     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                         super.onItemRangeInserted(positionStart, itemCount)
                         if (positionStart == 0 && positionStart == linearLayoutManager.findFirstCompletelyVisibleItemPosition()) {
+                            // auto-scroll up if recyclerview was at top before new item was added
                             linearLayoutManager.scrollToPosition(0)
                         }
                     }
@@ -87,7 +92,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
     }
 
     private fun startConnect(item: ConnectionItem) {
-        if (viewModel.isConnecting.value == true) return
+        if (viewModel.isConnecting.valueOrFalse) return
         (activity as? MainActivity)?.earableService?.connectOrBond(item.device)
     }
 

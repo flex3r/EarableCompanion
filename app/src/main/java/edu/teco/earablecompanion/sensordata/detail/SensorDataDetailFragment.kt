@@ -53,9 +53,11 @@ class SensorDataDetailFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = SensorDataDetailAdapter()
 
-        viewModel.detailData.observe(viewLifecycleOwner) { adapter.submitList(it) }
-        viewModel.exportEventFlow.observe(viewLifecycleOwner, ::handleExportEvent)
-        viewModel.isNotActive.observe(viewLifecycleOwner) { activity?.invalidateOptionsMenu() }
+        with(viewModel) {
+            detailData.observe(viewLifecycleOwner, adapter::submitList)
+            exportEventFlow.observe(viewLifecycleOwner, ::handleExportEvent)
+            isNotActive.observe(viewLifecycleOwner) { activity?.invalidateOptionsMenu() }
+        }
 
         binding = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel

@@ -15,7 +15,6 @@ import edu.teco.earablecompanion.settings.label.LabelFragment
 @AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
 
-    //private val navController: NavController by lazy { findNavController() }
     private val viewModel: SettingsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

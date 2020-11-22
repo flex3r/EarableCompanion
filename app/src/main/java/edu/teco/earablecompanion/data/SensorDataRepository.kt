@@ -119,6 +119,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     suspend fun exportData(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {
         val calibrationEntries = sensorDataDao.getCalibrationEntries(dataId).sortedBy { it.timestamp }
         val entries = sensorDataDao.getEntries(dataId).sortedBy { it.timestamp }
+
         outputStream.sink().buffer().use { sink ->
             sink.writeUtf8(SensorDataEntry.CSV_HEADER_ROW)
             calibrationEntries.forEach { sink.writeUtf8(it.asCsvEntry) }

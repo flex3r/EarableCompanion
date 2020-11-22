@@ -26,7 +26,7 @@ class SensorDataOverviewFragment : Fragment() {
             val action = SensorDataOverviewFragmentDirections.actionSensorDataOverviewFragmentToSensorDataDetailFragment(it.title, it.id, date)
             navController.navigate(action)
         }
-        viewModel.sensorDataItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
+        viewModel.sensorDataItems.observe(viewLifecycleOwner, adapter::submitList)
 
         val binding = SensorDataOverviewFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel

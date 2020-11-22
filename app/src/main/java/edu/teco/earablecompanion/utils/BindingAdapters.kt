@@ -91,10 +91,7 @@ fun TextView.formatDuration(duration: Duration?) {
 @BindingAdapter("startedLocalDateTime")
 fun TextView.formatStartedLocalDateTime(localDateTime: LocalDateTime?) {
     isVisible = localDateTime != null
-    if (localDateTime == null) {
-        text = ""
-        return
-    }
+    localDateTime ?: return
 
     val formatter = DateTimeFormatter
         .ofLocalizedDateTime(FormatStyle.SHORT)
@@ -105,10 +102,7 @@ fun TextView.formatStartedLocalDateTime(localDateTime: LocalDateTime?) {
 @BindingAdapter("stoppedLocalDateTime")
 fun TextView.formatStoppedLocalDateTime(localDateTime: LocalDateTime?) {
     isVisible = localDateTime != null
-    if (localDateTime == null) {
-        text = ""
-        return
-    }
+    localDateTime ?: return
 
     val formatter = DateTimeFormatter
         .ofLocalizedDateTime(FormatStyle.SHORT)
@@ -186,7 +180,7 @@ fun LineChart.setDataEntries(entries: List<Entry>, dataType: SensorDataType) {
 
     data = LineData(dataSet)
     setVisibleXRange(min(250f, entries.size.toFloat()), min(250f, entries.size.toFloat()))
-    invalidate()
+    invalidate() // needs to be called to start drawing chart
     //animateX(1000)
 }
 
@@ -197,6 +191,7 @@ fun ProgressIndicator.setByConnectionEvent(event: ConnectionEvent) {
         is ConnectionEvent.Pairing -> setProgressCompat(66, true)
         is ConnectionEvent.Connected -> setProgressCompat(100, true)
         else -> {
+            // Change indeterminate mode while indicator is invisible to prevent rare crash
             isVisible = false
             isIndeterminate = true
             isVisible = true

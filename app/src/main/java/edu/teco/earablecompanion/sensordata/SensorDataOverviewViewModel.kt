@@ -26,10 +26,13 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
         sensorDataRepository.getSensorDataFlow().collectLatest { data ->
             when {
                 data.isEmpty() -> emit(listOf(SensorDataOverviewItem.NoData))
-                else -> emit(data.map {
-                    val entryCount = sensorDataRepository.getDataEntryCount(it.dataId)
-                    it.toOverviewItem(entryCount)
-                })
+                else -> {
+                    val items = data.map {
+                        val entryCount = sensorDataRepository.getDataEntryCount(it.dataId)
+                        it.toOverviewItem(entryCount)
+                    }
+                    emit(items)
+                }
             }
         }
     }

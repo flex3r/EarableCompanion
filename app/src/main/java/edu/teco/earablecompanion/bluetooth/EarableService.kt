@@ -201,9 +201,7 @@ class EarableService : Service() {
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_NOT_STICKY
-    }
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_NOT_STICKY
 
     override fun onDestroy() {
         if (dataRepository.isRecording) {
@@ -534,11 +532,14 @@ class EarableService : Service() {
                 is EarableType.Cosinuss -> CosinussConfig(accSupported = type.accSupported, accEnabled = type.accSupported) // enable by default if supported
                 else -> GenericConfig.fromDiscoveredServices(deviceCharacteristics.values) ?: return
             }
-            connectionRepository.setConfig(gatt.device.address, defaultConfig)
-            readCharacteristics(gatt, deviceCharacteristics, defaultConfig)
 
-            connectionRepository.updateConnectionEvent(ConnectionEvent.Connected(gatt.device, defaultConfig))
-            connectionRepository.updateConnectedDevice(gatt.device)
+            with(connectionRepository) {
+                setConfig(gatt.device.address, defaultConfig)
+                updateConnectionEvent(ConnectionEvent.Connected(gatt.device, defaultConfig))
+                updateConnectedDevice(gatt.device)
+            }
+
+            readCharacteristics(gatt, deviceCharacteristics, defaultConfig)
         }
 
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {

@@ -149,6 +149,7 @@ class OverviewFragment : Fragment() {
         val labelString = PreferenceManager.getDefaultSharedPreferences(requireContext()).getString(labelKey, default) ?: default
         val labels = labelString.split(",").plus(other).toTypedArray()
         var index = 0
+
         MaterialAlertDialogBuilder(requireContext())
             .setSingleChoiceItems(labels, index) { _, idx -> index = idx }
             .setTitle(R.string.start_recording_dialog_title)
@@ -193,15 +194,15 @@ class OverviewFragment : Fragment() {
     private fun startRecording(title: String) {
         val devices = viewModel.overviewItems.value?.filterIsInstance<OverviewItem.Device>()?.map { it.bluetoothDevice }
         val configs = viewModel.getCurrentConfigs()
-        devices?.let {
-            (activity as? MainActivity)?.run {
-                with(earableService ?: return) {
-                    startRecording(title, devices, configs, viewModel.micRecordingPossible)
+        devices ?: return
 
-                    if (sharedPreferences.getBoolean(getString(R.string.preference_intercept_media_buttons_key), false)) {
-                        val session = earableService?.startMediaSession() ?: return
-                        mediaController = session.controller.mediaController as MediaController
-                    }
+        (activity as? MainActivity)?.run {
+            with(earableService ?: return) {
+                startRecording(title, devices, configs, viewModel.micRecordingPossible)
+
+                if (sharedPreferences.getBoolean(getString(R.string.preference_intercept_media_buttons_key), false)) {
+                    val session = earableService?.startMediaSession() ?: return
+                    mediaController = session.controller.mediaController as MediaController
                 }
             }
         }
@@ -210,9 +211,11 @@ class OverviewFragment : Fragment() {
     private fun stopRecording() {
         val devices = viewModel.overviewItems.value?.filterIsInstance<OverviewItem.Device>()?.map { it.bluetoothDevice }
         val configs = viewModel.getCurrentConfigs()
-        devices?.let {
-            (activity as? MainActivity)?.earableService?.stopRecording(devices, configs)
-            activity?.mediaController = null
+        devices ?: return
+
+        (activity as? MainActivity)?.run {
+            earableService?.stopRecording(devices, configs)
+            mediaController = null
         }
     }
 
