@@ -70,4 +70,16 @@ class SensorDataOverviewViewModelTest {
         viewModel.removeData(data)
         coVerify { sensorDataRepository.removeData(dataId) }
     }
+
+    @Test
+    fun testHasData() = coroutineScope.runBlockingTest {
+        val observer = viewModel.hasData.test()
+        observer.assertValue(false)
+
+        val data = SensorData(42L, "title", LocalDateTime.now(), LocalDateTime.now())
+        coEvery { sensorDataRepository.getDataEntryCount(42L) } returns 1
+        sensorDataFlow.value = listOf(data)
+
+        observer.assertValue(true)
+    }
 }

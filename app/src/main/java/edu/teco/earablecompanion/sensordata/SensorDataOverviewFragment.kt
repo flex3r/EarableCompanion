@@ -12,6 +12,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataOverviewFragmentBinding
+import edu.teco.earablecompanion.utils.CreateZipDocumentContract
+import edu.teco.earablecompanion.utils.extensions.observe
+import edu.teco.earablecompanion.utils.extensions.showShortSnackbar
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
@@ -19,6 +22,17 @@ class SensorDataOverviewFragment : Fragment() {
 
     private val viewModel: SensorDataOverviewViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
+    private lateinit var binding: SensorDataOverviewFragmentBinding
+
+    private val createZipRegistration = registerForActivityResult(CreateZipDocumentContract()) { result ->
+        val tempDir = requireContext().getExternalFilesDir(null)
+        when {
+            result == null || tempDir == null -> binding.root.showShortSnackbar(getString(R.string.export_file_creation_error))
+            else -> requireContext().contentResolver.openOutputStream(result)?.let {
+                viewModel.exportAllData(it, tempDir)
+            } ?: binding.root.showShortSnackbar(getString(R.string.export_file_creation_error))
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val adapter = SensorDataOverviewAdapter(::onRemove) {
@@ -26,12 +40,17 @@ class SensorDataOverviewFragment : Fragment() {
             val action = SensorDataOverviewFragmentDirections.actionSensorDataOverviewFragmentToSensorDataDetailFragment(it.title, it.id, date)
             navController.navigate(action)
         }
-        viewModel.sensorDataItems.observe(viewLifecycleOwner, adapter::submitList)
 
-        val binding = SensorDataOverviewFragmentBinding.inflate(inflater, container, false).apply {
+        with(viewModel) {
+            sensorDataItems.observe(viewLifecycleOwner, adapter::submitList)
+            exportEventFlow.observe(viewLifecycleOwner, ::handleExportEvent)
+        }
+
+        binding = SensorDataOverviewFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@SensorDataOverviewFragment
             sensorDataRecyclerview.adapter = adapter
+            sensorDataOverviewExportFab.setOnClickListener { createZipRegistration.launch("Data.zip") }
         }
 
         return binding.root
@@ -43,6 +62,14 @@ class SensorDataOverviewFragment : Fragment() {
             .setPositiveButton(getString(R.string.remove)) { _, _ -> viewModel.removeData(data) }
             .setNegativeButton(getString(R.string.cancel)) { d, _ -> d.dismiss() }
             .show()
+    }
+
+    private fun handleExportEvent(event: SensorDataExportEvent) {
+        when (event) {
+            is SensorDataExportEvent.Finished -> binding.root.showShortSnackbar(getString(R.string.export_file_finished))
+            is SensorDataExportEvent.Failed -> binding.root.showShortSnackbar(getString(R.string.export_file_export_error, event.cause))
+            else -> Unit
+        }
     }
 
     companion object {

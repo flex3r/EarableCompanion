@@ -17,7 +17,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.progressindicator.ProgressIndicator
-            android:id="@+id/export_progress"
+            android:id="@+id/sensor_data_detail_export_progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
@@ -25,7 +25,7 @@
             android:visibility="@{vm.shouldShowProgress ? View.VISIBLE : View.GONE}" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/export_fab"
+            android:id="@+id/sensor_data_detail_export_fab"
             style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

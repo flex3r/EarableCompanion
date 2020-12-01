@@ -6,7 +6,10 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.data.entities.SensorDataEntry.Companion.mapToEntriesWithDevice
+import edu.teco.earablecompanion.sensordata.SensorDataExportEvent
 import edu.teco.earablecompanion.sensordata.detail.SensorDataDetailDescription.Companion.toDescriptionItem
+import edu.teco.earablecompanion.sensordata.withExportEvent
+import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
@@ -24,7 +27,7 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, Log.getStackTraceString(throwable))
 
-        if (_exportEventFlow.replayCache.firstOrNull() == SensorDataExportEvent.Started) {
+        if (shouldShowProgress.valueOrFalse) {
             _exportEventFlow.tryEmit(SensorDataExportEvent.Failed(throwable))
         }
     }
@@ -88,24 +91,18 @@ class SensorDataDetailViewModel @ViewModelInject constructor(
     }
 
     fun exportData(outputStream: OutputStream) = viewModelScope.launch(coroutineExceptionHandler) {
-        withExportEvent {
+        _exportEventFlow.withExportEvent {
             sensorDataRepository.exportData(dataId, outputStream)
         }
     }
 
     fun exportMicRecording(outputStream: OutputStream) = viewModelScope.launch(coroutineExceptionHandler) {
-        withExportEvent {
+        _exportEventFlow.withExportEvent {
             sensorDataRepository.exportMicRecording(dataId, outputStream)
         }
     }
 
     suspend fun loadLogs() = withContext(coroutineExceptionHandler) { sensorDataRepository.getLogEntries(dataId) }
-
-    private suspend inline fun withExportEvent(block: () -> Unit) {
-        _exportEventFlow.emit(SensorDataExportEvent.Started)
-        block()
-        _exportEventFlow.emit(SensorDataExportEvent.Finished)
-    }
 
     companion object {
         private val TAG = SensorDataDetailViewModel::class.java.simpleName

@@ -13,15 +13,16 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataDetailFragmentBinding
+import edu.teco.earablecompanion.sensordata.SensorDataExportEvent
 import edu.teco.earablecompanion.utils.CreateCsvDocumentContract
 import edu.teco.earablecompanion.utils.extensions.observe
+import edu.teco.earablecompanion.utils.extensions.showShortSnackbar
 import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 
 @AndroidEntryPoint
@@ -34,19 +35,19 @@ class SensorDataDetailFragment : Fragment() {
 
     private val createCsvRegistration = registerForActivityResult(CreateCsvDocumentContract()) { result ->
         when (result) {
-            null -> showSnackbar(getString(R.string.export_file_creation_error))
+            null -> binding.root.showShortSnackbar(getString(R.string.export_file_creation_error))
             else -> requireContext().contentResolver.openOutputStream(result)?.let {
                 viewModel.exportData(it)
-            } ?: showSnackbar(getString(R.string.export_file_creation_error))
+            } ?: binding.root.showShortSnackbar(getString(R.string.export_file_creation_error))
         }
     }
 
     private val create3gpRegistration = registerForActivityResult(ActivityResultContracts.CreateDocument()) { result ->
         when (result) {
-            null -> showSnackbar(getString(R.string.export_file_creation_error))
+            null -> binding.root.showShortSnackbar(getString(R.string.export_file_creation_error))
             else -> requireContext().contentResolver.openOutputStream(result)?.let {
                 viewModel.exportMicRecording(it)
-            } ?: showSnackbar(getString(R.string.export_file_creation_error))
+            } ?: binding.root.showShortSnackbar(getString(R.string.export_file_creation_error))
         }
     }
 
@@ -66,7 +67,7 @@ class SensorDataDetailFragment : Fragment() {
             sensorDataDetailDescriptionEdit.setOnClickListener { editData() }
             sensorDataDetailDescriptionLogs.setOnClickListener { showLogs() }
             sensorDataDetailDescriptionMic.setOnClickListener { create3gpRegistration.launch("${args.dataTitle}-${args.dataDate}.3gp") }
-            exportFab.setOnClickListener { createCsvRegistration.launch("${args.dataTitle}-${args.dataDate}.csv") }
+            sensorDataDetailExportFab.setOnClickListener { createCsvRegistration.launch("${args.dataTitle}-${args.dataDate}.csv") }
         }
 
         setHasOptionsMenu(true)
@@ -139,13 +140,11 @@ class SensorDataDetailFragment : Fragment() {
 
     private fun handleExportEvent(event: SensorDataExportEvent) {
         when (event) {
-            is SensorDataExportEvent.Finished -> showSnackbar(getString(R.string.export_file_finished))
-            is SensorDataExportEvent.Failed -> showSnackbar(getString(R.string.export_file_export_error, event.cause))
+            is SensorDataExportEvent.Finished -> binding.root.showShortSnackbar(getString(R.string.export_file_finished))
+            is SensorDataExportEvent.Failed -> binding.root.showShortSnackbar(getString(R.string.export_file_export_error, event.cause))
             else -> Unit
         }
     }
-
-    private fun showSnackbar(text: String) = Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT).show()
 
     companion object {
         private val TAG = SensorDataDetailFragment::class.java.simpleName

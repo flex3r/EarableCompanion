@@ -15,16 +15,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import okio.buffer
-import okio.sink
-import okio.source
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.OutputStream
+import okio.*
+import java.io.*
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import javax.inject.Inject
 
+@Suppress("BlockingMethodInNonBlockingContext")
 class SensorDataRepository @Inject constructor(private val sensorDataDao: SensorDataDao, private val scope: CoroutineScope) {
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -115,19 +115,32 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
 
     suspend fun updateSensorData(dataId: Long, title: String) = sensorDataDao.updateData(dataId, title)
 
-    @Suppress("BlockingMethodInNonBlockingContext")
-    suspend fun exportData(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {
-        val calibrationEntries = sensorDataDao.getCalibrationEntries(dataId).sortedBy { it.timestamp }
-        val entries = sensorDataDao.getEntries(dataId).sortedBy { it.timestamp }
+    suspend fun exportData(dataId: Long, outputStream: OutputStream) = exportData(dataId, outputStream.sink().buffer())
 
-        outputStream.sink().buffer().use { sink ->
-            sink.writeUtf8(SensorDataEntry.CSV_HEADER_ROW)
-            calibrationEntries.forEach { sink.writeUtf8(it.asCsvEntry) }
-            entries.forEach { sink.writeUtf8(it.asCsvEntry) }
+    suspend fun exportAllData(outputStream: OutputStream, tempStorageDir: File) = withContext(Dispatchers.IO) {
+        with(ZipOutputStream(BufferedOutputStream(outputStream))) {
+            sink().use { sink ->
+                sensorDataDao.getAll().forEach { data ->
+                    val escapedDate = data.createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace(':', '_')
+                    val name = "${data.title}-$escapedDate"
+
+                    val tempFile = File.createTempFile(name, ".csv", tempStorageDir)
+                    try {
+                        exportData(data.dataId, tempFile.sink().buffer())
+
+                        tempFile.source().buffer().use {
+                            val entry = ZipEntry("$name.csv")
+                            putNextEntry(entry)
+                            it.readAll(sink)
+                        }
+                    } finally {
+                        tempFile.delete()
+                    }
+                }
+            }
         }
     }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun exportMicRecording(dataId: Long, outputStream: OutputStream) = withContext(Dispatchers.IO) {
         val data = sensorDataDao.getData(dataId)
         val path = data.micRecordingPath ?: throw FileNotFoundException()
@@ -138,6 +151,19 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
             }
         }
     }
+
+    private suspend fun exportData(dataId: Long, sink: BufferedSink) = withContext(Dispatchers.IO) {
+        val calibrationEntries = sensorDataDao.getCalibrationEntries(dataId).sortedBy { it.timestamp }
+        val entries = sensorDataDao.getEntries(dataId).sortedBy { it.timestamp }
+
+        sink.use { sink ->
+            sink.writeUtf8(SensorDataEntry.CSV_HEADER_ROW)
+            sink.writeEntries(calibrationEntries)
+            sink.writeEntries(entries)
+        }
+    }
+
+    private fun BufferedSink.writeEntries(entries: List<SensorDataEntry>) = entries.forEach { writeUtf8(it.asCsvEntry) }
 
     private fun SensorDataEntry.replaceValues(other: SensorDataEntry) = copy(
         accX = other.accX ?: this.accX,
