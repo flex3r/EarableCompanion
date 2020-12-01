@@ -16,6 +16,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.bluetooth.config.ESenseConfig
 import edu.teco.earablecompanion.databinding.EsenseDeviceFragmentBinding
 import edu.teco.earablecompanion.overview.device.DeviceFragment
+import edu.teco.earablecompanion.utils.extensions.showShortSnackbar
 
 @AndroidEntryPoint
 class ESenseDeviceFragment : DeviceFragment() {
@@ -42,7 +43,7 @@ class ESenseDeviceFragment : DeviceFragment() {
                     result -> getString(R.string.config_saved_successful)
                     else -> getString(R.string.config_saved_failed)
                 }
-                Snackbar.make(root, snackbarMessage, Snackbar.LENGTH_SHORT).show()
+                root.showShortSnackbar(snackbarMessage)
             }
         }
 

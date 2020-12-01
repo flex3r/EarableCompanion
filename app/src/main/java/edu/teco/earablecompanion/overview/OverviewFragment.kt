@@ -15,7 +15,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +26,7 @@ import edu.teco.earablecompanion.overview.calibration.CalibrationFragment
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
 import edu.teco.earablecompanion.utils.extensions.showOrHide
+import edu.teco.earablecompanion.utils.extensions.showShortSnackbar
 import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 
 @AndroidEntryPoint
@@ -40,7 +40,7 @@ class OverviewFragment : Fragment() {
     private val requestPermissionRegistration = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
         when {
             result -> displayStartRecordingDialog()
-            else -> showSnackbar(getString(R.string.audio_permission_disclaimer))
+            else -> binding.root.showShortSnackbar(getString(R.string.audio_permission_disclaimer))
         }
     }
 
@@ -93,7 +93,7 @@ class OverviewFragment : Fragment() {
     }
 
     fun onConnected(event: ConnectionEvent.Connected) {
-        showSnackbar(getString(R.string.connection_snackbar_text_connected, event.device.name ?: getString(R.string.unknown_device_name))) {
+        binding.root.showShortSnackbar(getString(R.string.connection_snackbar_text_connected, event.device.name ?: getString(R.string.unknown_device_name))) {
             if (event.config.canCalibrate) {
                 setAction(R.string.calibrate) { showCalibrationBottomSheet(event.device) }
             }
@@ -101,13 +101,7 @@ class OverviewFragment : Fragment() {
     }
 
     fun onConnectionFailed() {
-        showSnackbar(getString(R.string.connection_snackbar_text_failed))
-    }
-
-    private fun showSnackbar(text: String, block: Snackbar.() -> Unit = {}) {
-        Snackbar.make(binding.root, text, Snackbar.LENGTH_SHORT)
-            .apply(block)
-            .show()
+        binding.root.showShortSnackbar(getString(R.string.connection_snackbar_text_failed))
     }
 
     private fun calibrateDevice(item: OverviewItem.Device) {

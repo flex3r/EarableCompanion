@@ -18,4 +18,10 @@ fun ExtendedFloatingActionButton.showOrHide(show: Boolean) = when {
     else -> Unit
 }
 
-fun View.showShortSnackbar(text: String) = Snackbar.make(this, text, Snackbar.LENGTH_SHORT).show()
+fun View.showShortSnackbar(text: String, block: Snackbar.() -> Unit = {}) = Snackbar.make(this, text, Snackbar.LENGTH_SHORT)
+    .apply(block)
+    .show()
+
+fun View.showLongSnackbar(text: String, block: Snackbar.() -> Unit = {}) = Snackbar.make(this, text, Snackbar.LENGTH_LONG)
+    .apply(block)
+    .show()

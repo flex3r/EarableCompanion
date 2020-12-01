@@ -21,10 +21,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.bluetooth.EarableService
 import edu.teco.earablecompanion.databinding.MainActivityBinding
+import edu.teco.earablecompanion.utils.extensions.showLongSnackbar
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -45,10 +45,9 @@ class MainActivity : AppCompatActivity() {
             Activity.RESULT_OK -> earableService?.startScan()
             else -> {
                 bottomSheetDialogFragment?.requireDialog()?.cancel()
-
-                Snackbar.make(binding.root, R.string.bluetooth_disclaimer, Snackbar.LENGTH_LONG)
-                    .setAnchorView(binding.bottomNavView)
-                    .show()
+                binding.root.showLongSnackbar(getString(R.string.bluetooth_disclaimer)) {
+                    anchorView = binding.bottomNavView
+                }
             }
         }
     }
@@ -58,10 +57,9 @@ class MainActivity : AppCompatActivity() {
             map.all { it.value } -> startScanOrEnableBluetooth()
             else -> {
                 bottomSheetDialogFragment?.requireDialog()?.cancel()
-
-                Snackbar.make(binding.root, R.string.permissions_disclaimer, Snackbar.LENGTH_LONG)
-                    .setAnchorView(binding.bottomNavView)
-                    .show()
+                binding.root.showLongSnackbar(getString(R.string.permissions_disclaimer)) {
+                    anchorView = binding.bottomNavView
+                }
             }
         }
     }
