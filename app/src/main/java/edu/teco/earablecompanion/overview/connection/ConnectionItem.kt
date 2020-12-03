@@ -7,7 +7,7 @@ data class ConnectionItem(val name: String?, val address: String, val connection
 
     companion object {
         private fun ScanResult.toConnectionItem() = ConnectionItem(
-            name = this.device.name,
+            name = this.device.name ?: this.scanRecord?.deviceName,
             address = device.address,
             connectionStrength = "$rssi db",
             device = device

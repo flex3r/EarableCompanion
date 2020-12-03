@@ -500,9 +500,10 @@ class EarableService : Service() {
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            if (result.containsBlacklistedUuid || (shouldIgnoreUnknownDevices && result.device.name == null)) {
+            if (result.containsBlacklistedUuid || (shouldIgnoreUnknownDevices && result.device.name == null && result.scanRecord?.deviceName == null)) {
                 return
             }
+
 
             when (callbackType) {
                 ScanSettings.CALLBACK_TYPE_ALL_MATCHES -> scope.launch(coroutineExceptionHandler) {
@@ -670,15 +671,13 @@ class EarableService : Service() {
         private val TAG = EarableService::class.java.simpleName
 
         private const val CHANNEL_ID_LOW = "edu.teco.earablecompanion.low"
-        private const val CHANNEL_ID_DEFAULT = "edu.teco.earablecompanion.default"
         private const val NOTIFICATION_ID = 77777
         private const val NOTIFICATION_START_INTENT_CODE = 66666
-
-        private const val BASE_BLE_DELAY = 250L
 
         private val SERVICE_UUID_FILTER = listOf(
             ParcelUuid.fromString("0000fd6f-0000-1000-8000-00805f9b34fb"), // Contact tracing
             ParcelUuid.fromString("0000fe9f-0000-1000-8000-00805f9b34fb"), // Google
+            ParcelUuid.fromString("0000fea0-0000-1000-8000-00805f9b34fb"), // Google
         )
         private val ScanResult.containsBlacklistedUuid: Boolean
             get() = scanRecord?.serviceUuids?.any { SERVICE_UUID_FILTER.contains(it) } == true
