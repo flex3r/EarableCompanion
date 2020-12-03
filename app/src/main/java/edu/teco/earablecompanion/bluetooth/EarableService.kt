@@ -500,7 +500,7 @@ class EarableService : Service() {
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            if (result.containsBlacklistedUuid || (shouldIgnoreUnknownDevices && result.device.name == null && result.scanRecord?.deviceName == null)) {
+            if (!result.isConnectable || result.containsBlacklistedUuid || (shouldIgnoreUnknownDevices && result.device.name == null && result.scanRecord?.deviceName == null)) {
                 return
             }
 
