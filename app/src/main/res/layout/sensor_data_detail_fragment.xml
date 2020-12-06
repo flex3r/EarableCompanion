@@ -32,10 +32,9 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:contentDescription="@string/export_fab_description"
+            android:enabled="@{vm.hasData &amp;&amp; !vm.shouldShowProgress}"
             android:text="@string/export_fab_text"
-            android:visibility="@{vm.hasData &amp;&amp; !vm.shouldShowProgress ? View.VISIBLE : View.GONE}"
-            app:icon="@drawable/ic_baseline_save_alt_24"
-            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
+            app:icon="@drawable/ic_baseline_save_alt_24" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

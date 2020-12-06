@@ -14,6 +14,7 @@ import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataOverviewFragmentBinding
 import edu.teco.earablecompanion.utils.CreateZipDocumentContract
 import edu.teco.earablecompanion.utils.extensions.observe
+import edu.teco.earablecompanion.utils.extensions.setFabScrollBehavior
 import edu.teco.earablecompanion.utils.extensions.showShortSnackbar
 import java.time.format.DateTimeFormatter
 
@@ -50,6 +51,7 @@ class SensorDataOverviewFragment : Fragment() {
             vm = viewModel
             lifecycleOwner = this@SensorDataOverviewFragment
             recyclerData.adapter = adapter
+            recyclerData.setFabScrollBehavior(fabExportAll)
             fabExportAll.setOnClickListener { createZipRegistration.launch("Data.zip") }
         }
 

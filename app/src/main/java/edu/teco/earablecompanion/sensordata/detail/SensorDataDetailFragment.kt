@@ -22,6 +22,7 @@ import edu.teco.earablecompanion.databinding.SensorDataDetailFragmentBinding
 import edu.teco.earablecompanion.sensordata.SensorDataExportEvent
 import edu.teco.earablecompanion.utils.CreateCsvDocumentContract
 import edu.teco.earablecompanion.utils.extensions.observe
+import edu.teco.earablecompanion.utils.extensions.setFabScrollBehavior
 import edu.teco.earablecompanion.utils.extensions.showShortSnackbar
 import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 
@@ -64,6 +65,7 @@ class SensorDataDetailFragment : Fragment() {
             vm = viewModel
             lifecycleOwner = this@SensorDataDetailFragment
             recyclerData.adapter = adapter
+            recyclerData.setFabScrollBehavior(fabExport)
             buttonEdit.setOnClickListener { editData() }
             buttonLogs.setOnClickListener { showLogs() }
             buttonExportMicRecording.setOnClickListener { create3gpRegistration.launch("${args.dataTitle}-${args.dataDate}.3gp") }
