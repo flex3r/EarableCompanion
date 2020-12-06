@@ -34,7 +34,8 @@
             android:contentDescription="@string/export_all_fab_description"
             android:text="@string/export_all_fab_text"
             android:visibility="@{vm.hasData &amp;&amp; !vm.shouldShowProgress ? View.VISIBLE : View.GONE}"
-            app:icon="@drawable/ic_baseline_save_alt_24" />
+            app:icon="@drawable/ic_baseline_save_alt_24"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_data"
