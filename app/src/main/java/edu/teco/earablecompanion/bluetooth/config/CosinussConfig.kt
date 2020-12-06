@@ -51,16 +51,20 @@ data class CosinussConfig(
     }
 
     private fun parseAccSensorData(device: BluetoothDevice, bytes: ByteArray): SensorDataEntry? {
-        val (x, y, z) = bytes.parseAccSensorData()
+        return try {
+            val (x, y, z) = bytes.parseAccSensorData()
 
-        return SensorDataEntry(
-            deviceName = device.name,
-            deviceAddress = device.address,
-            timestamp = LocalDateTime.now(ZoneId.systemDefault()),
-            accX = x,
-            accY = y,
-            accZ = z
-        )
+            SensorDataEntry(
+                deviceName = device.name,
+                deviceAddress = device.address,
+                timestamp = LocalDateTime.now(ZoneId.systemDefault()),
+                accX = x,
+                accY = y,
+                accZ = z
+            )
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun ByteArray.parseAccSensorData(): Triple<Double, Double, Double> {
