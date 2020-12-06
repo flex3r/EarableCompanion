@@ -1,10 +1,12 @@
 package edu.teco.earablecompanion.overview
 
+import android.graphics.drawable.AnimationDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.*
 
 class OverviewAdapter(
@@ -54,6 +56,10 @@ class OverviewAdapter(
             is RecordingViewHolder -> with(holder.binding) {
                 recording = getItem(position) as OverviewItem.Recording
                 buttonShowValues.setOnClickListener { onShowValues() }
+                iconRecording.apply {
+                    setBackgroundResource(R.drawable.recording)
+                    post { (background as AnimationDrawable).start() }
+                }
             }
             is MicDisabledViewHolder -> with(holder.binding) {
                 item = getItem(position) as OverviewItem.MicDisabled

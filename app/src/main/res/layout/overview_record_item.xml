@@ -19,6 +19,18 @@
             android:layout_height="match_parent"
             android:padding="8dp">
 
+            <ImageView
+                android:id="@+id/icon_recording"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:contentDescription="@string/overview_recording_icon_description"
+                app:layout_constraintBottom_toBottomOf="@id/text_recording_title"
+                app:layout_constraintEnd_toStartOf="@id/text_recording_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_recording_title"
+                app:tint="?attr/colorSecondary" />
+
             <TextView
                 android:id="@+id/text_recording_title"
                 android:layout_width="0dp"
@@ -30,7 +42,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintBottom_toTopOf="@id/text_recording_start_time"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/icon_recording"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -40,7 +52,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toTopOf="@id/button_show_values"
                 app:layout_constraintEnd_toEndOf="@id/text_recording_title"
-                app:layout_constraintStart_toStartOf="@id/text_recording_title"
+                app:layout_constraintStart_toStartOf="@id/icon_recording"
                 app:layout_constraintTop_toBottomOf="@id/text_recording_title"
                 app:startedLocalDateTime="@{recording.startedAt}" />
 
