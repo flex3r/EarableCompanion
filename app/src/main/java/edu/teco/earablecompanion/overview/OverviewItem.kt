@@ -13,6 +13,7 @@ sealed class OverviewItem {
 
     data class MicDisabled(val recordingActive: Boolean = false) : OverviewItem()
     data class MicEnabled(val scoConnected: Boolean = false, val recordingActive: Boolean = false) : OverviewItem()
+    data class AddDevice(val recordingActive: Boolean = false) : OverviewItem()
 
     data class Device(
         val name: String?,

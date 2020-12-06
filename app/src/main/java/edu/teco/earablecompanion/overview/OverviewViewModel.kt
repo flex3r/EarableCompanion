@@ -44,7 +44,7 @@ class OverviewViewModel @ViewModelInject constructor(
         ) { devices, activeRecording, configs, socActive, micEnabled -> ItemState(devices, activeRecording, configs, socActive, micEnabled) }
             .collectLatest { (devices, activeRecording, configs, scoActive, micEnabled) ->
                 when {
-                    devices.isEmpty() -> emit(listOf(OverviewItem.NoDevices))
+                    devices.isEmpty() -> emit(listOf(OverviewItem.NoDevices, OverviewItem.AddDevice()))
                     else -> emit(buildList {
                         val recordingActive = activeRecording?.let {
                             add(it.toOverviewItem())
@@ -58,17 +58,14 @@ class OverviewViewModel @ViewModelInject constructor(
 
                         val items = devices.values.toOverviewItems(configs, recordingActive)
                         addAll(items)
+                        add(OverviewItem.AddDevice(recordingActive))
                     })
                 }
             }
     }
 
-    private val hasConnectedDevices = overviewItems.map { items -> items.any { it is OverviewItem.Device && it.type !is EarableType.NotSupported } }
-    val isRecording = overviewItems.map { items -> items.any { it is OverviewItem.Recording } }
-    val connectedDevicesAndRecording = MediatorLiveData<Pair<Boolean, Boolean>>().apply {
-        addSource(hasConnectedDevices) { value = Pair(it, isRecording.valueOrFalse) }
-        addSource(isRecording) { value = Pair(hasConnectedDevices.valueOrFalse, it) }
-    }
+    val hasConnectedDevices: LiveData<Boolean> = overviewItems.map { items -> items.any { it is OverviewItem.Device && it.type !is EarableType.NotSupported } }
+    val isRecording: LiveData<Boolean> = overviewItems.map { items -> items.any { it is OverviewItem.Recording } }
 
     val micRecordingPossible: Boolean get() = connectionRepository.bluetoothScoActive.value == true && connectionRepository.micEnabled.value
 

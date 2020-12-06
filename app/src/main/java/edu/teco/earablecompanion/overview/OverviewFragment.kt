@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothDevice
 import android.content.SharedPreferences
 import android.media.session.MediaController
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +26,6 @@ import edu.teco.earablecompanion.databinding.OverviewFragmentBinding
 import edu.teco.earablecompanion.overview.calibration.CalibrationFragment
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
-import edu.teco.earablecompanion.utils.extensions.showOrHide
 import edu.teco.earablecompanion.utils.extensions.showShortSnackbar
 import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 
@@ -45,7 +45,7 @@ class OverviewFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = OverviewAdapter(::disconnectDevice, ::calibrateDevice, ::setMicEnabled) { device ->
+        val adapter = OverviewAdapter(::showConnectionBottomSheet, ::disconnectDevice, ::calibrateDevice, ::setMicEnabled) { device ->
             if (viewModel.isRecording.valueOrFalse) return@OverviewAdapter
 
             val action = when (device.type) {
@@ -68,25 +68,18 @@ class OverviewFragment : Fragment() {
 
         viewModel.apply {
             overviewItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
-            connectedDevicesAndRecording.observe(viewLifecycleOwner) { (hasConnectedDevices, isRecording) ->
-                // show when no connected devices && not recording
-                binding.fabConnect.showOrHide(!hasConnectedDevices && !isRecording)
-                // show when connected devices && not recording
-                binding.fabRecord.showOrHide(hasConnectedDevices && !isRecording)
-                binding.fabSmallConnect.showOrHide(hasConnectedDevices && !isRecording)
-                // show when recording
-                binding.fabStopRecord.showOrHide(isRecording)
-            }
         }
 
         binding = OverviewFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@OverviewFragment
             vm = viewModel
             recyclerDevices.adapter = adapter
-            fabConnect.setOnClickListener { showConnectionBottomSheet() }
-            fabSmallConnect.setOnClickListener { showConnectionBottomSheet() }
-            fabRecord.setOnClickListener { requestPermissionIfNeeded() }
-            fabStopRecord.setOnClickListener { stopRecording() }
+            fabRecord.setOnClickListener {
+                when {
+                    viewModel.isRecording.valueOrFalse -> stopRecording()
+                    else -> requestRecordingPermissionIfNeeded()
+                }
+            }
         }
 
         return binding.root
@@ -131,7 +124,7 @@ class OverviewFragment : Fragment() {
         dialog.show(childFragmentManager, CalibrationFragment::class.java.simpleName)
     }
 
-    private fun requestPermissionIfNeeded() = when {
+    private fun requestRecordingPermissionIfNeeded() = when {
         viewModel.micRecordingPossible -> requestPermissionRegistration.launch(android.Manifest.permission.RECORD_AUDIO)
         else -> displayStartRecordingDialog()
     }

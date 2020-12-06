@@ -17,37 +17,6 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fab_connect"
-            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/connect_fab_description"
-            android:text="@string/connect_fab_text"
-            app:icon="@drawable/ic_baseline_bluetooth_searching_24" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_small_connect"
-            style="@style/Widget.MaterialComponents.FloatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/connect_fab_description"
-            android:src="@drawable/ic_baseline_bluetooth_searching_24"
-            android:visibility="gone"
-            app:layout_anchor="@id/fab_anchor_gap"
-            app:layout_anchorGravity="top|end" />
-
-        <View
-            android:id="@+id/fab_anchor_gap"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            app:layout_anchor="@id/fab_record"
-            app:layout_anchorGravity="top|end" />
-
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_record"
             style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
             android:layout_width="wrap_content"
@@ -55,21 +24,10 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:contentDescription="@string/record_fab_description"
-            android:text="@string/record_fab_text"
-            android:visibility="gone"
-            app:icon="@drawable/ic_baseline_play_arrow_24" />
-
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fab_stop_record"
-            style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/stop_record_fab_description"
-            android:text="@string/stop_record_fab_text"
-            android:visibility="gone"
-            app:icon="@drawable/ic_baseline_stop_24" />
+            android:text="@{vm.isRecording ? @string/stop_record_fab_text : @string/record_fab_text}"
+            android:visibility="@{vm.hasConnectedDevices ? View.VISIBLE : View.GONE}"
+            app:icon="@{vm.isRecording ? @drawable/ic_baseline_stop_24 : @drawable/ic_baseline_play_arrow_24}"
+            app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_devices"

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.teco.earablecompanion.databinding.*
 
 class OverviewAdapter(
+    private val onStartConnect: () -> Unit,
     private val onDisconnect: (OverviewItem.Device) -> Unit,
     private val onCalibrate: (OverviewItem.Device) -> Unit,
     private val onMicEnabledClick: (enabled: Boolean) -> Unit,
@@ -20,6 +21,7 @@ class OverviewAdapter(
     class RecordingViewHolder(val binding: OverviewRecordItemBinding) : RecyclerView.ViewHolder(binding.root)
     class MicDisabledViewHolder(val binding: OverviewMicDisabledItemBinding) : RecyclerView.ViewHolder(binding.root)
     class MicEnabled(val binding: OverviewMicEnabledItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class AddDevice(val binding: OverviewAddDeviceItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
         ITEM_VIEW_TYPE_DEVICE -> DeviceViewHolder(OverviewDeviceItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -27,6 +29,7 @@ class OverviewAdapter(
         ITEM_VIEW_TYPE_RECORDING -> RecordingViewHolder(OverviewRecordItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         ITEM_VIEW_TYPE_ENABLE_MIC -> MicDisabledViewHolder(OverviewMicDisabledItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         ITEM_VIEW_TYPE_DISABLE_MIC -> MicEnabled(OverviewMicEnabledItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ITEM_VIEW_TYPE_ADD_DEVICE -> AddDevice(OverviewAddDeviceItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         else -> throw ClassCastException("Unknown viewType $viewType")
     }
 
@@ -36,6 +39,7 @@ class OverviewAdapter(
         is OverviewItem.Recording -> ITEM_VIEW_TYPE_RECORDING
         is OverviewItem.MicDisabled -> ITEM_VIEW_TYPE_ENABLE_MIC
         is OverviewItem.MicEnabled -> ITEM_VIEW_TYPE_DISABLE_MIC
+        is OverviewItem.AddDevice -> ITEM_VIEW_TYPE_ADD_DEVICE
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -60,6 +64,10 @@ class OverviewAdapter(
                 holder.binding.item = getItem(position) as OverviewItem.MicEnabled
                 holder.binding.buttonDisableMic.setOnClickListener { onMicEnabledClick(false) }
             }
+            is AddDevice -> {
+                holder.binding.item = getItem(position) as OverviewItem.AddDevice
+                holder.binding.buttonConnect.setOnClickListener { onStartConnect() }
+            }
         }
     }
 
@@ -76,5 +84,6 @@ class OverviewAdapter(
         private const val ITEM_VIEW_TYPE_RECORDING = 3
         private const val ITEM_VIEW_TYPE_ENABLE_MIC = 4
         private const val ITEM_VIEW_TYPE_DISABLE_MIC = 5
+        private const val ITEM_VIEW_TYPE_ADD_DEVICE = 6
     }
 }
