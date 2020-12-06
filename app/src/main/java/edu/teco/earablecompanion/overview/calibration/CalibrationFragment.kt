@@ -25,7 +25,7 @@ class CalibrationFragment : BottomSheetDialogFragment() {
         binding = CalibrationFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@CalibrationFragment
-            calibrationCloseIcon.setOnClickListener { requireDialog().cancel() }
+            iconClose.setOnClickListener { requireDialog().cancel() }
         }
 
         viewModel.calibrationActive.observe(viewLifecycleOwner) { active ->

@@ -14,20 +14,20 @@
             android:padding="8dp">
 
             <ImageView
-                android:id="@+id/sensor_data_overview_no_data_icon"
+                android:id="@+id/icon_no_data"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/sensor_data_overview_no_data_icon_description"
                 android:src="@drawable/ic_baseline_save_24"
-                app:layout_constraintBottom_toBottomOf="@id/sensor_data_overview_no_data_text"
-                app:layout_constraintEnd_toStartOf="@id/sensor_data_overview_no_data_text"
+                app:layout_constraintBottom_toBottomOf="@id/text_no_data"
+                app:layout_constraintEnd_toStartOf="@id/text_no_data"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/sensor_data_overview_no_data_text"
+                app:layout_constraintTop_toTopOf="@id/text_no_data"
                 app:tint="?attr/colorSecondary" />
 
             <TextView
-                android:id="@+id/sensor_data_overview_no_data_text"
+                android:id="@+id/text_no_data"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -35,7 +35,7 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/sensor_data_overview_no_data_icon"
+                app:layout_constraintStart_toEndOf="@id/icon_no_data"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

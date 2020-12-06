@@ -26,19 +26,19 @@
             android:padding="8dp">
 
             <ImageView
-                android:id="@+id/overview_device_icon"
+                android:id="@+id/icon_device"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/overview_device_icon_description"
                 android:src="@drawable/ic_baseline_bluetooth_24"
-                app:layout_constraintBottom_toBottomOf="@id/overview_device_name"
+                app:layout_constraintBottom_toBottomOf="@id/text_device_name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/overview_device_name"
+                app:layout_constraintTop_toTopOf="@id/text_device_name"
                 app:tint="?attr/colorSecondary" />
 
             <TextView
-                android:id="@+id/overview_device_name"
+                android:id="@+id/text_device_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -46,50 +46,50 @@
                 android:gravity="center_horizontal"
                 android:text="@{device.name == null ? @string/unknown_device_name : device.name}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                app:layout_constraintBottom_toTopOf="@id/overview_device_address"
-                app:layout_constraintEnd_toStartOf="@id/overview_config_icon"
-                app:layout_constraintStart_toEndOf="@id/overview_device_icon"
+                app:layout_constraintBottom_toTopOf="@id/text_device_address"
+                app:layout_constraintEnd_toStartOf="@id/icon_config"
+                app:layout_constraintStart_toEndOf="@id/icon_device"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/overview_config_icon"
+                android:id="@+id/icon_config"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/overview_device_icon_description"
                 android:src="@drawable/ic_baseline_settings_24"
                 android:visibility="@{device.type instanceof EarableType.NotSupported ? View.GONE : View.VISIBLE}"
-                app:layout_constraintBottom_toBottomOf="@id/overview_device_name"
+                app:layout_constraintBottom_toBottomOf="@id/text_device_name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/overview_device_name"
-                app:layout_constraintTop_toTopOf="@id/overview_device_name"
+                app:layout_constraintStart_toEndOf="@id/text_device_name"
+                app:layout_constraintTop_toTopOf="@id/text_device_name"
                 app:tint="?attr/colorSecondary" />
 
             <TextView
-                android:id="@+id/overview_device_address"
+                android:id="@+id/text_device_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:text="@{device.address}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:layout_constraintBottom_toTopOf="@id/overview_device_description"
-                app:layout_constraintEnd_toEndOf="@id/overview_config_icon"
-                app:layout_constraintStart_toStartOf="@id/overview_device_icon"
-                app:layout_constraintTop_toBottomOf="@id/overview_device_name" />
+                app:layout_constraintBottom_toTopOf="@id/text_device_description"
+                app:layout_constraintEnd_toEndOf="@id/icon_config"
+                app:layout_constraintStart_toStartOf="@id/icon_device"
+                app:layout_constraintTop_toBottomOf="@id/text_device_name" />
 
             <TextView
-                android:id="@+id/overview_device_description"
+                android:id="@+id/text_device_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:description="@{device.type}"
-                app:layout_constraintBottom_toTopOf="@id/overview_device_disconnect"
-                app:layout_constraintEnd_toEndOf="@id/overview_config_icon"
-                app:layout_constraintStart_toStartOf="@id/overview_device_icon"
-                app:layout_constraintTop_toBottomOf="@id/overview_device_address" />
+                app:layout_constraintBottom_toTopOf="@id/button_disconnect"
+                app:layout_constraintEnd_toEndOf="@id/icon_config"
+                app:layout_constraintStart_toStartOf="@id/icon_device"
+                app:layout_constraintTop_toBottomOf="@id/text_device_address" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/overview_device_calibrate"
+                android:id="@+id/button_calibrate"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,11 +97,11 @@
                 android:visibility="@{device.canCalibrate ? View.VISIBLE : View.GONE}"
                 app:icon="@drawable/ic_baseline_360_24"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/overview_device_disconnect"
-                app:layout_constraintTop_toBottomOf="@id/overview_device_description" />
+                app:layout_constraintEnd_toStartOf="@id/button_disconnect"
+                app:layout_constraintTop_toBottomOf="@id/text_device_description" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/overview_device_disconnect"
+                android:id="@+id/button_disconnect"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                 app:icon="@drawable/ic_baseline_delete_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/overview_device_description" />
+                app:layout_constraintTop_toBottomOf="@id/text_device_description" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

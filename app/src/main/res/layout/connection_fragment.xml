@@ -18,7 +18,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/connection_header_progress"
+            android:id="@+id/progress_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
@@ -30,7 +30,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/connection_handle_icon"
+            android:id="@+id/icon_handle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -41,7 +41,7 @@
             app:srcCompat="@drawable/ic_baseline_maximize_24" />
 
         <TextView
-            android:id="@+id/connection_header_text"
+            android:id="@+id/text_header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -51,13 +51,13 @@
             android:singleLine="true"
             android:text="@string/connection_header_text"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            app:layout_constraintBottom_toTopOf="@id/connection_devices_recyclerview"
-            app:layout_constraintEnd_toStartOf="@id/connection_close_icon"
+            app:layout_constraintBottom_toTopOf="@id/recycler_devices"
+            app:layout_constraintEnd_toStartOf="@id/icon_close"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/connection_close_icon"
+            android:id="@+id/icon_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -65,21 +65,21 @@
             android:clickable="true"
             android:contentDescription="@string/bottom_sheet_close_icon_description"
             android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="@id/connection_header_text"
+            app:layout_constraintBottom_toBottomOf="@id/text_header"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/connection_header_text"
-            app:layout_constraintTop_toTopOf="@id/connection_header_text"
+            app:layout_constraintStart_toEndOf="@id/text_header"
+            app:layout_constraintTop_toTopOf="@id/text_header"
             app:srcCompat="@drawable/ic_baseline_clear_24" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/connection_devices_recyclerview"
+            android:id="@+id/recycler_devices"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginVertical="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/connection_header_text"
+            app:layout_constraintTop_toBottomOf="@id/text_header"
             tools:listitem="@layout/connection_device_item" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

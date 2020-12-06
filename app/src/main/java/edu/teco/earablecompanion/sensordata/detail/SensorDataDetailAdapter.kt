@@ -34,7 +34,7 @@ class SensorDataDetailAdapter : ListAdapter<SensorDataDetailItem, RecyclerView.V
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ChartViewHolder -> with(holder.binding) {
-                sensorDataDetailChart.setup()
+                chartData.setup()
                 item = getItem(position) as SensorDataDetailItem.Chart
             }
         }

@@ -38,7 +38,7 @@ class SensorDataOverviewAdapter(
                 with(holder.binding) {
                     data = entry
                     root.setOnClickListener { onClick(entry) }
-                    sensorDataOverviewRemove.setOnClickListener { onRemove(entry) }
+                    buttonRemove.setOnClickListener { onRemove(entry) }
                 }
             }
         }

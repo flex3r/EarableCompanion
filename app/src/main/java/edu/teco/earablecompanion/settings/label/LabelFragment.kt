@@ -24,7 +24,7 @@ class LabelFragment : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = LabelFragmentBinding.inflate(inflater, container, false).apply {
-            labelCloseIcon.setOnClickListener { requireDialog().dismiss() }
+            iconClose.setOnClickListener { requireDialog().dismiss() }
         }
 
         return binding.root
@@ -46,7 +46,7 @@ class LabelFragment : BottomSheetDialogFragment() {
         entries.add(LabelItem.Add)
 
         labelAdapter = LabelAdapter(entries, defaults)
-        binding.labelList.adapter = labelAdapter
+        binding.recyclerLabels.adapter = labelAdapter
     }
 
     override fun onStart() {

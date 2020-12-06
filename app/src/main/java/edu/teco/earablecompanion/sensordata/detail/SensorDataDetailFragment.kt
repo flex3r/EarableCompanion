@@ -63,11 +63,11 @@ class SensorDataDetailFragment : Fragment() {
         binding = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@SensorDataDetailFragment
-            sensorDataDetailRecyclerview.adapter = adapter
-            sensorDataDetailDescriptionEdit.setOnClickListener { editData() }
-            sensorDataDetailDescriptionLogs.setOnClickListener { showLogs() }
-            sensorDataDetailDescriptionMic.setOnClickListener { create3gpRegistration.launch("${args.dataTitle}-${args.dataDate}.3gp") }
-            sensorDataDetailExportFab.setOnClickListener { createCsvRegistration.launch("${args.dataTitle}-${args.dataDate}.csv") }
+            recyclerData.adapter = adapter
+            buttonEdit.setOnClickListener { editData() }
+            buttonLogs.setOnClickListener { showLogs() }
+            buttonExportMicRecording.setOnClickListener { create3gpRegistration.launch("${args.dataTitle}-${args.dataDate}.3gp") }
+            fabExport.setOnClickListener { createCsvRegistration.launch("${args.dataTitle}-${args.dataDate}.csv") }
         }
 
         setHasOptionsMenu(true)

@@ -25,69 +25,69 @@
                 app:layout_constraintGuide_percent="0.5" />
 
             <TextView
-                android:id="@+id/cosinuss_heart_rate_enabled_text"
+                android:id="@+id/text_heart_rate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:text="@string/generic_heart_rate_enabled_text"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintBottom_toBottomOf="@id/cosinuss_heart_rate_enabled_switch"
+                app:layout_constraintBottom_toBottomOf="@id/switch_heart_rate"
                 app:layout_constraintEnd_toEndOf="@id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cosinuss_heart_rate_enabled_switch" />
+                app:layout_constraintTop_toTopOf="@id/switch_heart_rate" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/cosinuss_heart_rate_enabled_switch"
+                android:id="@+id/switch_heart_rate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:checked="@{vm.device.config.heartRateEnabled}"
-                app:layout_constraintStart_toEndOf="@id/cosinuss_heart_rate_enabled_text"
+                app:layout_constraintStart_toEndOf="@id/text_heart_rate"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/cosinuss_body_temperature_enabled_text"
+                android:id="@+id/text_body_temperature"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:text="@string/generic_body_temperature_enabled_text"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintBottom_toBottomOf="@id/cosinuss_body_temperature_enabled_switch"
+                app:layout_constraintBottom_toBottomOf="@id/switch_body_temperature"
                 app:layout_constraintEnd_toEndOf="@id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cosinuss_body_temperature_enabled_switch" />
+                app:layout_constraintTop_toTopOf="@id/switch_body_temperature" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/cosinuss_body_temperature_enabled_switch"
+                android:id="@+id/switch_body_temperature"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:checked="@{vm.device.config.bodyTemperatureEnabled}"
-                app:layout_constraintStart_toEndOf="@id/cosinuss_body_temperature_enabled_text"
-                app:layout_constraintTop_toBottomOf="@id/cosinuss_heart_rate_enabled_switch" />
+                app:layout_constraintStart_toEndOf="@id/text_body_temperature"
+                app:layout_constraintTop_toBottomOf="@id/switch_heart_rate" />
 
             <TextView
-                android:id="@+id/cosinuss_acc_enabled_text"
+                android:id="@+id/text_accelerometer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:enabled="@{vm.accSupported}"
                 android:text="@string/cosinuss_acc_enabled_text"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintBottom_toBottomOf="@id/cosinuss_acc_enabled_switch"
+                app:layout_constraintBottom_toBottomOf="@id/switch_accelerometer"
                 app:layout_constraintEnd_toEndOf="@id/guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cosinuss_acc_enabled_switch" />
+                app:layout_constraintTop_toTopOf="@id/switch_accelerometer" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/cosinuss_acc_enabled_switch"
+                android:id="@+id/switch_accelerometer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:checked="@{vm.device.config.accEnabled}"
                 android:enabled="@{vm.accSupported}"
-                app:layout_constraintStart_toEndOf="@id/cosinuss_acc_enabled_text"
-                app:layout_constraintTop_toBottomOf="@id/cosinuss_body_temperature_enabled_switch" />
+                app:layout_constraintStart_toEndOf="@id/text_accelerometer"
+                app:layout_constraintTop_toBottomOf="@id/switch_body_temperature" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

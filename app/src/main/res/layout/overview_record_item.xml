@@ -20,7 +20,7 @@
             android:padding="8dp">
 
             <TextView
-                android:id="@+id/overview_recording_title"
+                android:id="@+id/text_recording_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -28,32 +28,32 @@
                 android:gravity="center_horizontal"
                 android:text="@string/overview_recording_title_text"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                app:layout_constraintBottom_toTopOf="@id/overview_recording_start_time"
+                app:layout_constraintBottom_toTopOf="@id/text_recording_start_time"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/overview_recording_start_time"
+                android:id="@+id/text_recording_start_time"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:layout_constraintBottom_toTopOf="@id/overview_recording_values"
-                app:layout_constraintEnd_toEndOf="@id/overview_recording_title"
-                app:layout_constraintStart_toStartOf="@id/overview_recording_title"
-                app:layout_constraintTop_toBottomOf="@id/overview_recording_title"
+                app:layout_constraintBottom_toTopOf="@id/text_recording_values"
+                app:layout_constraintEnd_toEndOf="@id/text_recording_title"
+                app:layout_constraintStart_toStartOf="@id/text_recording_title"
+                app:layout_constraintTop_toBottomOf="@id/text_recording_title"
                 app:startedLocalDateTime="@{recording.startedAt}" />
 
             <TextView
-                android:id="@+id/overview_recording_values"
+                android:id="@+id/text_recording_values"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/overview_recording_title"
-                app:layout_constraintStart_toStartOf="@id/overview_recording_title"
-                app:layout_constraintTop_toBottomOf="@id/overview_recording_start_time"
+                app:layout_constraintEnd_toEndOf="@id/text_recording_title"
+                app:layout_constraintStart_toStartOf="@id/text_recording_title"
+                app:layout_constraintTop_toBottomOf="@id/text_recording_start_time"
                 app:sensorValues="@{recording.latestValues}" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

@@ -17,7 +17,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/connect_fab"
+            android:id="@+id/fab_connect"
             style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             app:icon="@drawable/ic_baseline_bluetooth_searching_24" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/connect_fab_small"
+            android:id="@+id/fab_small_connect"
             style="@style/Widget.MaterialComponents.FloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,18 +37,18 @@
             android:contentDescription="@string/connect_fab_description"
             android:src="@drawable/ic_baseline_bluetooth_searching_24"
             android:visibility="gone"
-            app:layout_anchor="@id/connect_fab_small_anchor_gap"
+            app:layout_anchor="@id/fab_anchor_gap"
             app:layout_anchorGravity="top|end" />
 
         <View
-            android:id="@+id/connect_fab_small_anchor_gap"
+            android:id="@+id/fab_anchor_gap"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            app:layout_anchor="@id/record_fab"
+            app:layout_anchor="@id/fab_record"
             app:layout_anchorGravity="top|end" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/record_fab"
+            android:id="@+id/fab_record"
             style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
             app:icon="@drawable/ic_baseline_play_arrow_24" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/stop_record_fab"
+            android:id="@+id/fab_stop_record"
             style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
             app:icon="@drawable/ic_baseline_stop_24" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/devices_recyclerview"
+            android:id="@+id/recycler_devices"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

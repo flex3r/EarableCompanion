@@ -25,9 +25,9 @@ class GenericDeviceFragment : DeviceFragment() {
             vm = viewModel
             lifecycleOwner = this@GenericDeviceFragment
 
-            genericHeartRateEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setHeartRateEnabled(isChecked) }
-            genericBodyTemperatureEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setBodyTemperatureEnabled(isChecked) }
-            genericOximeterEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setOximeterEnabled(isChecked) }
+            switchHeartRate.setOnCheckedChangeListener { _, isChecked -> viewModel.setHeartRateEnabled(isChecked) }
+            switchBodyTemperature.setOnCheckedChangeListener { _, isChecked -> viewModel.setBodyTemperatureEnabled(isChecked) }
+            switchOximeter.setOnCheckedChangeListener { _, isChecked -> viewModel.setOximeterEnabled(isChecked) }
         }
 
         setHasOptionsMenu(true)

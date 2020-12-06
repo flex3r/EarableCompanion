@@ -14,7 +14,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/esense_device_save_fab"
+            android:id="@+id/fab_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -31,19 +31,19 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/sample_rate_text"
+                    android:id="@+id/text_sample_rate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:text="@string/sample_rate_text"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    app:layout_constraintBottom_toBottomOf="@id/sample_rate_slider"
-                    app:layout_constraintEnd_toStartOf="@id/sample_rate_slider"
+                    app:layout_constraintBottom_toBottomOf="@id/slider_sample_rate"
+                    app:layout_constraintEnd_toStartOf="@id/slider_sample_rate"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/sample_rate_slider" />
+                    app:layout_constraintTop_toTopOf="@id/slider_sample_rate" />
 
                 <com.google.android.material.slider.Slider
-                    android:id="@+id/sample_rate_slider"
+                    android:id="@+id/slider_sample_rate"
                     style="@style/Widget.MaterialComponents.Slider"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                     app:haloColor="@color/material_slider_halo_color_secondary"
                     app:labelBehavior="withinBounds"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/sample_rate_text"
+                    app:layout_constraintStart_toEndOf="@id/text_sample_rate"
                     app:layout_constraintTop_toTopOf="parent"
                     app:thumbColor="?attr/colorSecondary"
                     app:trackColorActive="@color/material_slider_active_track_color_secondary"
@@ -67,30 +67,30 @@
                     android:layout_height="1dp"
                     android:layout_marginVertical="4dp"
                     android:background="?attr/colorControlHighlight"
-                    app:layout_constraintBottom_toTopOf="@id/button_enabled_switch"
+                    app:layout_constraintBottom_toTopOf="@id/switch_button_presses"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/sample_rate_slider" />
+                    app:layout_constraintTop_toBottomOf="@id/slider_sample_rate" />
 
                 <TextView
-                    android:id="@+id/button_enabled_text"
+                    android:id="@+id/text_button_presses"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:text="@string/button_enabled_text"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    app:layout_constraintBottom_toBottomOf="@id/button_enabled_switch"
-                    app:layout_constraintEnd_toStartOf="@id/button_enabled_switch"
+                    app:layout_constraintBottom_toBottomOf="@id/switch_button_presses"
+                    app:layout_constraintEnd_toStartOf="@id/switch_button_presses"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/button_enabled_switch" />
+                    app:layout_constraintTop_toTopOf="@id/switch_button_presses" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/button_enabled_switch"
+                    android:id="@+id/switch_button_presses"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:checked="@{vm.device.config.buttonEnabled}"
-                    app:layout_constraintStart_toStartOf="@id/sample_rate_slider"
+                    app:layout_constraintStart_toStartOf="@id/slider_sample_rate"
                     app:layout_constraintTop_toBottomOf="@id/esense_divider_1" />
 
                 <View
@@ -99,34 +99,34 @@
                     android:layout_height="1dp"
                     android:layout_marginVertical="4dp"
                     android:background="?attr/colorControlHighlight"
-                    app:layout_constraintBottom_toTopOf="@id/acc_enabled_switch"
+                    app:layout_constraintBottom_toTopOf="@id/switch_accelerometer"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/button_enabled_switch" />
+                    app:layout_constraintTop_toBottomOf="@id/switch_button_presses" />
 
                 <TextView
-                    android:id="@+id/acc_enabled_text"
+                    android:id="@+id/text_accelerometer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:text="@string/acc_enabled_text"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    app:layout_constraintBottom_toBottomOf="@id/acc_enabled_switch"
-                    app:layout_constraintEnd_toStartOf="@id/acc_enabled_switch"
+                    app:layout_constraintBottom_toBottomOf="@id/switch_accelerometer"
+                    app:layout_constraintEnd_toStartOf="@id/switch_accelerometer"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/acc_enabled_switch" />
+                    app:layout_constraintTop_toTopOf="@id/switch_accelerometer" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/acc_enabled_switch"
+                    android:id="@+id/switch_accelerometer"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:checked="@{vm.device.config.accEnabled}"
-                    app:layout_constraintStart_toStartOf="@id/sample_rate_slider"
+                    app:layout_constraintStart_toStartOf="@id/slider_sample_rate"
                     app:layout_constraintTop_toBottomOf="@id/esense_divider_2" />
 
                 <TextView
-                    android:id="@+id/acc_range_text"
+                    android:id="@+id/text_accelerometer_range"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
@@ -143,8 +143,8 @@
                     android:layout_margin="16dp"
                     app:accRange="@{vm.device.config.accRange}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/acc_range_text"
-                    app:layout_constraintTop_toBottomOf="@id/acc_enabled_switch">
+                    app:layout_constraintStart_toEndOf="@id/text_accelerometer_range"
+                    app:layout_constraintTop_toBottomOf="@id/switch_accelerometer">
 
                     <RadioButton
                         android:id="@+id/acc_range_2"
@@ -180,7 +180,7 @@
                 </RadioGroup>
 
                 <TextView
-                    android:id="@+id/acc_low_pass_bandwidth_text"
+                    android:id="@+id/text_accelerometer_low_pass_bandwidth"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
@@ -197,7 +197,7 @@
                     android:layout_margin="16dp"
                     app:accLPFBandwidth="@{vm.device.config.accLPF}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/acc_low_pass_bandwidth_text"
+                    app:layout_constraintStart_toEndOf="@id/text_accelerometer_low_pass_bandwidth"
                     app:layout_constraintTop_toBottomOf="@id/acc_range_group">
 
                     <RadioButton
@@ -271,25 +271,25 @@
                     android:layout_height="1dp"
                     android:layout_marginVertical="4dp"
                     android:background="?attr/colorControlHighlight"
-                    app:layout_constraintBottom_toTopOf="@id/gyro_enabled_switch"
+                    app:layout_constraintBottom_toTopOf="@id/switch_gyroscope"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/acc_low_pass_bandwidth_group" />
 
                 <TextView
-                    android:id="@+id/gyro_enabled_text"
+                    android:id="@+id/text_gyroscope"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:text="@string/gyro_enabled_text"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    app:layout_constraintBottom_toBottomOf="@id/gyro_enabled_switch"
-                    app:layout_constraintEnd_toStartOf="@id/gyro_enabled_switch"
+                    app:layout_constraintBottom_toBottomOf="@id/switch_gyroscope"
+                    app:layout_constraintEnd_toStartOf="@id/switch_gyroscope"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/gyro_enabled_switch" />
+                    app:layout_constraintTop_toTopOf="@id/switch_gyroscope" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/gyro_enabled_switch"
+                    android:id="@+id/switch_gyroscope"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
@@ -298,7 +298,7 @@
                     app:layout_constraintTop_toBottomOf="@id/esense_divider_3" />
 
                 <TextView
-                    android:id="@+id/gyro_range_text"
+                    android:id="@+id/text_gyroscope_range"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
@@ -315,8 +315,8 @@
                     android:layout_margin="16dp"
                     app:gyroRange="@{vm.device.config.gyroRange}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/gyro_range_text"
-                    app:layout_constraintTop_toBottomOf="@id/gyro_enabled_switch">
+                    app:layout_constraintStart_toEndOf="@id/text_gyroscope_range"
+                    app:layout_constraintTop_toBottomOf="@id/switch_gyroscope">
 
                     <RadioButton
                         android:id="@+id/gyro_range_250"
@@ -352,7 +352,7 @@
                 </RadioGroup>
 
                 <TextView
-                    android:id="@+id/gyro_low_pass_bandwidth_text"
+                    android:id="@+id/text_gyroscope_low_pass_bandwidth"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
@@ -369,7 +369,7 @@
                     android:layout_margin="16dp"
                     app:gyroLPFBandwidth="@{vm.device.config.gyroLPF}"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/gyro_low_pass_bandwidth_text"
+                    app:layout_constraintStart_toEndOf="@id/text_gyroscope_low_pass_bandwidth"
                     app:layout_constraintTop_toBottomOf="@id/gyro_range_group">
 
                     <RadioButton

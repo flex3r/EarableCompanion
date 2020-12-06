@@ -20,19 +20,19 @@
             android:padding="8dp">
 
             <ImageView
-                android:id="@+id/sensor_data_detail_chart_icon"
+                android:id="@+id/icon_chart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/sensor_data_detail_chart_icon_description"
                 android:src="@drawable/ic_baseline_insert_chart_24"
-                app:layout_constraintBottom_toBottomOf="@id/sensor_data_detail_chart_title"
+                app:layout_constraintBottom_toBottomOf="@id/text_chart_title"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/sensor_data_detail_chart_title"
+                app:layout_constraintTop_toTopOf="@id/text_chart_title"
                 app:tint="?attr/colorSecondary" />
 
             <TextView
-                android:id="@+id/sensor_data_detail_chart_title"
+                android:id="@+id/text_chart_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -40,44 +40,44 @@
                 android:gravity="center_horizontal"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:dataTypeTitle="@{item.type}"
-                app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_device_name"
+                app:layout_constraintBottom_toTopOf="@id/text_device_name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/sensor_data_detail_chart_icon"
+                app:layout_constraintStart_toEndOf="@id/icon_chart"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/sensor_data_detail_device_name"
+                android:id="@+id/text_device_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@{item.deviceName == null ? @string/unknown_device_name : item.deviceName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_device_address"
-                app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_chart_title"
-                app:layout_constraintStart_toStartOf="@id/sensor_data_detail_chart_icon"
-                app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_chart_title" />
+                app:layout_constraintBottom_toTopOf="@id/text_device_address"
+                app:layout_constraintEnd_toEndOf="@id/text_chart_title"
+                app:layout_constraintStart_toStartOf="@id/icon_chart"
+                app:layout_constraintTop_toBottomOf="@id/text_chart_title" />
 
             <TextView
-                android:id="@+id/sensor_data_detail_device_address"
+                android:id="@+id/text_device_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="@{item.deviceAddress == null ? @string/unknown_device_address : item.deviceAddress}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintBottom_toTopOf="@id/sensor_data_detail_chart"
-                app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_chart_title"
-                app:layout_constraintStart_toStartOf="@id/sensor_data_detail_chart_icon"
-                app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_device_name" />
+                app:layout_constraintBottom_toTopOf="@id/chart_data"
+                app:layout_constraintEnd_toEndOf="@id/text_chart_title"
+                app:layout_constraintStart_toStartOf="@id/icon_chart"
+                app:layout_constraintTop_toBottomOf="@id/text_device_name" />
 
             <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/sensor_data_detail_chart"
+                android:id="@+id/chart_data"
                 android:layout_width="match_parent"
                 android:layout_height="256dp"
                 app:dataEntries="@{item.data}"
                 app:dataType="@{item.type}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/sensor_data_detail_chart_title"
-                app:layout_constraintStart_toStartOf="@id/sensor_data_detail_chart_title"
-                app:layout_constraintTop_toBottomOf="@id/sensor_data_detail_device_address" />
+                app:layout_constraintEnd_toEndOf="@id/text_chart_title"
+                app:layout_constraintStart_toStartOf="@id/text_chart_title"
+                app:layout_constraintTop_toBottomOf="@id/text_device_address" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

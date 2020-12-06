@@ -70,23 +70,23 @@ class OverviewFragment : Fragment() {
             overviewItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
             connectedDevicesAndRecording.observe(viewLifecycleOwner) { (hasConnectedDevices, isRecording) ->
                 // show when no connected devices && not recording
-                binding.connectFab.showOrHide(!hasConnectedDevices && !isRecording)
+                binding.fabConnect.showOrHide(!hasConnectedDevices && !isRecording)
                 // show when connected devices && not recording
-                binding.recordFab.showOrHide(hasConnectedDevices && !isRecording)
-                binding.connectFabSmall.showOrHide(hasConnectedDevices && !isRecording)
+                binding.fabRecord.showOrHide(hasConnectedDevices && !isRecording)
+                binding.fabSmallConnect.showOrHide(hasConnectedDevices && !isRecording)
                 // show when recording
-                binding.stopRecordFab.showOrHide(isRecording)
+                binding.fabStopRecord.showOrHide(isRecording)
             }
         }
 
         binding = OverviewFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@OverviewFragment
             vm = viewModel
-            devicesRecyclerview.adapter = adapter
-            connectFab.setOnClickListener { showConnectionBottomSheet() }
-            connectFabSmall.setOnClickListener { showConnectionBottomSheet() }
-            recordFab.setOnClickListener { requestPermissionIfNeeded() }
-            stopRecordFab.setOnClickListener { stopRecording() }
+            recyclerDevices.adapter = adapter
+            fabConnect.setOnClickListener { showConnectionBottomSheet() }
+            fabSmallConnect.setOnClickListener { showConnectionBottomSheet() }
+            fabRecord.setOnClickListener { requestPermissionIfNeeded() }
+            fabStopRecord.setOnClickListener { stopRecording() }
         }
 
         return binding.root

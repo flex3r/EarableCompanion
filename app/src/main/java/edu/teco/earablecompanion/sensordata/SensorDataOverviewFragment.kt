@@ -49,8 +49,8 @@ class SensorDataOverviewFragment : Fragment() {
         binding = SensorDataOverviewFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@SensorDataOverviewFragment
-            sensorDataRecyclerview.adapter = adapter
-            sensorDataOverviewExportFab.setOnClickListener { createZipRegistration.launch("Data.zip") }
+            recyclerData.adapter = adapter
+            fabExportAll.setOnClickListener { createZipRegistration.launch("Data.zip") }
         }
 
         return binding.root

@@ -10,7 +10,7 @@ class LabelAdapter(val entries: MutableList<LabelItem>, private val defaults: Li
 
     inner class LabelViewHolder(val binding: LabelItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.labelDelete.setOnClickListener {
+            binding.iconDelete.setOnClickListener {
                 entries.removeAt(bindingAdapterPosition)
                 notifyItemRemoved(bindingAdapterPosition)
             }
@@ -43,8 +43,8 @@ class LabelAdapter(val entries: MutableList<LabelItem>, private val defaults: Li
                 val item = entries[position]
                 holder.binding.label = item as LabelItem.Label
                 if (defaults.contains(item.name)) {
-                    holder.binding.labelInput.isEnabled = false
-                    holder.binding.labelDelete.isEnabled = false
+                    holder.binding.inputLayoutLabel.isEnabled = false
+                    holder.binding.iconDelete.isEnabled = false
                 }
             }
         }

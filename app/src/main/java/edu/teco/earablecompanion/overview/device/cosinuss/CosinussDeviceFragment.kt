@@ -25,9 +25,9 @@ class CosinussDeviceFragment : DeviceFragment() {
             vm = viewModel
             lifecycleOwner = this@CosinussDeviceFragment
 
-            cosinussHeartRateEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setHeartRateEnabled(isChecked) }
-            cosinussBodyTemperatureEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setBodyTemperatureEnabled(isChecked) }
-            cosinussAccEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerEnabled(isChecked) }
+            switchHeartRate.setOnCheckedChangeListener { _, isChecked -> viewModel.setHeartRateEnabled(isChecked) }
+            switchBodyTemperature.setOnCheckedChangeListener { _, isChecked -> viewModel.setBodyTemperatureEnabled(isChecked) }
+            switchAccelerometer.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerEnabled(isChecked) }
         }
 
         setHasOptionsMenu(true)

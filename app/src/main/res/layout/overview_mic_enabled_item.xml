@@ -20,19 +20,19 @@
             android:padding="8dp">
 
             <ImageView
-                android:id="@+id/overview_mic_enabled_icon"
+                android:id="@+id/icon_mic_enabled"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:contentDescription="@string/overview_mic_enabled_icon_description"
                 android:src="@{item.scoConnected ? @drawable/ic_baseline_mic_24 : @drawable/ic_baseline_mic_off_24}"
-                app:layout_constraintBottom_toBottomOf="@id/overview_mic_enabled_header"
+                app:layout_constraintBottom_toBottomOf="@id/text_header_mic_enabled"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/overview_mic_enabled_header"
+                app:layout_constraintTop_toTopOf="@id/text_header_mic_enabled"
                 app:tint="?attr/colorSecondary" />
 
             <TextView
-                android:id="@+id/overview_mic_enabled_header"
+                android:id="@+id/text_header_mic_enabled"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -41,23 +41,23 @@
                 android:text="@string/overview_mic_enabled_header"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/overview_mic_enabled_icon"
+                app:layout_constraintStart_toEndOf="@id/icon_mic_enabled"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/overview_mic_enabled_status"
+                android:id="@+id/text_sco_status"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:text="@{item.scoConnected ? @string/overview_mic_enabled_connected : @string/overview_mic_enabled_disconnected}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/overview_mic_enabled_button"
-                app:layout_constraintStart_toStartOf="@id/overview_mic_enabled_icon"
-                app:layout_constraintTop_toBottomOf="@id/overview_mic_enabled_header" />
+                app:layout_constraintEnd_toStartOf="@id/button_disable_mic"
+                app:layout_constraintStart_toStartOf="@id/icon_mic_enabled"
+                app:layout_constraintTop_toBottomOf="@id/text_header_mic_enabled" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/overview_mic_enabled_button"
+                android:id="@+id/button_disable_mic"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,8 +66,8 @@
                 android:text="@string/overview_mic_enabled_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/overview_mic_enabled_status"
-                app:layout_constraintTop_toBottomOf="@id/overview_mic_enabled_header" />
+                app:layout_constraintStart_toEndOf="@id/text_sco_status"
+                app:layout_constraintTop_toBottomOf="@id/text_header_mic_enabled" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </layout>

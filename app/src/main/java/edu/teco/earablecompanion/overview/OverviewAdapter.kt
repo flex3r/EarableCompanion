@@ -45,8 +45,8 @@ class OverviewAdapter(
                 with(holder.binding) {
                     device = entry
                     root.setOnClickListener { onDeviceClick(entry) }
-                    overviewDeviceDisconnect.setOnClickListener { onDisconnect(entry) }
-                    overviewDeviceCalibrate.setOnClickListener { onCalibrate(entry) }
+                    buttonDisconnect.setOnClickListener { onDisconnect(entry) }
+                    buttonCalibrate.setOnClickListener { onCalibrate(entry) }
                 }
             }
             is RecordingViewHolder -> {
@@ -54,11 +54,11 @@ class OverviewAdapter(
             }
             is MicDisabledViewHolder -> {
                 holder.binding.item = getItem(position) as OverviewItem.MicDisabled
-                holder.binding.overviewMicDisabledButton.setOnClickListener { onMicEnabledClick(true) }
+                holder.binding.buttonEnableMic.setOnClickListener { onMicEnabledClick(true) }
             }
             is MicEnabled -> {
                 holder.binding.item = getItem(position) as OverviewItem.MicEnabled
-                holder.binding.overviewMicEnabledButton.setOnClickListener { onMicEnabledClick(false) }
+                holder.binding.buttonDisableMic.setOnClickListener { onMicEnabledClick(false) }
             }
         }
     }

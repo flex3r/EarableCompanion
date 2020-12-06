@@ -17,7 +17,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:id="@+id/sensor_data_overview_export_progress"
+            android:id="@+id/progress_export"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
@@ -25,19 +25,19 @@
             android:visibility="@{vm.shouldShowProgress ? View.VISIBLE : View.GONE}" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/sensor_data_overview_export_fab"
+            android:id="@+id/fab_export_all"
             style="@style/Widget.MaterialComponents.ExtendedFloatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:contentDescription="@string/export_fab_description"
+            android:contentDescription="@string/export_all_fab_description"
             android:text="@string/export_all_fab_text"
             android:visibility="@{vm.hasData &amp;&amp; !vm.shouldShowProgress ? View.VISIBLE : View.GONE}"
             app:icon="@drawable/ic_baseline_save_alt_24" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/sensor_data_recyclerview"
+            android:id="@+id/recycler_data"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

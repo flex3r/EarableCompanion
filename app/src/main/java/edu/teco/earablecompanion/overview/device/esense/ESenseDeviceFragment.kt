@@ -30,11 +30,11 @@ class ESenseDeviceFragment : DeviceFragment() {
             vm = viewModel
             lifecycleOwner = this@ESenseDeviceFragment
 
-            sampleRateSlider.setup()
-            buttonEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setButtonPressEnabled(isChecked) }
+            sliderSampleRate.setup()
+            switchButtonPresses.setOnCheckedChangeListener { _, isChecked -> viewModel.setButtonPressEnabled(isChecked) }
             setupAccelerometerSettings()
             setupGyroSensorSettings()
-            esenseDeviceSaveFab.setOnClickListener {
+            fabSave.setOnClickListener {
                 val config = viewModel.device.value?.config
                 val result = config?.let {
                     (activity as? MainActivity)?.earableService?.setConfig(args.device, it)
@@ -67,7 +67,7 @@ class ESenseDeviceFragment : DeviceFragment() {
     }
 
     private fun EsenseDeviceFragmentBinding.setupAccelerometerSettings() {
-        accEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerEnabled(isChecked) }
+        switchAccelerometer.setOnCheckedChangeListener { _, isChecked -> viewModel.setAccelerometerEnabled(isChecked) }
         accRangeGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.setAccelerometerRange(checkedId.toAccRange)
         }
@@ -98,7 +98,7 @@ class ESenseDeviceFragment : DeviceFragment() {
         }
 
     private fun EsenseDeviceFragmentBinding.setupGyroSensorSettings() {
-        gyroEnabledSwitch.setOnCheckedChangeListener { _, isChecked -> viewModel.setGyroSensorEnabled(isChecked) }
+        switchGyroscope.setOnCheckedChangeListener { _, isChecked -> viewModel.setGyroSensorEnabled(isChecked) }
         gyroRangeGroup.setOnCheckedChangeListener { _, checkedId ->
             viewModel.setGyroSensorRange(checkedId.toGyroRange)
         }

@@ -34,7 +34,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
         binding = ConnectionFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@ConnectionFragment
-            connectionCloseIcon.setOnClickListener { requireDialog().cancel() }
+            iconClose.setOnClickListener { requireDialog().cancel() }
         }
 
         viewModel.apply {
@@ -43,7 +43,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
             isConnecting.observe(viewLifecycleOwner) {
                 binding.root.post {
                     connectionAdapter.clickEnabled = !it
-                    binding.connectionDevicesRecyclerview.swapAdapter(connectionAdapter, false)
+                    binding.recyclerDevices.swapAdapter(connectionAdapter, false)
                 }
             }
         }
@@ -56,7 +56,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
         val linearLayoutManager = LinearLayoutManager(view.context)
         connectionAdapter = ConnectionAdapter(::startConnect)
 
-        binding.connectionDevicesRecyclerview.apply {
+        binding.recyclerDevices.apply {
             layoutManager = linearLayoutManager
             adapter = connectionAdapter.apply {
                 registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -98,8 +98,8 @@ class ConnectionFragment : BottomSheetDialogFragment() {
 
     private fun handleConnectionEvent(event: ConnectionEvent) {
         when (event) {
-            is ConnectionEvent.Pairing -> binding.connectionHeaderText.text = formatDeviceName(R.string.connection_header_text_pairing, event.device.name)
-            is ConnectionEvent.Connecting -> binding.connectionHeaderText.text = formatDeviceName(R.string.connection_header_text_connecting, event.device.name)
+            is ConnectionEvent.Pairing -> binding.textHeader.text = formatDeviceName(R.string.connection_header_text_pairing, event.device.name)
+            is ConnectionEvent.Connecting -> binding.textHeader.text = formatDeviceName(R.string.connection_header_text_connecting, event.device.name)
             is ConnectionEvent.Connected -> {
                 cancelDialog(delay = 1_000)
                 (parentFragment as? OverviewFragment)?.onConnected(event)
@@ -109,7 +109,7 @@ class ConnectionFragment : BottomSheetDialogFragment() {
                 cancelDialog()
                 (parentFragment as? OverviewFragment)?.onConnectionFailed()
             }
-            else -> binding.connectionHeaderText.text = getString(R.string.connection_header_text)
+            else -> binding.textHeader.text = getString(R.string.connection_header_text)
         }
     }
 
