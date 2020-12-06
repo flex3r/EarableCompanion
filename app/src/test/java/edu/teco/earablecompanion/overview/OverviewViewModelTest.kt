@@ -58,7 +58,10 @@ class OverviewViewModelTest {
 
     @Test
     fun testNoDevices() {
-        viewModel.overviewItems.test().assertValue(listOf(OverviewItem.NoDevices))
+        viewModel.overviewItems.test().assertValue(listOf(
+            OverviewItem.NoDevices,
+            OverviewItem.AddDevice(false)
+        ))
     }
 
     @Test
@@ -69,7 +72,8 @@ class OverviewViewModelTest {
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
 
         val expected = listOf(
-            OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false)
+            OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
+            OverviewItem.AddDevice(false),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -86,7 +90,8 @@ class OverviewViewModelTest {
 
         val expected = listOf(
             OverviewItem.Device(name1, address1, device1, EarableType.NotSupported, false),
-            OverviewItem.Device(name2, address2, device2, EarableType.NotSupported, false)
+            OverviewItem.Device(name2, address2, device2, EarableType.NotSupported, false),
+            OverviewItem.AddDevice(false),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -101,7 +106,8 @@ class OverviewViewModelTest {
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
 
         val expected = listOf(
-            OverviewItem.Device(name, address, mockDevice, EarableType.Generic(heartRateSupported = true, oximeterSupported = true), false)
+            OverviewItem.Device(name, address, mockDevice, EarableType.Generic(heartRateSupported = true, oximeterSupported = true), false),
+            OverviewItem.AddDevice(false),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -110,17 +116,19 @@ class OverviewViewModelTest {
     fun testDevicesWithConfigAndRecording() {
         val address = "address"
         val name = "name"
+        val title = "asd"
         val mockDevice = mockDevice(address, name)
         val mockConfig = mockConfig(EarableType.Generic())
         val dateTime = LocalDateTime.now()
-        val recording = SensorDataRecording(SensorData(title = "asd", createdAt = dateTime), listOf(mockDevice))
+        val recording = SensorDataRecording(SensorData(title = title, createdAt = dateTime), listOf(mockDevice))
         deviceConfigsFlow.value = mutableMapOf(address to mockConfig)
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
         activeRecordingFlow.value = recording
 
         val expected = listOf(
-            OverviewItem.Recording(dateTime, listOf(mockDevice), mapOf()),
-            OverviewItem.Device(name, address, mockDevice, EarableType.Generic(), false)
+            OverviewItem.Recording(title, dateTime),
+            OverviewItem.Device(name, address, mockDevice, EarableType.Generic(), false),
+            OverviewItem.AddDevice(true),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -135,7 +143,8 @@ class OverviewViewModelTest {
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
 
         val expected = listOf(
-            OverviewItem.Device(name, address, mockDevice, EarableType.Generic(), true)
+            OverviewItem.Device(name, address, mockDevice, EarableType.Generic(), true),
+            OverviewItem.AddDevice(false),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -153,6 +162,7 @@ class OverviewViewModelTest {
         val expected = listOf(
             OverviewItem.MicEnabled(scoConnected = false, recordingActive = false),
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
+            OverviewItem.AddDevice(false),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -169,6 +179,7 @@ class OverviewViewModelTest {
         val expected = listOf(
             OverviewItem.MicEnabled(scoConnected = true, recordingActive = false),
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
+            OverviewItem.AddDevice(false),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -177,18 +188,20 @@ class OverviewViewModelTest {
     fun testBondedDevicesMicEnabledAndScoAndRecording() {
         val address = "address"
         val name = "name"
+        val title = "asd"
         val mockDevice = mockDevice(address, name)
         val dateTime = LocalDateTime.now()
-        val recording = SensorDataRecording(SensorData(title = "asd", createdAt = dateTime), listOf(mockDevice))
+        val recording = SensorDataRecording(SensorData(title = title, createdAt = dateTime), listOf(mockDevice))
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
         micEnabledFlow.value = true
         bluetoothScoActiveFlow.value = true
         activeRecordingFlow.value = recording
 
         val expected = listOf(
-            OverviewItem.Recording(dateTime, listOf(mockDevice), mapOf()),
+            OverviewItem.Recording(title, dateTime),
             OverviewItem.MicEnabled(scoConnected = true, recordingActive = true),
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
+            OverviewItem.AddDevice(true),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -205,6 +218,7 @@ class OverviewViewModelTest {
         val expected = listOf(
             OverviewItem.MicDisabled(false),
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
+            OverviewItem.AddDevice(false),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -213,18 +227,20 @@ class OverviewViewModelTest {
     fun testBondedDevicesMicDisabledRecording() {
         val address = "address"
         val name = "name"
+        val title = "asd"
         val mockDevice = mockDevice(address, name)
         val dateTime = LocalDateTime.now()
-        val recording = SensorDataRecording(SensorData(title = "asd", createdAt = dateTime), listOf(mockDevice))
+        val recording = SensorDataRecording(SensorData(title = title, createdAt = dateTime), listOf(mockDevice))
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
         micEnabledFlow.value = false
         bluetoothScoActiveFlow.value = true
         activeRecordingFlow.value = recording
 
         val expected = listOf(
-            OverviewItem.Recording(dateTime, listOf(mockDevice), mapOf()),
+            OverviewItem.Recording(title, dateTime),
             OverviewItem.MicDisabled(true),
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
+            OverviewItem.AddDevice(true),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
@@ -240,27 +256,28 @@ class OverviewViewModelTest {
 
         val expected = listOf(
             OverviewItem.Device(name, address, mockDevice, EarableType.NotSupported, false),
+            OverviewItem.AddDevice(false),
         )
         viewModel.overviewItems.test().assertValue(expected)
     }
 
     @Test
-    fun testConnectedDevicesAndRecordingInitial() {
-        viewModel.connectedDevicesAndRecording.test().assertValue(false to false)
+    fun testConnectedDevicesInitial() {
+        viewModel.hasConnectedDevices.test().assertValue(false)
     }
 
     @Test
-    fun testUnSupportedConnectedDevicesAndNoRecording() {
+    fun testUnSupportedConnectedDevices() {
         val address = "address"
         val name = "name"
         val mockDevice = mockDevice(address, name)
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
 
-        viewModel.connectedDevicesAndRecording.test().assertValue(false to false)
+        viewModel.hasConnectedDevices.test().assertValue(false)
     }
 
     @Test
-    fun testConnectedDevicesAndNoRecording() {
+    fun testConnectedDevices() {
         val address = "address"
         val name = "name"
         val mockDevice = mockDevice(address, name)
@@ -268,11 +285,16 @@ class OverviewViewModelTest {
         deviceConfigsFlow.value = mutableMapOf(address to mockConfig)
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
 
-        viewModel.connectedDevicesAndRecording.test().assertValue(true to false)
+        viewModel.hasConnectedDevices.test().assertValue(true)
     }
 
     @Test
-    fun testConnectedDevicesAndRecording() {
+    fun testIsRecordingInitial() {
+        viewModel.isRecording.test().assertValue(false)
+    }
+
+    @Test
+    fun testIsRecording() {
         val address = "address"
         val name = "name"
         val mockDevice = mockDevice(address, name)
@@ -283,7 +305,7 @@ class OverviewViewModelTest {
         connectedDevicesFlow.value = mutableMapOf(address to mockDevice)
         activeRecordingFlow.value = recording
 
-        viewModel.connectedDevicesAndRecording.test().assertValue(true to true)
+        viewModel.isRecording.test().assertValue(true)
     }
 
     @Test
