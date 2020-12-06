@@ -17,7 +17,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button_connect"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="@string/overview_connect_button_description"
