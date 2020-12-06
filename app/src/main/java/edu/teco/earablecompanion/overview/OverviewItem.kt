@@ -41,12 +41,11 @@ sealed class OverviewItem {
         }
     }
 
-    data class Recording(val startedAt: LocalDateTime, val devices: List<BluetoothDevice>, val latestValues: Map<String, SensorDataEntry>) : OverviewItem() {
+    data class Recording(val title: String, val startedAt: LocalDateTime) : OverviewItem() {
         companion object {
             fun SensorDataRecording.toOverviewItem() = Recording(
-                startedAt = data.createdAt,
-                devices = devices,
-                latestValues = latestValues
+                title = data.title,
+                startedAt = data.createdAt
             )
         }
     }

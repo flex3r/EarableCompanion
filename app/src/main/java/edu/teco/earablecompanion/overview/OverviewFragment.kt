@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothDevice
 import android.content.SharedPreferences
 import android.media.session.MediaController
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +25,7 @@ import edu.teco.earablecompanion.databinding.OverviewFragmentBinding
 import edu.teco.earablecompanion.overview.calibration.CalibrationFragment
 import edu.teco.earablecompanion.overview.connection.ConnectionEvent
 import edu.teco.earablecompanion.overview.connection.ConnectionFragment
+import edu.teco.earablecompanion.overview.values.ValuesFragment
 import edu.teco.earablecompanion.utils.extensions.showShortSnackbar
 import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 
@@ -45,7 +45,7 @@ class OverviewFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val adapter = OverviewAdapter(::showConnectionBottomSheet, ::disconnectDevice, ::calibrateDevice, ::setMicEnabled) { device ->
+        val adapter = OverviewAdapter(::showConnectionBottomSheet, ::disconnectDevice, ::showValuesDialog, ::calibrateDevice, ::setMicEnabled) { device ->
             if (viewModel.isRecording.valueOrFalse) return@OverviewAdapter
 
             val action = when (device.type) {
@@ -95,6 +95,11 @@ class OverviewFragment : Fragment() {
 
     fun onConnectionFailed() {
         binding.root.showShortSnackbar(getString(R.string.connection_snackbar_text_failed))
+    }
+
+    private fun showValuesDialog() {
+        val dialog = ValuesFragment()
+        dialog.show(childFragmentManager, ValuesFragment::class.java.simpleName)
     }
 
     private fun calibrateDevice(item: OverviewItem.Device) {

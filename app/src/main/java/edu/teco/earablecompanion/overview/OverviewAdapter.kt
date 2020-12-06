@@ -10,11 +10,11 @@ import edu.teco.earablecompanion.databinding.*
 class OverviewAdapter(
     private val onStartConnect: () -> Unit,
     private val onDisconnect: (OverviewItem.Device) -> Unit,
+    private val onShowValues: () -> Unit,
     private val onCalibrate: (OverviewItem.Device) -> Unit,
     private val onMicEnabledClick: (enabled: Boolean) -> Unit,
     private val onDeviceClick: (item: OverviewItem.Device) -> Unit,
-) :
-    ListAdapter<OverviewItem, RecyclerView.ViewHolder>(DetectDiff()) {
+) : ListAdapter<OverviewItem, RecyclerView.ViewHolder>(DetectDiff()) {
 
     class DeviceViewHolder(val binding: OverviewDeviceItemBinding) : RecyclerView.ViewHolder(binding.root)
     class NoDevicesViewHolder(binding: OverviewNoDevicesItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -44,38 +44,35 @@ class OverviewAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is DeviceViewHolder -> {
+            is DeviceViewHolder -> with(holder.binding) {
                 val entry = getItem(position) as OverviewItem.Device
-                with(holder.binding) {
-                    device = entry
-                    root.setOnClickListener { onDeviceClick(entry) }
-                    buttonDisconnect.setOnClickListener { onDisconnect(entry) }
-                    buttonCalibrate.setOnClickListener { onCalibrate(entry) }
-                }
+                device = entry
+                root.setOnClickListener { onDeviceClick(entry) }
+                buttonDisconnect.setOnClickListener { onDisconnect(entry) }
+                buttonCalibrate.setOnClickListener { onCalibrate(entry) }
             }
-            is RecordingViewHolder -> {
-                holder.binding.recording = getItem(position) as OverviewItem.Recording
+            is RecordingViewHolder -> with(holder.binding) {
+                recording = getItem(position) as OverviewItem.Recording
+                buttonShowValues.setOnClickListener { onShowValues() }
             }
-            is MicDisabledViewHolder -> {
-                holder.binding.item = getItem(position) as OverviewItem.MicDisabled
-                holder.binding.buttonEnableMic.setOnClickListener { onMicEnabledClick(true) }
+            is MicDisabledViewHolder -> with(holder.binding) {
+                item = getItem(position) as OverviewItem.MicDisabled
+                buttonEnableMic.setOnClickListener { onMicEnabledClick(true) }
             }
-            is MicEnabled -> {
-                holder.binding.item = getItem(position) as OverviewItem.MicEnabled
-                holder.binding.buttonDisableMic.setOnClickListener { onMicEnabledClick(false) }
+            is MicEnabled -> with(holder.binding) {
+                item = getItem(position) as OverviewItem.MicEnabled
+                buttonDisableMic.setOnClickListener { onMicEnabledClick(false) }
             }
-            is AddDevice -> {
-                holder.binding.item = getItem(position) as OverviewItem.AddDevice
-                holder.binding.buttonConnect.setOnClickListener { onStartConnect() }
+            is AddDevice -> with(holder.binding) {
+                item = getItem(position) as OverviewItem.AddDevice
+                buttonConnect.setOnClickListener { onStartConnect() }
             }
         }
     }
 
     private class DetectDiff : DiffUtil.ItemCallback<OverviewItem>() {
         override fun areItemsTheSame(oldItem: OverviewItem, newItem: OverviewItem): Boolean = oldItem == newItem
-        override fun areContentsTheSame(oldItem: OverviewItem, newItem: OverviewItem): Boolean {
-            return if (newItem is OverviewItem.Recording) false else oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: OverviewItem, newItem: OverviewItem): Boolean = oldItem == newItem
     }
 
     companion object {

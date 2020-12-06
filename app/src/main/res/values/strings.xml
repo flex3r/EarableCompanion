@@ -89,6 +89,7 @@
     <string name="sensor_data_overview_remove_text">Remove</string>
     <string name="overview_device_icon_description">Device icon</string>
     <string name="overview_config_icon_description">Config icon</string>
+    <string name="overview_show_values_button">Show values</string>
     <string name="overview_mic_disabled_icon_description">Enable mic icon</string>
     <string name="overview_mic_disabled_header">Microphone disabled</string>
     <string name="overview_mic_disabled_button">Enable</string>
@@ -138,7 +139,7 @@
     <string name="record_fab_text">Record</string>
     <string name="stop_record_fab_text">Stop</string>
     <string name="overview_recording_icon_description">Recording icon</string>
-    <string name="overview_recording_title_text">Recording active</string>
+    <string name="overview_recording_title_text">Recording active: %s</string>
     <string name="recording_started_datetime_format">Started %s</string>
     <string name="recording_stopped_datetime_format">Stopped %s</string>
     <string name="start_recording_dialog_title">Start a recording</string>
