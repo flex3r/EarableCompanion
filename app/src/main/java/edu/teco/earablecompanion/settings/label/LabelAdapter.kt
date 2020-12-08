@@ -41,10 +41,12 @@ class LabelAdapter(val entries: MutableList<LabelItem>, private val defaults: Li
         when (holder) {
             is LabelViewHolder -> {
                 val item = entries[position]
-                holder.binding.label = item as LabelItem.Label
-                if (defaults.contains(item.name)) {
-                    holder.binding.inputLayoutLabel.isEnabled = false
-                    holder.binding.iconDelete.isEnabled = false
+                with(holder.binding) {
+                    label = item as LabelItem.Label
+
+                    val enabled = !defaults.contains(item.name)
+                    inputLayoutLabel.isEnabled = enabled
+                    iconDelete.isEnabled = enabled
                 }
             }
         }
