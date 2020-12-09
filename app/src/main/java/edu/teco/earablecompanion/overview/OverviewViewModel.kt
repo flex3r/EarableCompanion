@@ -12,7 +12,6 @@ import edu.teco.earablecompanion.data.SensorDataRepository
 import edu.teco.earablecompanion.overview.OverviewItem.Device.Companion.toOverviewItems
 import edu.teco.earablecompanion.overview.OverviewItem.Recording.Companion.toOverviewItem
 import edu.teco.earablecompanion.utils.extensions.hasBondedDevice
-import edu.teco.earablecompanion.utils.extensions.valueOrFalse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine

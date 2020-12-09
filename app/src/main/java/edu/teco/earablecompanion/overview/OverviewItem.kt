@@ -4,7 +4,6 @@ import android.bluetooth.BluetoothDevice
 import edu.teco.earablecompanion.bluetooth.EarableType
 import edu.teco.earablecompanion.bluetooth.config.Config
 import edu.teco.earablecompanion.data.SensorDataRecording
-import edu.teco.earablecompanion.data.entities.SensorDataEntry
 import java.time.LocalDateTime
 
 sealed class OverviewItem {
