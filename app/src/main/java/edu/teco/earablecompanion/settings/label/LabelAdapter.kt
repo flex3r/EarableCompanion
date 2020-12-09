@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import edu.teco.earablecompanion.databinding.LabelAddItemBinding
 import edu.teco.earablecompanion.databinding.LabelItemBinding
 
-class LabelAdapter(val entries: MutableList<LabelItem>, private val defaults: List<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class LabelAdapter(val entries: MutableList<LabelItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     inner class LabelViewHolder(val binding: LabelItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
@@ -41,13 +41,7 @@ class LabelAdapter(val entries: MutableList<LabelItem>, private val defaults: Li
         when (holder) {
             is LabelViewHolder -> {
                 val item = entries[position]
-                with(holder.binding) {
-                    label = item as LabelItem.Label
-
-                    val enabled = !defaults.contains(item.name)
-                    inputLayoutLabel.isEnabled = enabled
-                    iconDelete.isEnabled = enabled
-                }
+                holder.binding.label = item as LabelItem.Label
             }
         }
     }

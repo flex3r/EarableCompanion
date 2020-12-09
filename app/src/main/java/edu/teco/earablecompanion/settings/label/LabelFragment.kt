@@ -3,6 +3,7 @@ package edu.teco.earablecompanion.settings.label
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ class LabelFragment : BottomSheetDialogFragment() {
         val defaultString = getString(R.string.preference_recording_labels_default)
         val defaults = defaultString.split(",").map { it.trim() }
         val labels: List<LabelItem> = sharedPreferences.getString(key, defaultString)
+            ?.ifBlank { null }
             ?.split(",")
             ?.map { LabelItem.Label(it.trim()) }
             ?: defaults.map { LabelItem.Label(it) }
@@ -45,7 +47,7 @@ class LabelFragment : BottomSheetDialogFragment() {
         val entries = labels.toMutableList()
         entries.add(LabelItem.Add)
 
-        labelAdapter = LabelAdapter(entries, defaults)
+        labelAdapter = LabelAdapter(entries)
         binding.recyclerLabels.adapter = labelAdapter
     }
 
