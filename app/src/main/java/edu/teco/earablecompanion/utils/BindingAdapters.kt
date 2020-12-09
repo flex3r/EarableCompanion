@@ -4,6 +4,8 @@ import android.content.Context
 import android.text.format.DateUtils
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import com.github.mikephil.charting.charts.LineChart
@@ -202,46 +204,48 @@ fun LinearProgressIndicator.setByConnectionEvent(event: ConnectionEvent) {
 @BindingAdapter("sensorValues")
 fun TextView.setLatestSensorValues(map: Map<String, SensorDataEntry>) {
     val unknownDeviceName = context.getString(R.string.unknown_device_name)
-    text = buildString {
+    text = buildSpannedString {
         map.values.forEachIndexed { idx, it ->
-            append("${it.deviceName ?: unknownDeviceName} ${it.deviceAddress}\n")
+            bold { appendLine("${it.deviceName ?: unknownDeviceName} ${it.deviceAddress}") }
             if (it.accX != null && it.accY != null && it.accZ != null) {
                 val unit = context.getString(R.string.sensor_data_type_acc_unit)
-                append(context.getString(R.string.earable_supported_sensors_accelerometer))
-                append(" ${String.format("%.3f", it.accX)} $unit")
-                append(" ${String.format("%.3f", it.accY)} $unit")
-                append(" ${String.format("%.3f", it.accZ)} $unit\n")
+                bold { appendLine(context.getString(R.string.earable_supported_sensors_accelerometer)) }
+                appendLine("   X: ${String.format("%.3f", it.accX)} $unit")
+                appendLine("   Y: ${String.format("%.3f", it.accY)} $unit")
+                appendLine("   Z: ${String.format("%.3f", it.accZ)} $unit")
             }
             if (it.gyroX != null && it.gyroY != null && it.gyroZ != null) {
                 val unit = context.getString(R.string.sensor_data_type_gyro_unit)
-                append(context.getString(R.string.earable_supported_sensors_gyrosensor))
-                append(" ${String.format("%.3f", it.gyroX)} $unit")
-                append(" ${String.format("%.3f", it.gyroY)} $unit")
-                append(" ${String.format("%.3f", it.gyroZ)} $unit\n")
+                bold { appendLine(context.getString(R.string.earable_supported_sensors_gyrosensor)) }
+                appendLine("   X: ${String.format("%.3f", it.gyroX)} $unit")
+                appendLine("   Y: ${String.format("%.3f", it.gyroY)} $unit")
+                appendLine("   Z: ${String.format("%.3f", it.gyroZ)} $unit")
             }
             it.buttonPressed?.let { pressed ->
-                append(context.getString(R.string.earable_supported_sensors_button))
-                append(" ${pressed == 1}\n")
+                bold { appendLine(context.getString(R.string.earable_supported_sensors_button)) }
+                appendLine("   ${pressed == 1}")
             }
             it.heartRate?.let { rate ->
                 val unit = context.getString(R.string.sensor_data_type_heart_rate_unit)
-                append(context.getString(R.string.earable_supported_sensors_heart_rate))
-                append(" ${rate.toInt()} $unit\n")
+                bold { appendLine(context.getString(R.string.earable_supported_sensors_heart_rate)) }
+                appendLine("   $rate $unit")
             }
             it.bodyTemperature?.let { temp ->
                 val unit = context.getString(R.string.sensor_data_type_body_temperature_unit)
-                append(context.getString(R.string.earable_supported_sensors_body_temperature))
-                append(" ${String.format("%.3f", temp)} $unit\n")
+                bold { appendLine(context.getString(R.string.earable_supported_sensors_body_temperature)) }
+                appendLine("   ${String.format("%.3f", temp)} $unit")
             }
             if (it.oxygenSaturation != null && it.pulseRate != null) {
                 val unit = context.getString(R.string.sensor_data_type_heart_rate_unit)
-                append(context.getString(R.string.earable_supported_sensors_oximeter))
-                append(" ${String.format("%.2f", it.oxygenSaturation)}")
-                append(" ${String.format("%.3f", it.pulseRate)} $unit\n")
+                val saturation = context.getString(R.string.sensor_data_type_oxygen_saturation_title)
+                val pulse = context.getString(R.string.sensor_data_type_pulse_rate_title)
+                bold { appendLine(context.getString(R.string.earable_supported_sensors_oximeter)) }
+                appendLine("   $saturation: ${String.format("%.2f", it.oxygenSaturation)}")
+                appendLine("   $pulse: ${String.format("%.3f", it.pulseRate)} $unit")
             }
 
             if (idx != map.size - 1) {
-                append("\n")
+                appendLine()
             }
         }
     }
