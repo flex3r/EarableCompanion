@@ -12,6 +12,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataOverviewFragmentBinding
+import edu.teco.earablecompanion.databinding.ValuesFragmentBinding
 import edu.teco.earablecompanion.utils.CreateZipDocumentContract
 import edu.teco.earablecompanion.utils.extensions.observe
 import edu.teco.earablecompanion.utils.extensions.setFabScrollBehavior
@@ -23,7 +24,8 @@ class SensorDataOverviewFragment : Fragment() {
 
     private val viewModel: SensorDataOverviewViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
-    private lateinit var binding: SensorDataOverviewFragmentBinding
+    private var bindingRef: SensorDataOverviewFragmentBinding? = null
+    private val binding get() = bindingRef!!
 
     private val createZipRegistration = registerForActivityResult(CreateZipDocumentContract()) { result ->
         val tempDir = requireContext().getExternalFilesDir(null)
@@ -47,7 +49,7 @@ class SensorDataOverviewFragment : Fragment() {
             exportEventFlow.observe(viewLifecycleOwner, ::handleExportEvent)
         }
 
-        binding = SensorDataOverviewFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = SensorDataOverviewFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@SensorDataOverviewFragment
             recyclerData.adapter = adapter
@@ -56,6 +58,11 @@ class SensorDataOverviewFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
     }
 
     private fun onRemove(data: SensorDataOverviewItem.Data) {

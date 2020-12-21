@@ -18,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.ConnectionFragmentBinding
+import edu.teco.earablecompanion.databinding.ValuesFragmentBinding
 import edu.teco.earablecompanion.overview.OverviewFragment
 import edu.teco.earablecompanion.utils.extensions.isLandscape
 import edu.teco.earablecompanion.utils.extensions.valueOrFalse
@@ -27,11 +28,12 @@ import kotlinx.coroutines.delay
 class ConnectionFragment : BottomSheetDialogFragment() {
 
     private val viewModel: ConnectionViewModel by viewModels()
-    private lateinit var binding: ConnectionFragmentBinding
+    private var bindingRef: ConnectionFragmentBinding? = null
+    private val binding get() = bindingRef!!
     private lateinit var connectionAdapter: ConnectionAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = ConnectionFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = ConnectionFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@ConnectionFragment
             iconClose.setOnClickListener { requireDialog().cancel() }
@@ -89,6 +91,11 @@ class ConnectionFragment : BottomSheetDialogFragment() {
     override fun onCancel(dialog: DialogInterface) {
         (activity as? MainActivity)?.earableService?.stopScan()
         viewModel.clearConnectionEvent()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
     }
 
     private fun startConnect(item: ConnectionItem) {

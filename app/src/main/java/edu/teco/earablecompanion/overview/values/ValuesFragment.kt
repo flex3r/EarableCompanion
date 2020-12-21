@@ -16,10 +16,9 @@ import edu.teco.earablecompanion.utils.extensions.isLandscape
 class ValuesFragment : BottomSheetDialogFragment() {
 
     private val viewModel: ValuesViewModel by viewModels()
-    private lateinit var binding: ValuesFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = ValuesFragmentBinding.inflate(inflater, container, false).apply {
+        val binding = ValuesFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@ValuesFragment
             iconClose.setOnClickListener { requireDialog().cancel() }

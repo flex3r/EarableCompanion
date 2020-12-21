@@ -35,7 +35,8 @@ class OverviewFragment : Fragment() {
     private val viewModel: OverviewViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
     private val sharedPreferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
-    private lateinit var binding: OverviewFragmentBinding
+    private var bindingRef: OverviewFragmentBinding? = null
+    private val binding get() = bindingRef!!
 
     private val requestPermissionRegistration = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
         when {
@@ -70,7 +71,7 @@ class OverviewFragment : Fragment() {
             overviewItems.observe(viewLifecycleOwner) { adapter.submitList(it) }
         }
 
-        binding = OverviewFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = OverviewFragmentBinding.inflate(inflater, container, false).apply {
             lifecycleOwner = this@OverviewFragment
             vm = viewModel
             recyclerDevices.adapter = adapter
@@ -83,6 +84,11 @@ class OverviewFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
     }
 
     fun onConnected(event: ConnectionEvent.Connected) {

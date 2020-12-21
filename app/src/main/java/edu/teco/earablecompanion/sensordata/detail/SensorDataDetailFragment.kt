@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataDetailFragmentBinding
+import edu.teco.earablecompanion.databinding.ValuesFragmentBinding
 import edu.teco.earablecompanion.sensordata.SensorDataExportEvent
 import edu.teco.earablecompanion.utils.CreateCsvDocumentContract
 import edu.teco.earablecompanion.utils.extensions.observe
@@ -32,7 +33,8 @@ class SensorDataDetailFragment : Fragment() {
     private val viewModel: SensorDataDetailViewModel by viewModels()
     private val navController: NavController by lazy { findNavController() }
     private val args: SensorDataDetailFragmentArgs by navArgs()
-    private lateinit var binding: SensorDataDetailFragmentBinding
+    private var bindingRef: SensorDataDetailFragmentBinding? = null
+    private val binding get() = bindingRef!!
 
     private val createCsvRegistration = registerForActivityResult(CreateCsvDocumentContract()) { result ->
         when (result) {
@@ -61,7 +63,7 @@ class SensorDataDetailFragment : Fragment() {
             isNotActive.observe(viewLifecycleOwner) { activity?.invalidateOptionsMenu() }
         }
 
-        binding = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
+        bindingRef = SensorDataDetailFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@SensorDataDetailFragment
             recyclerData.adapter = adapter
@@ -102,6 +104,11 @@ class SensorDataDetailFragment : Fragment() {
     override fun onDetach() {
         (activity as? MainActivity)?.bottomNavigationVisible = true
         super.onDetach()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bindingRef = null
     }
 
     private fun removeData() {

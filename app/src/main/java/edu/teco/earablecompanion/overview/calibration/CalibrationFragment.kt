@@ -19,10 +19,9 @@ import edu.teco.earablecompanion.utils.extensions.isLandscape
 class CalibrationFragment : BottomSheetDialogFragment() {
 
     private val viewModel: CalibrationViewModel by viewModels()
-    private lateinit var binding: CalibrationFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = CalibrationFragmentBinding.inflate(inflater, container, false).apply {
+        val binding = CalibrationFragmentBinding.inflate(inflater, container, false).apply {
             vm = viewModel
             lifecycleOwner = this@CalibrationFragment
             iconClose.setOnClickListener { requireDialog().cancel() }
