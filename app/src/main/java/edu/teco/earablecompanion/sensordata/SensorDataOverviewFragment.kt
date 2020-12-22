@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import edu.teco.earablecompanion.MainActivity
 import edu.teco.earablecompanion.R
 import edu.teco.earablecompanion.databinding.SensorDataOverviewFragmentBinding
 import edu.teco.earablecompanion.databinding.ValuesFragmentBinding
@@ -68,7 +69,13 @@ class SensorDataOverviewFragment : Fragment() {
     private fun onRemove(data: SensorDataOverviewItem.Data) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.remove_data_dialog_title))
-            .setPositiveButton(getString(R.string.remove)) { _, _ -> viewModel.removeData(data) }
+            .setPositiveButton(getString(R.string.remove)) { _, _ ->
+                if (viewModel.isCurrentRecording(data)) {
+                    (activity as? MainActivity)?.earableService?.stopRecording()
+                }
+
+                viewModel.removeData(data)
+            }
             .setNegativeButton(getString(R.string.cancel)) { d, _ -> d.dismiss() }
             .show()
     }

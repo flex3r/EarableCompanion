@@ -101,7 +101,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sensor_data_overview_remove_text"
-                android:visibility="@{data.stoppedAt == null ? View.GONE : View.VISIBLE}"
                 app:icon="@drawable/ic_baseline_delete_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

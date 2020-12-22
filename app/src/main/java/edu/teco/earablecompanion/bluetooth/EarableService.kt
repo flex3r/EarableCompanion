@@ -350,7 +350,7 @@ class EarableService : Service() {
         dataRepository.startRecording(title, devices, micFile, calibrations)
     }
 
-    fun stopRecording(devices: List<BluetoothDevice>, configs: Map<String, Config>) {
+    fun stopRecording(devices: List<BluetoothDevice> = gatts.keys.toList(), configs: Map<String, Config> = connectionRepository.getCurrentConfigs()) {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
             val actions = mutableListOf<QueueAction>()

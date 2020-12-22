@@ -66,6 +66,8 @@ class SensorDataOverviewViewModel @ViewModelInject constructor(
         sensorDataRepository.removeData(data.id)
     }
 
+    fun isCurrentRecording(data: SensorDataOverviewItem.Data): Boolean = data.stoppedAt == null  && sensorDataRepository.isCurrentRecording(data.id)
+
     companion object {
         private val TAG = SensorDataOverviewViewModel::class.java.simpleName
     }

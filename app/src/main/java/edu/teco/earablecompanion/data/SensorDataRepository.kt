@@ -111,6 +111,8 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
         sensorDataDao.insertEntry(entry)
     }
 
+    fun isCurrentRecording(dataId: Long): Boolean = activeRecording.replayCache.first()?.data?.dataId == dataId
+
     suspend fun hasLogs(dataId: Long): Boolean = sensorDataDao.getLogEntryCountByDataId(dataId) > 0
 
     suspend fun updateSensorData(dataId: Long, title: String) = sensorDataDao.updateData(dataId, title)
