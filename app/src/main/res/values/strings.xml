@@ -4,7 +4,7 @@
     <string name="preference_about_header">About</string>
     <string name="preference_bluetooth_header">Bluetooth</string>
     <string name="preference_recording_header">Recording</string>
-    <string name="preference_data_header">Recording</string>
+    <string name="preference_data_header">Data</string>
     <string name="preference_about_key" translatable="false">preference_about_key</string>
     <string name="preference_about_summary">EarableCompanion %s</string>
     <string name="preference_clear_data_header">Clear data</string>
