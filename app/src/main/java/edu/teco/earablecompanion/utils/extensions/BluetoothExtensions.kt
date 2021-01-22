@@ -11,7 +11,7 @@ fun BluetoothGatt.collectCharacteristics(): Map<String, BluetoothGattCharacteris
     }
 }.flatten().toMap()
 
-fun BluetoothDevice.connect(context: Context, callback: BluetoothGattCallback): BluetoothGatt = connectGatt(context, false, callback, BluetoothDevice.TRANSPORT_LE)
+fun BluetoothDevice.connect(context: Context, callback: BluetoothGattCallback): BluetoothGatt = connectGatt(context, true, callback, BluetoothDevice.TRANSPORT_LE)
 
 inline val BluetoothDevice.earableTypeByDeviceName: EarableType
     get() = when {
