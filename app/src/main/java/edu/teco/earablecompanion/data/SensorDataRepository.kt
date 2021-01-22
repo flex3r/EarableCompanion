@@ -44,7 +44,7 @@ class SensorDataRepository @Inject constructor(private val sensorDataDao: Sensor
     suspend fun getSensorDataEntries(dataId: Long): List<SensorDataEntry> = sensorDataDao.getEntries(dataId)
     suspend fun getLogEntries(dataId: Long): List<LogEntry> = sensorDataDao.getLogEntries(dataId)
 
-    suspend fun removeAll() {
+    fun removeAll() = scope.launch {
         sensorDataDao.getAll().forEach(SensorData::removeMicRecording)
         sensorDataDao.deleteAll()
     }
