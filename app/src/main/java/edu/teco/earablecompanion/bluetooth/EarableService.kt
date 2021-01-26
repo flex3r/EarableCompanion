@@ -485,6 +485,9 @@ class EarableService : Service() {
             characteristics.remove(device)
             gatt.disconnect()
             gatt.close()
+
+            connectionRepository.removeConnectedDevice(device)
+            connectionRepository.removeConfig(device.address)
         }
 
         gatts.clear()
