@@ -44,7 +44,7 @@ jobs:
 
       - name: Remove previous debug release
         if: (github.event_name == 'push' && github.ref == 'refs/heads/master')
-        uses: author/action-rollback@stable
+        uses: author/action-rollback@1.0.0
         with:
           tag: 'debug'
           always_delete_tag: true
