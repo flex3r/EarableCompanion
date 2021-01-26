@@ -346,8 +346,10 @@ class EarableService : Service() {
 
         val calibrations = configs.map { it.value.calibrationValues }.flatten()
 
-        addLogEntryIfEnabled(null, getString(R.string.log_record_start, title, devices.joinToString { it.address }))
-        dataRepository.startRecording(title, devices, micFile, calibrations)
+        scope.launch {
+            dataRepository.startRecording(title, devices, micFile, calibrations).join()
+            addLogEntryIfEnabled(null, getString(R.string.log_record_start, title, devices.joinToString { it.address }))
+        }
     }
 
     fun stopRecording(devices: List<BluetoothDevice> = gatts.keys.toList(), configs: Map<String, Config> = connectionRepository.getCurrentConfigs()) {
