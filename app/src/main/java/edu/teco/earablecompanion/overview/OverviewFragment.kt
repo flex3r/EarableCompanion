@@ -196,12 +196,10 @@ class OverviewFragment : Fragment() {
 
         (activity as? MainActivity)?.run {
             with(earableService ?: return) {
-                startRecording(title, devices, configs, viewModel.micRecordingPossible)
+                val shouldInterceptMediaButtons = sharedPreferences.getBoolean(getString(R.string.preference_intercept_media_buttons_key), false)
+                val session = startRecording(title, devices, configs, viewModel.micRecordingPossible, shouldInterceptMediaButtons) ?: return
 
-                if (sharedPreferences.getBoolean(getString(R.string.preference_intercept_media_buttons_key), false)) {
-                    val session = earableService?.startMediaSession() ?: return
-                    mediaController = session.controller.mediaController as MediaController
-                }
+                mediaController = session.controller.mediaController as MediaController
             }
         }
     }

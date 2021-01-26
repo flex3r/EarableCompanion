@@ -325,7 +325,7 @@ class EarableService : Service() {
         activeCalibration = null
     }
 
-    fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>, recordMic: Boolean) {
+    fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>, recordMic: Boolean, interceptMediaButtons: Boolean): MediaSessionCompat? {
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
             val actions = mutableListOf<QueueAction>()
@@ -344,12 +344,22 @@ class EarableService : Service() {
             else -> null
         }
 
+        val session = when {
+            interceptMediaButtons -> startMediaSession()
+            else -> null
+        }
+
         val calibrations = configs.map { it.value.calibrationValues }.flatten()
 
         scope.launch {
             dataRepository.startRecording(title, devices, micFile, calibrations).join()
+
             addLogEntryIfEnabled(null, getString(R.string.log_record_start, title, devices.joinToString { it.address }))
+            micFile?.let { addLogEntryIfEnabled(null, getString(R.string.log_mic_record_start)) }
+            session?.let { addLogEntryIfEnabled(null, getString(R.string.log_media_session_started)) }
         }
+
+        return session
     }
 
     fun stopRecording(devices: List<BluetoothDevice> = gatts.keys.toList(), configs: Map<String, Config> = connectionRepository.getCurrentConfigs()) {
@@ -386,7 +396,6 @@ class EarableService : Service() {
             start()
         }
 
-        addLogEntryIfEnabled(null, getString(R.string.log_mic_record_start))
         return file
     }
 
@@ -399,7 +408,7 @@ class EarableService : Service() {
         }
     }
 
-    fun startMediaSession(): MediaSessionCompat {
+    private fun startMediaSession(): MediaSessionCompat {
         val state = PlaybackStateCompat.Builder()
             .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE
                     or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_SKIP_TO_NEXT or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
@@ -411,7 +420,6 @@ class EarableService : Service() {
             isActive = true
             this@EarableService.mediaSession = this
         }
-        addLogEntryIfEnabled(null, getString(R.string.log_media_session_started))
 
         playDummyAudio()
         return session
