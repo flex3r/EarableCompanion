@@ -303,7 +303,7 @@ class EarableService : Service() {
                 gatts[device]?.let { gatt -> actions.add { gatt.writeCharacteristic(characteristic) } }
             }
 
-            setSensorNotificationEnabled(device, this, enable = true, calibration = true)?.let { actions.addAll(it) }
+            setSensorNotification(device, this, enable = true, calibration = true)?.let { actions.addAll(it) }
             writeQueue.addQueueActionsAndInvoke(device.address, actions)
         }
     }
@@ -317,7 +317,7 @@ class EarableService : Service() {
                     gatts[device]?.let { gatt -> actions.add { gatt.writeCharacteristic(characteristic) } }
                 }
 
-                setSensorNotificationEnabled(device, this, enable = false, calibration = true)?.let { actions.addAll(it) }
+                setSensorNotification(device, this, enable = false, calibration = true)?.let { actions.addAll(it) }
                 writeQueue.addQueueActionsAndInvoke(device.address, actions)
             }
         }
@@ -354,7 +354,7 @@ class EarableService : Service() {
                 gatts[device]?.let { gatt -> actions.add { gatt.writeCharacteristic(characteristic) } }
             }
 
-            setSensorNotificationEnabled(device, config, enable = true)?.let { actions.addAll(it) }
+            setSensorNotification(device, config, enable = true)?.let { actions.addAll(it) }
             writeQueue.addQueueActionsAndInvoke(device.address, actions)
         }
 
@@ -371,7 +371,7 @@ class EarableService : Service() {
                 gatts[device]?.let { gatt -> actions.add { gatt.writeCharacteristic(characteristic) } }
             }
 
-            setSensorNotificationEnabled(device, config, enable = false)?.let { actions.addAll(it) }
+            setSensorNotification(device, config, enable = false)?.let { actions.addAll(it) }
             writeQueue.addQueueActionsAndInvoke(device.address, actions)
         }
 
@@ -445,11 +445,12 @@ class EarableService : Service() {
         }
     }
 
-    private fun setSensorNotificationEnabled(device: BluetoothDevice, config: Config, enable: Boolean, calibration: Boolean = false): List<QueueAction>? {
+    private fun setSensorNotification(device: BluetoothDevice, config: Config, enable: Boolean, calibration: Boolean = false): List<QueueAction>? {
         val sensorCharacteristics = when {
             calibration -> config.calibrationSensorCharacteristics
             else -> config.sensorCharacteristics
         } ?: return null
+
         return sensorCharacteristics.mapNotNull { (uuid, isIndication) ->
             val characteristic = characteristics[device]?.get(uuid) ?: return@mapNotNull null
             val success = gatts[device]?.setCharacteristicNotification(characteristic, enable) ?: false
