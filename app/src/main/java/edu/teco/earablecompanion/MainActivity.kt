@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         if (!isChangingConfigurations) {
             stopService(Intent(this, EarableService::class.java))
+            android.os.Process.killProcess(android.os.Process.myPid())
         }
 
         super.onDestroy()
