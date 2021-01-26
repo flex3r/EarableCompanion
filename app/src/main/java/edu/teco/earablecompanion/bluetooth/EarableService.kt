@@ -326,6 +326,25 @@ class EarableService : Service() {
     }
 
     fun startRecording(title: String, devices: List<BluetoothDevice>, configs: Map<String, Config>, recordMic: Boolean, interceptMediaButtons: Boolean): MediaSessionCompat? {
+        val micFile = when {
+            recordMic -> startMicRecording(title)
+            else -> null
+        }
+
+        val session = when {
+            interceptMediaButtons -> startMediaSession()
+            else -> null
+        }
+
+        scope.launch {
+            val calibrations = configs.map { it.value.calibrationValues }.flatten()
+            dataRepository.startRecording(title, devices, micFile, calibrations).join()
+
+            addLogEntryIfEnabled(null, getString(R.string.log_record_start, title, devices.joinToString { it.address }))
+            micFile?.let { addLogEntryIfEnabled(null, getString(R.string.log_mic_record_start)) }
+            session?.let { addLogEntryIfEnabled(null, getString(R.string.log_media_session_started)) }
+        }
+
         devices.forEach { device ->
             val config = configs[device.address] ?: return@forEach
             val actions = mutableListOf<QueueAction>()
@@ -337,26 +356,6 @@ class EarableService : Service() {
 
             setSensorNotificationEnabled(device, config, enable = true)?.let { actions.addAll(it) }
             writeQueue.addQueueActionsAndInvoke(device.address, actions)
-        }
-
-        val micFile = when {
-            recordMic -> startMicRecording(title)
-            else -> null
-        }
-
-        val session = when {
-            interceptMediaButtons -> startMediaSession()
-            else -> null
-        }
-
-        val calibrations = configs.map { it.value.calibrationValues }.flatten()
-
-        scope.launch {
-            dataRepository.startRecording(title, devices, micFile, calibrations).join()
-
-            addLogEntryIfEnabled(null, getString(R.string.log_record_start, title, devices.joinToString { it.address }))
-            micFile?.let { addLogEntryIfEnabled(null, getString(R.string.log_mic_record_start)) }
-            session?.let { addLogEntryIfEnabled(null, getString(R.string.log_media_session_started)) }
         }
 
         return session
